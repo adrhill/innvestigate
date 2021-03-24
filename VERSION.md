@@ -9,7 +9,7 @@ for details see [PR #222](https://github.com/albermax/innvestigate/pull/222)
 
 ## Version 1.0.8
 
-Bugfixes, increased code covervage, CI.
+Bugfixes, increased code coverage, CI.
 
 ## Version 1.0.7
 
