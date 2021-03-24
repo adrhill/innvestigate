@@ -72,7 +72,7 @@ markers = [
 
 # Options for code coverage
 [tool.coverage.paths]
-source = ["innvestigate"]
+source = ["src", "*/site-packages"]
 
 [tool.coverage.run]
 branch = true
