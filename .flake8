@@ -1,30 +1,20 @@
 [flake8]
 select = 
     # A: flake8-builtins
-    A,
     # B: flake8-bugbear
-    B,
     # B9: flake8-bugbear
-    B9,
     # BLK: Black
-    BLK,
     # C: McCabe complexity
-    C,
     # E: pycodestyle / PEP8
-    E,
     # F: pyflakes
-    F,
     # I: flake8-import-order
-    I,
     # N8: pep8-naming
-    N,
     # W: pycodestyle / PEP8
-    W,
+    A, B, B9, BLK, C, E, F, I, N, W,
 ignore = 
-    # E203: Whitespace before ':' (used for Black)
-    E203,
-    # W503: Line break occurred before a binary operator (used for Black)
-    W503,
+    # E203: Whitespace before ':' (for Black)
+    # W503: Line break occurred before a binary operator (for Black)
+    E203, W503,
 max-line-length = 
     # for use with Black 
     88
