@@ -56,8 +56,10 @@ coverage = {extras = ["toml"], version = "^5.5"}
 pytest-cov = "^2.11.1"
 
 # Options for pytest
+codecov = "^2.1.11"
 [tool.pytest.ini_options]
-addopts = "-m precommit --strict-markers"
+addopts = "-m fast --strict-markers"
+# addopts = "-m precommit --strict-markers"
 filterwarnings = [
     "ignore::FutureWarning:tensorflow",
     "ignore::DeprecationWarning:tensorflow",
