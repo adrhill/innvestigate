@@ -11,7 +11,7 @@ from __future__ import\
 import pytest
 
 
-from innvestigate.utils.tests import dryrun
+from tests.pytest_utils import dryrun
 
 from innvestigate.analyzer import BaselineLRPZ
 from innvestigate.analyzer import LRPZ

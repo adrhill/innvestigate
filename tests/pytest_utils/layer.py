@@ -12,8 +12,7 @@ from builtins import range
 import keras.models
 import keras.engine.topology
 
-
-from ... import utils as iutils
+import innvestigate.utils as iutils
 
 
 __all__ = [

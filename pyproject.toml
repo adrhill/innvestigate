@@ -1,0 +1,87 @@
+[tool.poetry]
+name = "innvestigate"
+version = "1.0.10"
+description = "A toolbox to innvestigate neural networks' predictions."
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+    "Development Status :: 2 - Pre-Alpha", # TODO: update on release
+    "Environment :: Console", 
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.6",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+authors = [
+    "Maxmilian Alber <workDoTalberDoTmaximilian@gmail.com>",
+    "Sebastian Lapuschkin",
+    "Miriam Haegele",
+    "Kristof Schuett",
+    "Philipp Seegerer",
+    "Pieter-Jan Kindermans",
+    "Henry Webel",
+    "Leander Weber",
+    "Adrian Hill <hill@campus.tu-berlin.de>",
+    "and others",
+]
+maintainers = ["Adrian Hill <hill@campus.tu-berlin.de>"]
+license = "BSD-2-Clause"
+readme = "README.md"
+homepage = "https://github.com/albermax/innvestigate"
+repository = "https://github.com/albermax/innvestigate"
+documentation = "https://innvestigate.readthedocs.io/en/latest/"
+keywords = ["XAI", "LRP", "Deep Taylor",]
+
+[tool.poetry.dependencies]
+python = "3.6.*"
+Keras = "2.2.4"
+tensorflow = "1.12.*"
+h5py = "^3.1.0"
+Pillow = "^8.1.1"
+future = "^0.18.2"
+numpy = "1.16.*"
+matplotlib = "^3.3.4"
+
+[tool.poetry.dev-dependencies]
+bandit = "^1.7.0"
+black  = { version = "*", allow-prereleases = true }
+flake8 = "^3.8.4"
+flake8-black = "^0.2.1"
+flake8-bugbear = "^21.3.1"
+flake8-builtins = "^1.5.3"
+flake8-docstrings = "^1.5.0"
+flake8-import-order = "^0.18.1"
+pep8-naming = "^0.11.1"
+pytest = "^6.2.2"
+coverage = {extras = ["toml"], version = "^5.5"}
+pytest-cov = "^2.11.1"
+
+# Options for pytest
+[tool.pytest.ini_options]
+addopts = "-m precommit --strict-markers"
+filterwarnings = [
+    "ignore::FutureWarning:tensorflow",
+    "ignore::DeprecationWarning:tensorflow",
+]
+markers = [
+    "precommit",
+    "slow",
+    "fast",
+    "application",
+    "imagenet",
+]
+
+# Options for code coverage
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.run]
+branch = true
+source = ["innvestigate"]
+
+[tool.coverage.report]
+show_missing = false
+
+# Build with Poetry
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

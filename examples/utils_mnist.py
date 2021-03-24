@@ -30,8 +30,7 @@ import innvestigate.utils as iutils
 import innvestigate.utils.visualizations as ivis
 
 import innvestigate.utils
-import innvestigate.utils.tests
-import innvestigate.utils.tests.networks
+import innvestigate.utils.networks
 
 
 ###############################################################################
@@ -114,8 +113,8 @@ def create_model(modelname, **kwargs):
         model_init_fxn = getattr(innvestigate.applications.mnist, modelname)
         model_wo_sm, model_w_sm = model_init_fxn(input_shape[1:])
 
-    elif modelname in innvestigate.utils.tests.networks.base.__all__:
-        network_init_fxn = getattr(innvestigate.utils.tests.networks.base,
+    elif modelname in innvestigate.utils.networks.base.__all__:
+        network_init_fxn = getattr(innvestigate.utils.networks.base,
                                    modelname)
         network = network_init_fxn(input_shape,
                                    num_classes,
