@@ -17,7 +17,7 @@ try:
 except ImportError:
     deeplift = None
 
-from innvestigate.utils.tests import dryrun
+from tests.pytest_utils import dryrun
 
 from innvestigate.analyzer import DeepLIFT
 from innvestigate.analyzer import DeepLIFTWrapper
