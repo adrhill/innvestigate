@@ -1,22 +1,10 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-import numpy as np
-import pytest
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import innvestigate.utils.visualizations as ivis
 
+import numpy as np
 
-###############################################################################
-###############################################################################
-###############################################################################
+import pytest
 
 
 @pytest.mark.fast

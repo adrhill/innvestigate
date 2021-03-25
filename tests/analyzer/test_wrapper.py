@@ -1,35 +1,19 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-
-###############################################################################
-###############################################################################
-###############################################################################
-
+from innvestigate.analyzer import AugmentReduceBase
+from innvestigate.analyzer import GaussianSmoother
+from innvestigate.analyzer import Gradient
+from innvestigate.analyzer import PathIntegrator
+from innvestigate.analyzer import WrapperBase
 
 import pytest
 
-
 from tests.pytest_utils import dryrun
-
-from innvestigate.analyzer import WrapperBase
-from innvestigate.analyzer import AugmentReduceBase
-from innvestigate.analyzer import GaussianSmoother
-from innvestigate.analyzer import PathIntegrator
-
-from innvestigate.analyzer import Gradient
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__WrapperBase():
-
     def method(model):
         return WrapperBase(Gradient(model))
 
@@ -38,7 +22,6 @@ def test_fast__WrapperBase():
 
 @pytest.mark.precommit
 def test_precommit__WrapperBase():
-
     def method(model):
         return WrapperBase(Gradient(model))
 
@@ -48,7 +31,6 @@ def test_precommit__WrapperBase():
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__SerializeWrapperBase():
-
     def method(model):
         return WrapperBase(Gradient(model))
 
@@ -56,14 +38,11 @@ def test_fast__SerializeWrapperBase():
 
 
 ###############################################################################
-###############################################################################
-###############################################################################
 
 
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__AugmentReduceBase():
-
     def method(model):
         return AugmentReduceBase(Gradient(model))
 
@@ -72,7 +51,6 @@ def test_fast__AugmentReduceBase():
 
 @pytest.mark.precommit
 def test_precommit__AugmentReduceBase():
-
     def method(model):
         return AugmentReduceBase(Gradient(model))
 
@@ -82,7 +60,6 @@ def test_precommit__AugmentReduceBase():
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__SerializeAugmentReduceBase():
-
     def method(model):
         return AugmentReduceBase(Gradient(model))
 
@@ -90,14 +67,11 @@ def test_fast__SerializeAugmentReduceBase():
 
 
 ###############################################################################
-###############################################################################
-###############################################################################
 
 
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__GaussianSmoother():
-
     def method(model):
         return GaussianSmoother(Gradient(model))
 
@@ -106,7 +80,6 @@ def test_fast__GaussianSmoother():
 
 @pytest.mark.precommit
 def test_precommit__GaussianSmoother():
-
     def method(model):
         return GaussianSmoother(Gradient(model))
 
@@ -116,7 +89,6 @@ def test_precommit__GaussianSmoother():
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__SerializeGaussianSmoother():
-
     def method(model):
         return GaussianSmoother(Gradient(model))
 
@@ -124,14 +96,11 @@ def test_fast__SerializeGaussianSmoother():
 
 
 ###############################################################################
-###############################################################################
-###############################################################################
 
 
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__PathIntegrator():
-
     def method(model):
         return PathIntegrator(Gradient(model))
 
@@ -140,7 +109,6 @@ def test_fast__PathIntegrator():
 
 @pytest.mark.precommit
 def test_precommit__PathIntegrator():
-
     def method(model):
         return PathIntegrator(Gradient(model))
 
@@ -150,7 +118,6 @@ def test_precommit__PathIntegrator():
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__SerializePathIntegrator():
-
     def method(model):
         return PathIntegrator(Gradient(model))
 

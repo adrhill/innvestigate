@@ -1,22 +1,8 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-
-
-###############################################################################
-###############################################################################
-###############################################################################
-
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest
 
-
 from tests.pytest_utils import dryrun
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 @pytest.mark.fast
@@ -27,7 +13,6 @@ def test_fast__DryRunAnalyzerTestCase():
     """
 
     def method(output_layer):
-
         class TestAnalyzer(object):
             def analyze(self, X):
                 return X
