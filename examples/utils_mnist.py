@@ -50,12 +50,12 @@ def create_preprocessing_f(X, input_range=None):
 
     if len(input_range) != 2:
         raise ValueError(
-            "Input range must be of length 2, but was {}".format(
-                len(input_range)))
+            "Input range must be of length 2, but was {}".format(len(input_range))
+        )
     if input_range[0] >= input_range[1]:
         raise ValueError(
-            "Values in input_range must be ascending. It is {}".format(
-                input_range))
+            "Values in input_range must be ascending. It is {}".format(input_range)
+        )
 
     a, b = X.min(), X.max()
     c, d = input_range
@@ -64,16 +64,16 @@ def create_preprocessing_f(X, input_range=None):
         # shift original data to [0, b-a] (and copy)
         X = X - a
         # scale to new range gap [0, d-c]
-        X /= (b-a)
-        X *= (d-c)
+        X /= b - a
+        X *= d - c
         # shift to desired output range
         X += c
         return X
 
     def revert_preprocessing(X):
         X = X - c
-        X /= (d-c)
-        X *= (b-a)
+        X /= d - c
+        X *= b - a
         X += a
         return X
 
@@ -100,12 +100,9 @@ def create_model(modelname, **kwargs):
         model_wo_sm, model_w_sm = model_init_fxn(input_shape[1:])
 
     elif modelname in innvestigate.utils.networks.base.__all__:
-        network_init_fxn = getattr(innvestigate.utils.networks.base,
-                                   modelname)
-        network = network_init_fxn(input_shape,
-                                   num_classes,
-                                   **kwargs)
-        model_wo_sm = Model(inputs=network["in"], outputs=network["out"])
+        network_init_fxn = getattr(innvestigate.utils.networks.base, modelname)
+        network = network_init_fxn(input_shape, num_classes, **kwargs)
+        # model_wo_sm = Model(inputs=network["in"], outputs=network["out"])
         model_w_sm = Model(inputs=network["in"], outputs=network["sm_out"])
     else:
         raise ValueError("Invalid model name {}".format(modelname))
@@ -121,9 +118,9 @@ def train_model(model, data, batch_size=128, epochs=20):
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
-    model.compile(loss="categorical_crossentropy",
-                  optimizer=Adam(),
-                  metrics=["accuracy"])
+    model.compile(
+        loss="categorical_crossentropy", optimizer=Adam(), metrics=["accuracy"]
+    )
 
     score = model.evaluate(x_test, y_test, verbose=0)
     return score
