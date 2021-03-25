@@ -10,7 +10,8 @@ select =
     # I: flake8-import-order
     # N8: pep8-naming
     # W: pycodestyle / PEP8
-    A, B, B9, BLK, C, E, F, I, N, W,
+    A, B, B9, BLK, C, E, F, I, W,
+    ; N,
 ignore = 
     # E203: Whitespace before ':' (for Black)
     # W503: Line break occurred before a binary operator (for Black)
