@@ -1,8 +1,7 @@
-import numpy as np
-
-import innvestigate
 import innvestigate.utils as iutils
 import innvestigate.utils.visualizations as ivis
+
+import numpy as np
 
 
 def preprocess(X, net):

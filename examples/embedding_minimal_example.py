@@ -1,7 +1,9 @@
-from keras import Sequential
-from keras.layers import Dense, Conv1D, Embedding, GlobalMaxPooling1D
-import numpy as np
 import innvestigate
+
+from keras import Sequential
+from keras.layers import Conv1D, Dense, Embedding, GlobalMaxPooling1D
+
+import numpy as np
 
 model = Sequential()
 model.add(Embedding(input_dim=219, output_dim=8))

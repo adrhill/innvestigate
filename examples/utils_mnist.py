@@ -1,36 +1,20 @@
-# Begin: Python 2/3 compatibility header small
-# Get Python 3 functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-from future.utils import raise_with_traceback, raise_from
-# catch exception with: except Exception as e
-from builtins import range, map, zip, filter
-from io import open
-import six
-# End: Python 2/3 compatability header small
+from __future__ import absolute_import, division, print_function, unicode_literals
 
+import innvestigate
+import innvestigate.applications.mnist
+import innvestigate.utils
+import innvestigate.utils as iutils
+import innvestigate.utils.networks
+import innvestigate.utils.visualizations as ivis
 
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-import numpy as np
 
 import keras
 from keras import backend as K
 from keras.datasets import mnist
 from keras.models import Model
-from keras.layers import Dense, Dropout, Activation, Input
 from keras.optimizers import Adam
 
-import innvestigate
-import innvestigate.applications.mnist
-import innvestigate.utils as iutils
-import innvestigate.utils.visualizations as ivis
-
-import innvestigate.utils
-import innvestigate.utils.networks
+import numpy as np
 
 
 ###############################################################################

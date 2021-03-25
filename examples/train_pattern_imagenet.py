@@ -1,31 +1,8 @@
-# Begin: Python 2/3 compatibility header small
-# Get Python 3 functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-from future.utils import raise_with_traceback, raise_from
-# catch exception with: except Exception as e
-from builtins import range, map, zip, filter
-from io import open
-import six
-# End: Python 2/3 compatability header small
-
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-import matplotlib
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import imp
-import keras.backend
-import keras.models
-import keras.preprocessing.image
-import keras.utils
-import matplotlib.pyplot as plt
-import numpy as np
-import sys
 import os
+import sys
 
 import innvestigate
 import innvestigate.tools
@@ -33,10 +10,12 @@ import innvestigate.utils as iutils
 import innvestigate.utils.networks.imagenet
 import innvestigate.utils.visualizations as ivis
 
+import keras.backend
+import keras.models
+import keras.preprocessing.image
+import keras.utils
 
-###############################################################################
-###############################################################################
-###############################################################################
+import numpy as np
 
 
 base_dir = os.path.dirname(__file__)

@@ -1,33 +1,16 @@
-# Begin: Python 2/3 compatibility header small
-# Get Python 3 functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-from future.utils import raise_with_traceback, raise_from
-# catch exception with: except Exception as e
-from builtins import range, map, zip, filter
-from io import open
-import six
-# End: Python 2/3 compatability header small
-
-
-###############################################################################
-###############################################################################
-###############################################################################
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 
 import imp
-import matplotlib.pyplot as plt
-import numpy as np
 import os
+
+import matplotlib.pyplot as plt
+
+import numpy as np
+
 
 base_dir = os.path.dirname(__file__)
 utils = imp.load_source("utils", os.path.join(base_dir, "utils.py"))
-
-
-###############################################################################
-###############################################################################
-###############################################################################
-
 
 if __name__ == "__main__":
     # Load an image.

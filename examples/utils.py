@@ -1,20 +1,17 @@
-# Begin: Python 2/3 compatibility header small
-# Get Python 3 functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-from future.utils import raise_with_traceback, raise_from
-# catch exception with: except Exception as e
-from builtins import range, map, zip, filter
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import os
+import shutil
+from builtins import range
 from io import open
-import six
-# End: Python 2/3 compatability header small
+
+import PIL.Image
 
 import matplotlib.pyplot as plt
-import numpy as np
-import os
-import PIL.Image
-import shutil
 
+import numpy as np
+
+import six
 
 ###############################################################################
 # Download utilities
