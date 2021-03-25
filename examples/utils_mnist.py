@@ -40,11 +40,13 @@ def fetch_data():
     return x_train, y_train, x_test, y_test
 
 
-def create_preprocessing_f(X, input_range=[0, 1]):
+def create_preprocessing_f(X, input_range=None):
     """
     Generically shifts data from interval [a, b] to interval [c, d].
     Assumes that theoretical min and max values are populated.
     """
+    if input_range is None:
+        input_range = [0, 1]
 
     if len(input_range) != 2:
         raise ValueError(
