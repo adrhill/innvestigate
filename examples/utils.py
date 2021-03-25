@@ -81,6 +81,7 @@ def plot_image_grid(grid,
                     file_name=None,
                     figsize=None,
                     dpi=224):
+    # TODO: reduce complexity
     n_rows = len(grid)
     n_cols = len(grid[0])
     if figsize is None:

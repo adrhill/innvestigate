@@ -36,6 +36,7 @@ imagenet_val_dir = "/temp/datasets/imagenet/2012/train_set_small"
 ###############################################################################
 
 if __name__ == "__main__":
+    # TODO: reduce complexity
 
     netname = sys.argv[1] if len(sys.argv) > 1 else "vgg16"
     pattern_type = "relu"

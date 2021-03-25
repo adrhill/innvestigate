@@ -8,6 +8,7 @@ from io import open
 
 
 if __name__ == "__main__":
+    # TODO: reduce complexity
     def is_executable(filepath):
         #determine whether the target file exists and is executable
         return os.path.isfile(filepath) and os.access(filepath, os.X_OK)
