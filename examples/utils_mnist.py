@@ -125,10 +125,6 @@ def train_model(model, data, batch_size=128, epochs=20):
                   optimizer=Adam(),
                   metrics=["accuracy"])
 
-    history = model.fit(x_train, y_train,
-                        batch_size=batch_size,
-                        epochs=epochs,
-                        verbose=1)
     score = model.evaluate(x_test, y_test, verbose=0)
     return score
 
