@@ -15,7 +15,8 @@ select =
 ignore = 
     # E203: Whitespace before ':' (for Black)
     # W503: Line break occurred before a binary operator (for Black)
-    E203, W503,
+    # E741: Ignore warning "ambiguous variable name 'l'" as it is useful to iterate over layers
+    E203, W503, E741
 max-line-length = 
     # for use with Black 
     88
