@@ -1,19 +1,12 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from builtins import zip
 
-
-###############################################################################
-###############################################################################
-###############################################################################
-
+import innvestigate.utils as iutils
 
 import keras.backend as K
+
 import numpy as np
-
-
-from ... import utils as iutils
 
 
 __all__ = [
@@ -22,8 +15,6 @@ __all__ = [
 ]
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 

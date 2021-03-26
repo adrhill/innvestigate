@@ -1,21 +1,15 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
+import warnings
 
-###############################################################################
-###############################################################################
-###############################################################################
-
+from innvestigate.applications import imagenet
+from innvestigate.utils.networks import base
+from innvestigate.utils.networks import mnist
 
 import keras.backend as K
 import keras.layers
-import numpy as np
-import warnings
 
-from . import base
-from . import mnist
-from innvestigate.applications import imagenet
+import numpy as np
 
 __all__ = [
     "vgg16_custom",
@@ -32,8 +26,6 @@ __all__ = [
 ]
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 

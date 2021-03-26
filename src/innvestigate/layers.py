@@ -1,12 +1,9 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from builtins import range, zip
 
-
-###############################################################################
-###############################################################################
-###############################################################################
+import innvestigate.utils as iutils
+from innvestigate.utils.keras import backend as iK
 
 import keras
 import keras.backend as K
@@ -14,11 +11,8 @@ import keras.constraints
 import keras.layers
 import keras.regularizers
 from keras.utils import conv_utils
+
 import numpy as np
-
-
-from . import utils as iutils
-from .utils.keras import backend as iK
 
 
 __all__ = [
@@ -29,10 +23,8 @@ __all__ = [
     "OnesLike",
     "AsFloatX",
     "FiniteCheck",
-
     "Gradient",
     "GradientWRT",
-
     "Min",
     "Max",
     "Greater",
@@ -46,18 +38,15 @@ __all__ = [
     "Sum",
     "Mean",
     "CountNonZero",
-
     "Identity",
     "Abs",
     "Square",
     "Clip",
     "Project",
     "Print",
-
     "Transpose",
     "Dot",
     "SafeDivide",
-
     "Repeat",
     "Reshape",
     "MultiplyWithLinspace",
@@ -70,8 +59,6 @@ __all__ = [
 ]
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 

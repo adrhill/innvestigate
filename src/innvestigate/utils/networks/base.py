@@ -1,35 +1,20 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-from builtins import range
-
-
-###############################################################################
-###############################################################################
-###############################################################################
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import keras.layers
 
 
 __all__ = [
     "log_reg",
-
     "mlp_2dense",
     "mlp_3dense",
-
     "cnn_1convb_2dense",
     "cnn_2convb_2dense",
     "cnn_2convb_3dense",
     "cnn_3convb_3dense",
 ]
 
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-
 # TODO: more consistent nameing
+
 
 def input_layer(shape, *args, **kwargs):
     return keras.layers.Input(shape=shape[1:], *args, **kwargs)

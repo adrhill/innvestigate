@@ -4,39 +4,33 @@ Each function returns a pretrained ImageNet model.
 The models are based on keras.applications models and
 contain additionally pretrained patterns.
 
-The returned dictionary contains the following
-keys\: model, in, sm_out, out, image_shape, color_coding,
-preprocess_f, patterns.
+The returned dictionary contains the following keys:
+    model, in, sm_out, out, image_shape, color_coding,
+    preprocess_f, patterns.
 
-Function parameters\:
-
-:param load_weights: Download or access cached weights.
-:param load_patterns: Download or access cached patterns.
+Function parameters:
+    :param load_weights: Download or access cached weights.
+    :param load_patterns: Download or access cached patterns.
 """
-# todo: rename in, sm_out, out to input_tensors, output_tensors,
-# todo: softmax_output_tenors
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+# TODO: rename in, sm_out, out to input_tensors, output_tensors,
+# TODO: softmax_output_tenors
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import warnings
 from builtins import range
 
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-import keras.backend as K
+import keras.applications.densenet
+import keras.applications.inception_resnet_v2
+import keras.applications.inception_v3
+import keras.applications.nasnet
 import keras.applications.resnet50
 import keras.applications.vgg16
 import keras.applications.vgg19
-import keras.applications.inception_v3
-import keras.applications.inception_resnet_v2
-import keras.applications.densenet
-import keras.applications.nasnet
+import keras.backend as K
 import keras.utils.data_utils
+
 import numpy as np
-import warnings
 
 from ..utils.keras import graph as kgraph
 
@@ -55,8 +49,6 @@ __all__ = [
 ]
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 

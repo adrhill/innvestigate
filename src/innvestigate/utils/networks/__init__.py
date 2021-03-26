@@ -1,25 +1,13 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-import keras.backend as K
 import fnmatch
 
-from . import trivia
-from . import mnist
-from . import cifar10
-from . import imagenet
+from innvestigate.utils.networks import cifar10
+from innvestigate.utils.networks import imagenet
+from innvestigate.utils.networks import mnist
+from innvestigate.utils.networks import trivia
 
-
-###############################################################################
-###############################################################################
-###############################################################################
+import keras.backend as K
 
 
 def iterator(network_filter="*", clear_sessions=False):

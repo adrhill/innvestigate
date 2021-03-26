@@ -1,7 +1,6 @@
-
-from .pattern import PatternComputer
-from .perturbate import Perturbation
-from .perturbate import PerturbationAnalysis
+from innvestigate.tools.pattern import PatternComputer
+from innvestigate.tools.perturbate import Perturbation
+from innvestigate.tools.perturbate import PerturbationAnalysis
 
 # Make pylint ignore the imports
 assert PatternComputer

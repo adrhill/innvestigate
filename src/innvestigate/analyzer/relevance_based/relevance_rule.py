@@ -1,17 +1,17 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from builtins import zip
 
-
-###############################################################################
-###############################################################################
-###############################################################################
+import innvestigate.utils.keras as kutils
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.analyzer.relevance_based import utils as rutils
+from innvestigate.utils.keras import backend as iK
+from innvestigate.utils.keras import graph as kgraph
 
 import keras
 import keras.backend as K
 import keras.engine.topology
-import keras.models
 import keras.layers
 import keras.layers.convolutional
 import keras.layers.core
@@ -19,53 +19,37 @@ import keras.layers.local
 import keras.layers.noise
 import keras.layers.normalization
 import keras.layers.pooling
+import keras.models
+
+
 import numpy as np
-
-
-from innvestigate import layers as ilayers
-from innvestigate import utils as iutils
-import innvestigate.utils.keras as kutils
-from innvestigate.utils.keras import backend as iK
-from innvestigate.utils.keras import graph as kgraph
-from . import utils as rutils
-
 
 # TODO: differentiate between LRP and DTD rules?
 # DTD rules are special cases of LRP rules with additional assumptions
 __all__ = [
-    #dedicated treatment for special layers
-
-
-    #general rules
+    # dedicated treatment for special layers
+    # general rules
     "ZRule",
     "ZIgnoreBiasRule",
-
     "EpsilonRule",
     "EpsilonIgnoreBiasRule",
-
     "WSquareRule",
     "FlatRule",
-
     "AlphaBetaRule",
     "AlphaBetaIgnoreBiasRule",
-
     "Alpha2Beta1Rule",
     "Alpha2Beta1IgnoreBiasRule",
-
     "Alpha1Beta0Rule",
     "Alpha1Beta0IgnoreBiasRule",
-
     "AlphaBetaXRule",
     "AlphaBetaX1000Rule",
     "AlphaBetaX1010Rule",
     "AlphaBetaX1001Rule",
     "AlphaBetaX2m100Rule",
-
     "ZPlusRule",
     "ZPlusFastRule",
-    "BoundedRule"
+    "BoundedRule",
 ]
-
 
 
 class ZRule(kgraph.ReverseMappingBase):

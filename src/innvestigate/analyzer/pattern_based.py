@@ -1,41 +1,30 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
+import warnings
 
-###############################################################################
-###############################################################################
-###############################################################################
+from innvestigate import layers as ilayers
+from innvestigate import tools as itools
+from innvestigate import utils
+from innvestigate.analyzer import base
+from innvestigate.utils import keras as kutils
+from innvestigate.utils.keras import checks as kchecks
+from innvestigate.utils.keras import graph as kgraph
 
+import keras
 import keras.activations
 import keras.engine.topology
 import keras.layers
 import keras.layers.core
 import keras.layers.pooling
 import keras.models
-import keras
+
 import numpy as np
-import warnings
-
-
-from . import base
-from .. import layers as ilayers
-from .. import utils
-from .. import tools as itools
-from ..utils import keras as kutils
-from ..utils.keras import checks as kchecks
-from ..utils.keras import graph as kgraph
 
 
 __all__ = [
     "PatternNet",
     "PatternAttribution",
 ]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 SUPPORTED_LAYER_PATTERNNET = (

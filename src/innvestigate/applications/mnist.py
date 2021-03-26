@@ -7,24 +7,16 @@ and http://jmlr.org/papers/v17/15-618.html.
 """
 # TODO: rename in, sm_out, out to input_tensors, output_tensors,
 # TODO: softmax_output_tenors
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
 
-
-###############################################################################
-###############################################################################
-###############################################################################
-
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
-import keras.utils.data_utils
-import numpy as np
 
 import keras.models
-from keras.models import load_model, clone_model
-#from keras.utils import get_file
+import keras.utils.data_utils
+from keras.models import clone_model, load_model
 
+import numpy as np
 
 
 __all__ = [

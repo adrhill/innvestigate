@@ -1,24 +1,11 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-from .base import AnalyzerNetworkBase
-from .. import layers as ilayers
-from .. import utils as iutils
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.analyzer.base import AnalyzerNetworkBase
 
 
 __all__ = ["Random", "Input"]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 class Input(AnalyzerNetworkBase):

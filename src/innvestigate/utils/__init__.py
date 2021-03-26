@@ -1,33 +1,19 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-
-###############################################################################
-###############################################################################
-###############################################################################
-
+import math
 
 import keras.backend as K
 import keras.utils
-import math
 
 
 __all__ = [
     "model_wo_softmax",
     "to_list",
-
     "BatchSequence",
     "TargetAugmentedSequence",
-
     "preprocess_images",
     "postprocess_images",
 ]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 def model_wo_softmax(*args, **kwargs):
@@ -37,8 +23,6 @@ def model_wo_softmax(*args, **kwargs):
     return model_wo_softmax(*args, **kwargs)
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 

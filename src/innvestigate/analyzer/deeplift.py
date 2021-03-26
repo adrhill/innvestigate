@@ -1,38 +1,25 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-
-
-###############################################################################
-###############################################################################
-###############################################################################
-
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import importlib
-import keras.backend as K
-import keras.layers
-import numpy as np
 import tempfile
 import warnings
 
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.analyzer import base
+from innvestigate.utils import keras as kutils
+from innvestigate.utils.keras import checks as kchecks
+from innvestigate.utils.keras import graph as kgraph
 
-from . import base
-from .. import layers as ilayers
-from .. import utils as iutils
-from ..utils import keras as kutils
-from ..utils.keras import checks as kchecks
-from ..utils.keras import graph as kgraph
+import keras.backend as K
+import keras.layers
 
+import numpy as np
 
 __all__ = [
     "DeepLIFT",
     "DeepLIFTWrapper",
 ]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 def _create_deeplift_rules(reference_mapping, approximate_gradient=True):

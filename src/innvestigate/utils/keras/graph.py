@@ -1,31 +1,24 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-from builtins import range, zip
-import six
-
-
-###############################################################################
-###############################################################################
-###############################################################################
-
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import inspect
+from builtins import range, zip
+
+import innvestigate.layers as ilayers
+import innvestigate.utils as iutils
+from innvestigate.utils.keras import checks as kchecks
+
 import keras.backend as K
 import keras.engine.topology
 import keras.layers
 import keras.models
+
 import numpy as np
 
-
-from . import checks as kchecks
-from ... import layers as ilayers
-from ... import utils as iutils
+import six
 
 
 __all__ = [
     "get_kernel",
-
     "get_layer_inbound_count",
     "get_layer_outbound_count",
     "get_layer_neuronwise_io",
@@ -33,26 +26,17 @@ __all__ = [
     "copy_layer",
     "pre_softmax_tensors",
     "model_wo_softmax",
-
     "get_model_layers",
     "model_contains",
-
     "trace_model_execution",
     "get_model_execution_trace",
     "get_model_execution_graph",
     "print_model_execution_graph",
-
     "get_bottleneck_nodes",
     "get_bottleneck_tensors",
-
     "ReverseMappingBase",
     "reverse_model",
 ]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 def get_kernel(layer):

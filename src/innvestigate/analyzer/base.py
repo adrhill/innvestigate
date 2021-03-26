@@ -1,42 +1,30 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import warnings
 from builtins import zip
-import six
 
-###############################################################################
-###############################################################################
-###############################################################################
 
+import innvestigate.layers as ilayers
+import innvestigate.utils as iutils
+from innvestigate.utils.keras import checks as kchecks
+from innvestigate.utils.keras import graph as kgraph
 
 import keras.backend as K
 import keras.layers
 import keras.models
+
 import numpy as np
-import warnings
 
-
-from .. import layers as ilayers
-from .. import utils as iutils
-from ..utils.keras import checks as kchecks
-from ..utils.keras import graph as kgraph
-
+import six
 
 __all__ = [
     "NotAnalyzeableModelException",
     "AnalyzerBase",
-
     "TrainerMixin",
     "OneEpochTrainerMixin",
-
     "AnalyzerNetworkBase",
-    "ReverseAnalyzerBase"
+    "ReverseAnalyzerBase",
 ]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 class NotAnalyzeableModelException(Exception):

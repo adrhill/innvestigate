@@ -1,22 +1,8 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 
-###############################################################################
-###############################################################################
-###############################################################################
+__all__ = ["assert_lrp_epsilon_param", "assert_infer_lrp_alpha_beta_param"]
 
-
-__all__ = [
-    "assert_lrp_epsilon_param",
-    "assert_infer_lrp_alpha_beta_param"
-]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 def assert_lrp_epsilon_param(epsilon, caller):
     """

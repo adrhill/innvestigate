@@ -1,18 +1,20 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
-from builtins import zip
-import six
-
-###############################################################################
-###############################################################################
-###############################################################################
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import inspect
+from builtins import zip
+
+import innvestigate.utils.keras as kutils
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.analyzer import base
+from innvestigate.analyzer.relevance_based import relevance_rule as rrule
+from innvestigate.analyzer.relevance_based import utils as rutils
+from innvestigate.utils.keras import checks as kchecks
+from innvestigate.utils.keras import graph as kgraph
+
 import keras
 import keras.backend as K
 import keras.engine.topology
-import keras.models
 import keras.layers
 import keras.layers.convolutional
 import keras.layers.core
@@ -20,53 +22,36 @@ import keras.layers.local
 import keras.layers.noise
 import keras.layers.normalization
 import keras.layers.pooling
+import keras.models
 
-
-from .. import base
-from innvestigate import layers as ilayers
-from innvestigate import utils as iutils
-import innvestigate.utils.keras as kutils
-from innvestigate.utils.keras import checks as kchecks
-from innvestigate.utils.keras import graph as kgraph
-from . import relevance_rule as rrule
-from . import utils as rutils
+import six
 
 
 __all__ = [
     "BaselineLRPZ",
-
     "LRP",
     "LRP_RULES",
-
     "LRPZ",
     "LRPZIgnoreBias",
-
     "LRPEpsilon",
     "LRPEpsilonIgnoreBias",
-
     "LRPWSquare",
     "LRPFlat",
-
     "LRPAlphaBeta",
-
     "LRPAlpha2Beta1",
     "LRPAlpha2Beta1IgnoreBias",
     "LRPAlpha1Beta0",
     "LRPAlpha1Beta0IgnoreBias",
     "LRPZPlus",
     "LRPZPlusFast",
-
     "LRPSequentialPresetA",
     "LRPSequentialPresetB",
-
     "LRPSequentialPresetAFlat",
     "LRPSequentialPresetBFlat",
     "LRPSequentialPresetBFlatUntilIdx",
 ]
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 

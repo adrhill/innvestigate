@@ -1,23 +1,16 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from builtins import zip
 
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.analyzer import base
+from innvestigate.utils import keras as kutils
 
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-import keras.models
 import keras.backend as K
+import keras.models
+
 import numpy as np
-
-
-from . import base
-from .. import layers as ilayers
-from .. import utils as iutils
-from ..utils import keras as kutils
 
 
 __all__ = [
@@ -26,11 +19,6 @@ __all__ = [
     "GaussianSmoother",
     "PathIntegrator",
 ]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 class WrapperBase(base.AnalyzerBase):

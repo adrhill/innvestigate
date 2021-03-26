@@ -1,18 +1,18 @@
-# Get Python six functionality:
-from __future__ import \
-    absolute_import, print_function, division, unicode_literals
-from builtins import range
-import six
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-import numpy as np
-import warnings
 import time
+import warnings
+from builtins import range
+
+import innvestigate.utils
 
 import keras.backend as K
 from keras.utils import Sequence
-from keras.utils.data_utils import OrderedEnqueuer, GeneratorEnqueuer
+from keras.utils.data_utils import GeneratorEnqueuer, OrderedEnqueuer
 
-import innvestigate.utils
+import numpy as np
+
+import six
 
 
 class Perturbation:

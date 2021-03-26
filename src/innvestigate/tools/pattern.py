@@ -1,6 +1,5 @@
 # Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, print_function, division, unicode_literals
 from builtins import range
 import six
 
@@ -27,13 +26,11 @@ from ..utils.keras import graph as kgraph
 __all__ = [
     "get_active_neuron_io",
     "get_pattern_class",
-
     "BasePattern",
     "DummyPattern",
     "LinearPattern",
     "ReLUPositivePattern",
     "ReLUNegativePattern",
-
     "PatternComputer",
 ]
 

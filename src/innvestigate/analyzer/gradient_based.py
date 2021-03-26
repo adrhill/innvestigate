@@ -1,43 +1,26 @@
-# Get Python six functionality:
-from __future__ import\
-    absolute_import, print_function, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.analyzer import base
+from innvestigate.analyzer import wrapper
+from innvestigate.utils import keras as kutils
+from innvestigate.utils.keras import checks as kchecks
+from innvestigate.utils.keras import graph as kgraph
 
-###############################################################################
-###############################################################################
-###############################################################################
-
-
-import keras.models
 import keras
+import keras.models
 
-
-from . import base
-from . import wrapper
-from .. import layers as ilayers
-from .. import utils as iutils
-from ..utils import keras as kutils
-from ..utils.keras import checks as kchecks
-from ..utils.keras import graph as kgraph
 
 __all__ = [
     "BaselineGradient",
     "Gradient",
-
     "InputTimesGradient",
-
     "Deconvnet",
     "GuidedBackprop",
-
     "IntegratedGradients",
-
     "SmoothGrad",
 ]
-
-
-###############################################################################
-###############################################################################
-###############################################################################
 
 
 class BaselineGradient(base.AnalyzerNetworkBase):
