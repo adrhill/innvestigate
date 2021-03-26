@@ -16,9 +16,13 @@ class Input(AnalyzerNetworkBase):
     :param model: A Keras model.
     """
 
-    def _create_analysis(self, model, stop_analysis_at_tensors=[]):
-        tensors_to_analyze = [x for x in iutils.to_list(model.inputs)
-                              if x not in stop_analysis_at_tensors]
+    def _create_analysis(self, model, stop_analysis_at_tensors=None):
+        if stop_analysis_at_tensors is None:
+            stop_analysis_at_tensors = []
+
+        tensors_to_analyze = [
+            x for x in iutils.to_list(model.inputs) if x not in stop_analysis_at_tensors
+        ]
         return [ilayers.Identity()(x) for x in tensors_to_analyze]
 
 
@@ -36,10 +40,14 @@ class Random(AnalyzerNetworkBase):
 
         super(Random, self).__init__(model, **kwargs)
 
-    def _create_analysis(self, model, stop_analysis_at_tensors=[]):
+    def _create_analysis(self, model, stop_analysis_at_tensors=None):
+        if stop_analysis_at_tensors is None:
+            stop_analysis_at_tensors = []
+
         noise = ilayers.TestPhaseGaussianNoise(stddev=self._stddev)
-        tensors_to_analyze = [x for x in iutils.to_list(model.inputs)
-                              if x not in stop_analysis_at_tensors]
+        tensors_to_analyze = [
+            x for x in iutils.to_list(model.inputs) if x not in stop_analysis_at_tensors
+        ]
         return [noise(x) for x in tensors_to_analyze]
 
     def _get_state(self):
@@ -48,8 +56,8 @@ class Random(AnalyzerNetworkBase):
         return state
 
     @classmethod
-    def _state_to_kwargs(clazz, state):
+    def _state_to_kwargs(cls, state):
         stddev = state.pop("stddev")
-        kwargs = super(Random, clazz)._state_to_kwargs(state)
+        kwargs = super(Random, cls)._state_to_kwargs(state)
         kwargs.update({"stddev": stddev})
         return kwargs

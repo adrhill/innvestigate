@@ -26,16 +26,16 @@ def model_wo_softmax(*args, **kwargs):
 ###############################################################################
 
 
-def to_list(l):
+def to_list(x):
     """ If not list, wraps parameter into a list."""
-    if not isinstance(l, list):
-        return [l, ]
+    if not isinstance(x, list):
+        return [
+            x,
+        ]
     else:
-        return l
+        return x
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 
@@ -63,8 +63,7 @@ class BatchSequence(keras.utils.Sequence):
         return int(math.ceil(float(len(self.Xs[0])) / self.batch_size))
 
     def __getitem__(self, idx):
-        ret = [X[idx*self.batch_size:(idx+1)*self.batch_size]
-               for X in self.Xs]
+        ret = [X[idx * self.batch_size : (idx + 1) * self.batch_size] for X in self.Xs]
 
         if self.single_tensor:
             return ret[0]
@@ -104,8 +103,6 @@ class TargetAugmentedSequence(keras.utils.Sequence):
 
 
 ###############################################################################
-###############################################################################
-###############################################################################
 
 
 def preprocess_images(images, color_coding=None):
@@ -123,7 +120,7 @@ def preprocess_images(images, color_coding=None):
 
     ret = images
     image_data_format = K.image_data_format()
-    # todo: not very general:
+    # TODO: not very general:
     channels_first = images.shape[1] in [1, 3]
     if image_data_format == "channels_first" and not channels_first:
         ret = ret.transpose(0, 3, 1, 2)

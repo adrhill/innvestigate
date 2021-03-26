@@ -54,11 +54,11 @@ __all__ = [
 
 PATTERNS = {
     "vgg16_pattern_type_relu_tf_dim_ordering_tf_kernels.npz": {
-        "url": "https://www.dropbox.com/s/15lip81fzvbgkaa/vgg16_pattern_type_relu_tf_dim_ordering_tf_kernels.npz?dl=1",
+        "url": "https://www.dropbox.com/s/15lip81fzvbgkaa/vgg16_pattern_type_relu_tf_dim_ordering_tf_kernels.npz?dl=1",  # noqa
         "hash": "8c2abe648e116a93fd5027fab49177b0",
     },
     "vgg19_pattern_type_relu_tf_dim_ordering_tf_kernels.npz": {
-        "url": "https://www.dropbox.com/s/nc5empj78rfe9hm/vgg19_pattern_type_relu_tf_dim_ordering_tf_kernels.npz?dl=1",
+        "url": "https://www.dropbox.com/s/nc5empj78rfe9hm/vgg19_pattern_type_relu_tf_dim_ordering_tf_kernels.npz?dl=1",  # noqa
         "hash": "3258b6c64537156afe75ca7b3be44742",
     },
 }
@@ -68,41 +68,44 @@ def _get_patterns_info(netname, pattern_type):
     if pattern_type is True:
         pattern_type = "relu"
 
-    file_name = ("%s_pattern_type_%s_tf_dim_ordering_tf_kernels.npz" %
-                 (netname, pattern_type))
+    file_name = "%s_pattern_type_%s_tf_dim_ordering_tf_kernels.npz" % (
+        netname,
+        pattern_type,
+    )
 
-    return {"file_name": file_name,
-            "url": PATTERNS[file_name]["url"],
-            "hash": PATTERNS[file_name]["hash"]}
+    return {
+        "file_name": file_name,
+        "url": PATTERNS[file_name]["url"],
+        "hash": PATTERNS[file_name]["hash"],
+    }
 
 
 ###############################################################################
-###############################################################################
-###############################################################################
 
 
-def _prepare_keras_net(netname,
-                       clazz,
-                       image_shape,
-                       preprocess_f,
-                       preprocess_mode=None,
-                       color_coding="RGB",
-                       load_weights=False,
-                       load_patterns=False):
+def _prepare_keras_net(
+    netname,
+    clazz,
+    image_shape,
+    preprocess_f,
+    preprocess_mode=None,
+    color_coding="RGB",
+    load_weights=False,
+    load_patterns=False,
+):
     net = {}
     net["name"] = netname
     net["image_shape"] = image_shape
     if K.image_data_format() == "channels_first":
-        net["input_shape"] = [None, 3]+image_shape
+        net["input_shape"] = [None, 3] + image_shape
     else:
-        net["input_shape"] = [None]+image_shape+[3]
+        net["input_shape"] = [None] + image_shape + [3]
 
     weights = None
     if load_weights is True:
         weights = "imagenet"
 
-    model = clazz(weights=weights,
-                  input_shape=tuple(net["input_shape"][1:]))
+    model = clazz(weights=weights, input_shape=tuple(net["input_shape"][1:]))
     net["model"] = model
 
     net["in"] = model.inputs
@@ -130,16 +133,16 @@ def _prepare_keras_net(netname,
                 pattern_info["url"],
                 cache_subdir="innvestigate_patterns",
                 hash_algorithm="md5",
-                file_hash=pattern_info["hash"])
+                file_hash=pattern_info["hash"],
+            )
             patterns_file = np.load(patterns_path)
-            patterns = [patterns_file["arr_%i" % i]
-                        for i in range(len(patterns_file.keys()))]
+            patterns = [
+                patterns_file["arr_%i" % i] for i in range(len(patterns_file.keys()))
+            ]
             net["patterns"] = patterns
     return net
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 
@@ -152,7 +155,8 @@ def vgg16(load_weights=False, load_patterns=False):
         preprocess_mode="caffe",
         color_coding="BGR",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
 def vgg19(load_weights=False, load_patterns=False):
@@ -164,11 +168,10 @@ def vgg19(load_weights=False, load_patterns=False):
         preprocess_mode="caffe",
         color_coding="BGR",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 
@@ -181,11 +184,10 @@ def resnet50(load_weights=False, load_patterns=False):
         preprocess_mode="caffe",
         color_coding="BGR",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 
@@ -197,11 +199,10 @@ def inception_v3(load_weights=False, load_patterns=False):
         preprocess_f=keras.applications.inception_v3.preprocess_input,
         preprocess_mode="tf",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 
@@ -213,11 +214,10 @@ def inception_resnet_v2(load_weights=False, load_patterns=False):
         preprocess_f=keras.applications.inception_resnet_v2.preprocess_input,
         preprocess_mode="tf",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 
@@ -229,7 +229,8 @@ def densenet121(load_weights=False, load_patterns=False):
         preprocess_f=keras.applications.densenet.preprocess_input,
         preprocess_mode="torch",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
 def densenet169(load_weights=False, load_patterns=False):
@@ -240,7 +241,8 @@ def densenet169(load_weights=False, load_patterns=False):
         preprocess_f=keras.applications.densenet.preprocess_input,
         preprocess_mode="torch",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
 def densenet201(load_weights=False, load_patterns=False):
@@ -251,11 +253,10 @@ def densenet201(load_weights=False, load_patterns=False):
         preprocess_f=keras.applications.densenet.preprocess_input,
         preprocess_mode="torch",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
-###############################################################################
-###############################################################################
 ###############################################################################
 
 
@@ -271,7 +272,8 @@ def nasnet_large(load_weights=False, load_patterns=False):
         preprocess_f=keras.applications.nasnet.preprocess_input,
         preprocess_mode="tf",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
 
 
 def nasnet_mobile(load_weights=False, load_patterns=False):
@@ -286,4 +288,5 @@ def nasnet_mobile(load_weights=False, load_patterns=False):
         preprocess_f=keras.applications.nasnet.preprocess_input,
         preprocess_mode="tf",
         load_weights=load_weights,
-        load_patterns=load_patterns)
+        load_patterns=load_patterns,
+    )
