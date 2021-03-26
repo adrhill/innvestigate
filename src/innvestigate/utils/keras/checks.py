@@ -19,9 +19,13 @@ import keras.layers.wrappers
 import keras.legacy.layers
 
 
-# Prevents circular imports.
 def get_kgraph():
-    from . import graph as kgraph
+    """
+    Prevents circular imports.
+    """
+    # TODO: this looks like it should be removed -A.
+    import innvestigate.utils.keras.graph as kgraph
+
     return kgraph
 
 
@@ -424,5 +428,9 @@ def is_input_layer(layer, ignore_reshape_layers=True):
         return False
 
 def is_layer_at_idx(layer, index, ignore_reshape_layers=True):
-    """Checks if layer is a layer at index index, by repeatedly applying is_input_layer()."""
-    kgraph = get_kgraph()
+    """Checks if layer is a layer at index index,
+    by repeatedly applying is_input_layer()."""
+    # TODO: check if this is unused dead code -A.
+    # get_kgraph seems to only import innvestigate.keras.graph
+    # uncommenting for now
+    # kgraph = get_kgraph()
