@@ -1,8 +1,13 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import importlib
 import tempfile
 import warnings
+
+import keras.backend as K
+import keras.layers
+
+import numpy as np
 
 from innvestigate import layers as ilayers
 from innvestigate import utils as iutils
@@ -10,11 +15,6 @@ from innvestigate.analyzer import base
 from innvestigate.utils import keras as kutils
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
-
-import keras.backend as K
-import keras.layers
-
-import numpy as np
 
 __all__ = [
     "DeepLIFT",

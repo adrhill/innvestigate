@@ -23,4 +23,6 @@ max-line-length =
 max-complexity = 
     # for McCabe complexity checker
     10
-import-order-style = google
+application-import-names = 
+    innvestigate,
+    tests,

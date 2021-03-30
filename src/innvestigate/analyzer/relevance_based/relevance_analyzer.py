@@ -1,16 +1,7 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import inspect
 from builtins import zip
-
-import innvestigate.utils.keras as kutils
-from innvestigate import layers as ilayers
-from innvestigate import utils as iutils
-from innvestigate.analyzer import base
-from innvestigate.analyzer.relevance_based import relevance_rule as rrule
-from innvestigate.analyzer.relevance_based import utils as rutils
-from innvestigate.utils.keras import checks as kchecks
-from innvestigate.utils.keras import graph as kgraph
 
 import keras
 import keras.backend as K
@@ -25,6 +16,15 @@ import keras.layers.pooling
 import keras.models
 
 import six
+
+import innvestigate.utils.keras as kutils
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.analyzer import base
+from innvestigate.analyzer.relevance_based import relevance_rule as rrule
+from innvestigate.analyzer.relevance_based import utils as rutils
+from innvestigate.utils.keras import checks as kchecks
+from innvestigate.utils.keras import graph as kgraph
 
 
 __all__ = [

@@ -1,4 +1,6 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
+
+import pytest
 
 from innvestigate.analyzer import BaselineLRPZ
 from innvestigate.analyzer import LRPAlpha1Beta0
@@ -13,8 +15,6 @@ from innvestigate.analyzer import LRPZ
 from innvestigate.analyzer import LRPZIgnoreBias
 from innvestigate.analyzer import LRPZPlus
 from innvestigate.analyzer import LRPZPlusFast
-
-import pytest
 
 from tests.pytest_utils import dryrun
 

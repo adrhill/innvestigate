@@ -1,26 +1,22 @@
 # Get Python six functionality:
-from __future__ import absolute_import, print_function, division, unicode_literals
+from __future__ import annotations
+
 from builtins import range
-import six
-
-
-###############################################################################
-###############################################################################
-###############################################################################
-
 
 import keras.backend as K
 import keras.layers
 import keras.models
 import keras.optimizers
 import keras.utils
+
 import numpy as np
 
+import six
 
-from .. import layers as ilayers
-from .. import utils as iutils
-from ..utils.keras import checks as kchecks
-from ..utils.keras import graph as kgraph
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.utils.keras import checks as kchecks
+from innvestigate.utils.keras import graph as kgraph
 
 
 __all__ = [

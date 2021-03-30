@@ -1,7 +1,4 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import innvestigate.tools.perturbate
-import innvestigate.utils as iutils
+from __future__ import annotations
 
 import keras.layers
 import keras.models
@@ -9,6 +6,9 @@ import keras.models
 import numpy as np
 
 import pytest
+
+import innvestigate.tools.perturbate
+import innvestigate.utils as iutils
 
 
 @pytest.mark.fast

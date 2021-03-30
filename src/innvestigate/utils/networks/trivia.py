@@ -1,9 +1,8 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-
-from innvestigate.utils.networks import base
+from __future__ import annotations
 
 import keras.layers
+
+from innvestigate.utils.networks import base
 
 
 __all__ = [

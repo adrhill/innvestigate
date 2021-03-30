@@ -1,13 +1,13 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import fnmatch
+
+import keras.backend as K
 
 from innvestigate.utils.networks import cifar10
 from innvestigate.utils.networks import imagenet
 from innvestigate.utils.networks import mnist
 from innvestigate.utils.networks import trivia
-
-import keras.backend as K
 
 
 def iterator(network_filter="*", clear_sessions=False):

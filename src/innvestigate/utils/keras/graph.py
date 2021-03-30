@@ -1,11 +1,7 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import inspect
 from builtins import range, zip
-
-import innvestigate.layers as ilayers
-import innvestigate.utils as iutils
-from innvestigate.utils.keras import checks as kchecks
 
 import keras.backend as K
 import keras.engine.topology
@@ -15,6 +11,10 @@ import keras.models
 import numpy as np
 
 import six
+
+import innvestigate.layers as ilayers
+import innvestigate.utils as iutils
+from innvestigate.utils.keras import checks as kchecks
 
 
 __all__ = [

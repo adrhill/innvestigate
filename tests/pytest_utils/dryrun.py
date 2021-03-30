@@ -1,19 +1,16 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import unittest
-
-
-from innvestigate.analyzer.base import AnalyzerBase
-from innvestigate.utils import networks
-
 
 import keras.backend as K
 import keras.models
 
-
 import numpy as np
 
 import six
+
+from innvestigate.analyzer.base import AnalyzerBase
+from innvestigate.utils import networks
 
 
 __all__ = [

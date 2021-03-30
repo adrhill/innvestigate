@@ -1,5 +1,6 @@
-# Get Python six functionality:
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
+
+import pytest
 
 from innvestigate.analyzer import BaselineGradient
 from innvestigate.analyzer import Deconvnet
@@ -8,8 +9,6 @@ from innvestigate.analyzer import GuidedBackprop
 from innvestigate.analyzer import InputTimesGradient
 from innvestigate.analyzer import IntegratedGradients
 from innvestigate.analyzer import SmoothGrad
-
-import pytest
 
 from tests.pytest_utils import dryrun
 

@@ -1,16 +1,16 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 from builtins import zip
-
-from innvestigate import layers as ilayers
-from innvestigate import utils as iutils
-from innvestigate.analyzer import base
-from innvestigate.utils import keras as kutils
 
 import keras.backend as K
 import keras.models
 
 import numpy as np
+
+from innvestigate import layers as ilayers
+from innvestigate import utils as iutils
+from innvestigate.analyzer import base
+from innvestigate.utils import keras as kutils
 
 
 __all__ = [

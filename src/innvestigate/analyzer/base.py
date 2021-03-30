@@ -1,14 +1,9 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import warnings
 from builtins import zip
 
-
-import innvestigate.layers as ilayers
-import innvestigate.utils as iutils
-from innvestigate.utils.keras import checks as kchecks
-from innvestigate.utils.keras import graph as kgraph
-
+import keras
 import keras.backend as K
 import keras.layers
 import keras.models
@@ -16,6 +11,13 @@ import keras.models
 import numpy as np
 
 import six
+
+import innvestigate.analyzer
+import innvestigate.layers as ilayers
+import innvestigate.utils as iutils
+from innvestigate.utils.keras import checks as kchecks
+from innvestigate.utils.keras import graph as kgraph
+
 
 __all__ = [
     "NotAnalyzeableModelException",

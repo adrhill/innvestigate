@@ -1,12 +1,12 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from innvestigate import create_analyzer
-from innvestigate.analyzer import analyzers
+from __future__ import annotations
 
 import keras.layers
 import keras.models
 
 import pytest
+
+from innvestigate import create_analyzer
+from innvestigate.analyzer import analyzers
 
 
 @pytest.mark.fast

@@ -1,13 +1,12 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
+
+import keras.layers
+import keras.models
 
 from innvestigate.analyzer import base
 from innvestigate.analyzer.relevance_based import relevance_rule as lrp_rules
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
-
-import keras.layers
-import keras.models
-
 
 __all__ = [
     "DeepTaylor",

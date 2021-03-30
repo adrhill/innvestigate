@@ -1,11 +1,11 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from innvestigate.utils import networks
-from innvestigate.utils.keras import graph as kgraph
+from __future__ import annotations
 
 import keras.models
 
 import pytest
+
+from innvestigate.utils import networks
+from innvestigate.utils.keras import graph as kgraph
 
 
 @pytest.mark.fast

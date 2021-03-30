@@ -1,15 +1,16 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import warnings
-
-from innvestigate.applications import imagenet
-from innvestigate.utils.networks import base
-from innvestigate.utils.networks import mnist
 
 import keras.backend as K
 import keras.layers
 
 import numpy as np
+
+from innvestigate.applications import imagenet
+from innvestigate.utils.networks import base
+from innvestigate.utils.networks import mnist
+
 
 __all__ = [
     "vgg16_custom",
@@ -24,9 +25,6 @@ __all__ = [
     "nasnet_large",
     "nasnet_mobile",
 ]
-
-
-###############################################################################
 
 
 VGG16_OFFSET = np.array([103.939, 116.779, 123.68])

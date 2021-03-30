@@ -1,11 +1,11 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 from builtins import range
 
-import innvestigate.utils as iutils
-
 import keras.engine.topology
 import keras.models
+
+import innvestigate.utils as iutils
 
 
 __all__ = [

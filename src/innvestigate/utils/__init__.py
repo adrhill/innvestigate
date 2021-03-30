@@ -1,9 +1,11 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import math
 
 import keras.backend as K
-import keras.utils
+import keras.utils as kutils
+
+from innvestigate.utils.keras.graph import model_wo_softmax
 
 
 __all__ = [

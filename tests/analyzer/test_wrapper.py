@@ -1,12 +1,12 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
+
+import pytest
 
 from innvestigate.analyzer import AugmentReduceBase
 from innvestigate.analyzer import GaussianSmoother
 from innvestigate.analyzer import Gradient
 from innvestigate.analyzer import PathIntegrator
 from innvestigate.analyzer import WrapperBase
-
-import pytest
 
 from tests.pytest_utils import dryrun
 

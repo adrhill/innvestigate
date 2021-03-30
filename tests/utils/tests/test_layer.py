@@ -1,12 +1,12 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from innvestigate.analyzer.gradient_based import Gradient
+from __future__ import annotations
 
 import keras.layers
 
 import numpy as np
 
 import pytest
+
+from innvestigate.analyzer.gradient_based import Gradient
 
 # Prevent pytest from collecting this class:
 from tests.pytest_utils.layer import TestAnalysisHelper as AnalysisHelper

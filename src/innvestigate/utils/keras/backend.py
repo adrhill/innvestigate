@@ -1,9 +1,10 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from builtins import zip
+from __future__ import annotations
 
 import keras.backend as K
 
+import tensorflow
+
+# TODO: remove this file -A.
 
 __all__ = [
     "to_floatx",

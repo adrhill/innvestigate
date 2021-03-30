@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 
 __all__ = ["assert_lrp_epsilon_param", "assert_infer_lrp_alpha_beta_param"]

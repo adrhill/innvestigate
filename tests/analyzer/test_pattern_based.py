@@ -1,11 +1,12 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
+
+import pytest
 
 from innvestigate.analyzer import PatternAttribution
 from innvestigate.analyzer import PatternNet
 
-import pytest
-
 from tests.pytest_utils import dryrun
+
 
 # TODO: add again a train/test case for mnist
 

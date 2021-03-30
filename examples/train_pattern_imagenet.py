@@ -1,14 +1,8 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import imp
 import os
 import sys
-
-import innvestigate
-import innvestigate.tools
-import innvestigate.utils as iutils
-import innvestigate.utils.networks.imagenet
-import innvestigate.utils.visualizations as ivis
 
 import keras.backend
 import keras.models
@@ -16,6 +10,12 @@ import keras.preprocessing.image
 import keras.utils
 
 import numpy as np
+
+import innvestigate
+import innvestigate.tools
+import innvestigate.utils as iutils
+import innvestigate.utils.networks.imagenet
+import innvestigate.utils.visualizations as ivis
 
 
 base_dir = os.path.dirname(__file__)

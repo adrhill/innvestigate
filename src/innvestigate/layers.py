@@ -1,9 +1,6 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 from builtins import range, zip
-
-import innvestigate.utils as iutils
-from innvestigate.utils.keras import backend as iK
 
 import keras
 import keras.backend as K
@@ -13,6 +10,9 @@ import keras.regularizers
 from keras.utils import conv_utils
 
 import numpy as np
+
+import innvestigate.utils as iutils
+from innvestigate.utils.keras import backend as iK
 
 
 __all__ = [

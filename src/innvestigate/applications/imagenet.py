@@ -12,10 +12,10 @@ Function parameters:
     :param load_weights: Download or access cached weights.
     :param load_patterns: Download or access cached patterns.
 """
-# TODO: rename in, sm_out, out to input_tensors, output_tensors,
-# TODO: softmax_output_tenors
+# TODO: rename in, sm_out, out to
+# TODO: input_tensors, output_tensors, softmax_output_tenors
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import warnings
 from builtins import range

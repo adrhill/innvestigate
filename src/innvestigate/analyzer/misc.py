@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 from innvestigate import layers as ilayers
 from innvestigate import utils as iutils

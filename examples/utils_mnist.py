@@ -1,11 +1,4 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import innvestigate
-import innvestigate.applications.mnist
-import innvestigate.utils
-import innvestigate.utils as iutils
-import innvestigate.utils.networks
-import innvestigate.utils.visualizations as ivis
+from __future__ import annotations
 
 
 import keras
@@ -15,6 +8,13 @@ from keras.models import Model
 from keras.optimizers import Adam
 
 import numpy as np
+
+import innvestigate
+import innvestigate.applications.mnist
+import innvestigate.utils
+import innvestigate.utils as iutils
+import innvestigate.utils.networks
+import innvestigate.utils.visualizations as ivis
 
 
 ###############################################################################

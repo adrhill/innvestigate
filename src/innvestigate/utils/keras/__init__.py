@@ -1,12 +1,12 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 from builtins import zip
-
-import innvestigate.utils as iutils
 
 import keras.backend as K
 
 import numpy as np
+
+import innvestigate.utils as iutils
 
 
 __all__ = [

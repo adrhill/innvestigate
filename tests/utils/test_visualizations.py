@@ -1,10 +1,10 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-import innvestigate.utils.visualizations as ivis
+from __future__ import annotations
 
 import numpy as np
 
 import pytest
+
+import innvestigate.utils.visualizations as ivis
 
 
 @pytest.mark.fast

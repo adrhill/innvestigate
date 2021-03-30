@@ -1,4 +1,7 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
+
+import keras
+import keras.models
 
 from innvestigate import layers as ilayers
 from innvestigate import utils as iutils
@@ -7,9 +10,6 @@ from innvestigate.analyzer import wrapper
 from innvestigate.utils import keras as kutils
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
-
-import keras
-import keras.models
 
 
 __all__ = [

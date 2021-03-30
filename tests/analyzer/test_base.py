@@ -1,9 +1,9 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
+
+import pytest
 
 from innvestigate.analyzer import BaselineGradient
 from innvestigate.analyzer import Gradient
-
-import pytest
 
 from tests.pytest_utils import dryrun
 

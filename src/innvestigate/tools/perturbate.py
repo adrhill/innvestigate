@@ -1,10 +1,8 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import time
 import warnings
 from builtins import range
-
-import innvestigate.utils
 
 import keras.backend as K
 from keras.utils import Sequence
@@ -13,6 +11,8 @@ from keras.utils.data_utils import GeneratorEnqueuer, OrderedEnqueuer
 import numpy as np
 
 import six
+
+import innvestigate.utils
 
 
 class Perturbation:

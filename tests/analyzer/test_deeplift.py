@@ -1,12 +1,9 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 try:
     import deeplift
 except ImportError:
     deeplift = None
-
-from innvestigate.analyzer import DeepLIFT
-from innvestigate.analyzer import DeepLIFTWrapper
 
 import keras.layers
 import keras.models
@@ -14,6 +11,9 @@ import keras.models
 import numpy as np
 
 import pytest
+
+from innvestigate.analyzer import DeepLIFT
+from innvestigate.analyzer import DeepLIFTWrapper
 
 from tests.pytest_utils import dryrun
 

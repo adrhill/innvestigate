@@ -1,9 +1,6 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import annotations
 
 import unittest
-
-import innvestigate
-from innvestigate.tools import PatternComputer
 
 import keras.layers
 import keras.models
@@ -14,6 +11,9 @@ from keras.models import Model
 import numpy as np
 
 import pytest
+
+import innvestigate
+from innvestigate.tools import PatternComputer
 
 from tests.pytest_utils import dryrun
 
