@@ -61,8 +61,8 @@ pylint = "^2.7.3"
 addopts = "-v -m fast --strict-markers"
 # addopts = "-v -m precommit --strict-markers"
 filterwarnings = [
-    "ignore::FutureWarning:tensorflow",
     "ignore::DeprecationWarning:tensorflow",
+    "ignore::DeprecationWarning:keras",
 ]
 markers = [
     "precommit",
