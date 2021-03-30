@@ -94,6 +94,9 @@ ENV/
 # VSCode settings
 .vscode
 
+# macOS settings
+*.DS_Store
+
 # Rope project settings
 .ropeproject
 
