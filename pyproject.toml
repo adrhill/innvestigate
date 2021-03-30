@@ -8,7 +8,7 @@ classifiers = [
     "Environment :: Console", 
     "Intended Audience :: Science/Research",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 authors = [
@@ -32,14 +32,13 @@ documentation = "https://innvestigate.readthedocs.io/en/latest/"
 keywords = ["XAI", "LRP", "Deep Taylor",]
 
 [tool.poetry.dependencies]
-python = "3.6.*"
+python = "3.7.*"
 Keras = "2.2.4"
-tensorflow = "1.12.*"
-h5py = "^3.1.0"
+tensorflow = "1.15.5"
 Pillow = "^8.1.1"
 future = "^0.18.2"
-numpy = "1.16.*"
-matplotlib = "^3.3.4"
+numpy = "^1.18.5"
+matplotlib = "^3.4.0"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.0"
