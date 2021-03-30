@@ -68,7 +68,7 @@ class BaselineLRPZ(base.AnalyzerNetworkBase):
 
     def __init__(self, model, **kwargs):
         # Inside function to not break import if Keras changes.
-        BASELINELRPZ_LAYERS = (
+        baseline_lrpz_layers = (
             keras.engine.topology.InputLayer,
             keras.layers.convolutional.Conv1D,
             keras.layers.convolutional.Conv2D,
@@ -126,7 +126,7 @@ class BaselineLRPZ(base.AnalyzerNetworkBase):
             check_type="exception",
         )
         self._add_model_check(
-            lambda layer: not isinstance(layer, BASELINELRPZ_LAYERS),
+            lambda layer: not isinstance(layer, baseline_lrpz_layers),
             "BaselineLRPZ only works with a predefined set of layers.",
             check_type="exception",
         )
@@ -176,7 +176,7 @@ class EmbeddingReverseLayer(kgraph.ReverseMappingBase):
         # TODO: implement rule support.
         return
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state):
         # the embedding layer outputs for an (indexed) input a vector.
         # thus, in the relevance backward pass, the embedding layer receives
         # relevances Rs corresponding to those vectors.

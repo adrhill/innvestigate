@@ -365,9 +365,9 @@ class AnalyzerNetworkBase(AnalyzerBase):
             model_output = keras.layers.Flatten()(model_output)
 
         if neuron_selection_mode == "max_activation":
-            iMax = ilayers.Max(name="iNNvestigate_max")
-            model_output = iMax(model_output)
-            self._special_helper_layers.append(iMax)
+            inn_max = ilayers.Max(name="iNNvestigate_max")
+            model_output = inn_max(model_output)
+            self._special_helper_layers.append(inn_max)
         elif neuron_selection_mode == "index":
             neuron_indexing = keras.layers.Input(
                 batch_shape=[None, None],
@@ -379,9 +379,9 @@ class AnalyzerNetworkBase(AnalyzerBase):
             # The indexing tensor should not be analyzed.
             stop_analysis_at_tensors.append(neuron_indexing)
 
-            iGatherND = ilayers.GatherND(name="iNNvestigate_gather_nd")
-            model_output = iGatherND(model_output + [neuron_indexing])
-            self._special_helper_layers.append(iGatherND)
+            inn_gather = ilayers.GatherND(name="iNNvestigate_gather_nd")
+            model_output = inn_gather(model_output + [neuron_indexing])
+            self._special_helper_layers.append(inn_gather)
         elif neuron_selection_mode == "all":
             pass
         else:

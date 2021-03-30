@@ -101,7 +101,7 @@ class EpsilonRule(kgraph.ReverseMappingBase):
             layer, keep_bias=bias, name_template="reversed_kernel_%s"
         )
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state):
         grad = ilayers.GradientWRT(len(Xs))
         # The epsilon rule aligns epsilon with the (extended) sign:
         # 0 is considered to be positive
@@ -237,7 +237,7 @@ class AlphaBetaRule(kgraph.ReverseMappingBase):
             name_template="reversed_kernel_negative_%s",
         )
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state):
         # this method is correct, but wasteful
         grad = ilayers.GradientWRT(len(Xs))
         times_alpha = keras.layers.Lambda(lambda x: x * self._alpha)
@@ -497,7 +497,7 @@ class BoundedRule(kgraph.ReverseMappingBase):
         )
 
     # TODO: clean up this implementation and add more documentation
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state):
         grad = ilayers.GradientWRT(len(Xs))
         to_low = keras.layers.Lambda(lambda x: x * 0 + self._low)
         to_high = keras.layers.Lambda(lambda x: x * 0 + self._high)
@@ -517,17 +517,17 @@ class BoundedRule(kgraph.ReverseMappingBase):
         # Divide relevances with the value.
         tmp = [ilayers.SafeDivide()([a, b]) for a, b in zip(Rs, Zs)]
         # Distribute along the gradient.
-        tmpA = iutils.to_list(grad(Xs + A + tmp))
-        tmpB = iutils.to_list(grad(low + B + tmp))
-        tmpC = iutils.to_list(grad(high + C + tmp))
+        tmp_a = iutils.to_list(grad(Xs + A + tmp))
+        tmp_b = iutils.to_list(grad(low + B + tmp))
+        tmp_c = iutils.to_list(grad(high + C + tmp))
 
-        tmpA = [keras.layers.Multiply()([a, b]) for a, b in zip(Xs, tmpA)]
-        tmpB = [keras.layers.Multiply()([a, b]) for a, b in zip(low, tmpB)]
-        tmpC = [keras.layers.Multiply()([a, b]) for a, b in zip(high, tmpC)]
+        tmp_a = [keras.layers.Multiply()([a, b]) for a, b in zip(Xs, tmp_a)]
+        tmp_b = [keras.layers.Multiply()([a, b]) for a, b in zip(low, tmp_b)]
+        tmp_c = [keras.layers.Multiply()([a, b]) for a, b in zip(high, tmp_c)]
 
         tmp = [
             keras.layers.Subtract()([a, keras.layers.Add()([b, c])])
-            for a, b, c in zip(tmpA, tmpB, tmpC)
+            for a, b, c in zip(tmp_a, tmp_b, tmp_c)
         ]
 
         return tmp
@@ -575,7 +575,7 @@ class ZPlusFastRule(kgraph.ReverseMappingBase):
             name_template="reversed_kernel_positive_%s",
         )
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state):
         grad = ilayers.GradientWRT(len(Xs))
 
         # TODO: assert all inputs are positive, instead of only keeping the positives.

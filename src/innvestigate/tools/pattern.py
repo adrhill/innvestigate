@@ -400,7 +400,7 @@ class PatternComputer(object):
         # Create pattern instances and collect the dummy outputs.
         self._pattern_instances = {k: [] for k in self.pattern_types}
         computer_outputs = []
-        for layer_id, layer in enumerate(layers):
+        for _layer_id, layer in enumerate(layers):
             # This does not work with containers!
             # They should be replaced by trace_model_execution.
             if kchecks.is_network(layer):

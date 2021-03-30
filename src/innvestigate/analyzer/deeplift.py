@@ -147,11 +147,11 @@ class DeepLIFT(base.ReverseAnalyzerBase):
             keras.layers.Input(tensor=x, shape=K.int_shape(x)[1:]) for x in tmp
         ]
 
-        for k, v in zip(model.inputs, constant_reference_inputs):
-            self._reference_activations[k] = v
+        for key, val in zip(model.inputs, constant_reference_inputs):
+            self._reference_activations[key] = val
 
-        for k, v in zip(self._analysis_inputs, self._analysis_inputs):
-            self._reference_activations[k] = v
+        for key, val in zip(self._analysis_inputs, self._analysis_inputs):
+            self._reference_activations[key] = val
 
         # Compute intermediate states.
         for layer, Xs, Ys in execution_list:
@@ -164,8 +164,8 @@ class DeepLIFT(base.ReverseAnalyzerBase):
                 next_activations = iutils.to_list(kutils.apply(layer, activations))
 
             assert len(next_activations) == len(Ys)
-            for k, v in zip(Ys, next_activations):
-                self._reference_activations[k] = v
+            for key, val in zip(Ys, next_activations):
+                self._reference_activations[key] = val
 
         return constant_reference_inputs
 

@@ -83,7 +83,7 @@ class PatternNetReverseKernelLayer(kgraph.ReverseMappingBase):
             layer, name_template="reversed_pattern_%s", weights=filter_weights
         )
 
-    def apply(self, Xs, Ys, reversed_Ys, reverse_state):
+    def apply(self, Xs, _Ys, reversed_Ys, reverse_state):
         # Reapply the prepared layers.
         act_Xs = kutils.apply(self._filter_layer, Xs)
         act_Ys = kutils.apply(self._act_layer, act_Xs)
