@@ -38,13 +38,6 @@ Deep Taylor
    :members:
    :undoc-members:
 
-DeepLIFT
----------------
-
-.. automodule:: innvestigate.analyzer.deeplift
-   :members: DeepLIFTWrapper
-   :undoc-members:
-
 Misc
 ---------------
 

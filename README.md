@@ -85,7 +85,6 @@ The iNNvestigate library contains implementations for the following methods:
   * **pattern.attribution:** [PatternAttribution](https://arxiv.org/abs/1705.05598) applies Deep Taylor by searching root points along the signal direction of each neuron.
   * **lrp.\*:** [LRP](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0130140) attributes recursively to each neuron's input relevance proportional to its contribution of the neuron output.
   * **integrated_gradients:** [IntegratedGradients](https://arxiv.org/abs/1703.01365) integrates the gradient along a path from the input to a reference.
-  * **deeplift.wrapper:** [DeepLIFT (wrapper around original code, slower)](http://proceedings.mlr.press/v70/shrikumar17a.html) computes a backpropagation based on "finite" gradients.
 * *miscellaneous:*
   * **input:** Returns the input.
   * **random:** Returns random Gaussian noise.
