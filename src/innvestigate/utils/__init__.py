@@ -17,16 +17,6 @@ __all__ = [
 ]
 
 
-def model_wo_softmax(*args, **kwargs):
-    # Break cyclic import
-    from .keras.graph import model_wo_softmax
-
-    return model_wo_softmax(*args, **kwargs)
-
-
-###############################################################################
-
-
 def to_list(x):
     """ If not list, wraps parameter into a list."""
     if not isinstance(x, list):
@@ -40,7 +30,7 @@ def to_list(x):
 ###############################################################################
 
 
-class BatchSequence(keras.utils.Sequence):
+class BatchSequence(kutils.Sequence):
     """Batch sequence generator.
 
     Take a (list of) input tensors and a batch size
@@ -72,7 +62,7 @@ class BatchSequence(keras.utils.Sequence):
             return tuple(ret)
 
 
-class TargetAugmentedSequence(keras.utils.Sequence):
+class TargetAugmentedSequence(kutils.Sequence):
     """Augments a sequence with a target on the fly.
 
     Takes a sequence/generator and a function that

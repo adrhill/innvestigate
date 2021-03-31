@@ -196,9 +196,7 @@ class AnalyzerBase(object):
         :param class_name: The analyzer's class name.
         :param state: The analyzer's state.
         """
-        # Todo:do in a smarter way!
-        import innvestigate.analyzer
-
+        # TODO: do in a smarter way!
         cls = getattr(innvestigate.analyzer, class_name)
 
         kwargs = cls._state_to_kwargs(state)

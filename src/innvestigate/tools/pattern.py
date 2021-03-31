@@ -347,9 +347,6 @@ class PatternComputer(object):
     ):
         self.model = model
 
-        # Break cyclic import.
-        import innvestigate.analyzer.pattern_based
-
         supported_layers = (
             innvestigate.analyzer.pattern_based.SUPPORTED_LAYER_PATTERNNET
         )
