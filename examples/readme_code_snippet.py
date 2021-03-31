@@ -4,9 +4,7 @@ import imp
 import os
 
 import matplotlib.pyplot as plt
-
 import numpy as np
-
 
 base_dir = os.path.dirname(__file__)
 utils = imp.load_source("utils", os.path.join(base_dir, "utils.py"))
@@ -24,9 +22,10 @@ if __name__ == "__main__":
     plt.axis("off")
     plt.savefig(os.path.join(base_dir, "images", "readme_example_input.png"))
 
+    import keras.applications.vgg16 as vgg16
+
     import innvestigate
     import innvestigate.utils
-    import keras.applications.vgg16 as vgg16
 
     # Get model
     model, preprocess = vgg16.VGG16(), vgg16.preprocess_input

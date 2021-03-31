@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import keras.layers
 import keras.models
-
 import numpy as np
-
 import pytest
 
 import innvestigate.tools.perturbate

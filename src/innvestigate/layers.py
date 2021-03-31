@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from builtins import range, zip
+from builtins import range
+from builtins import zip
 
 import keras
 import keras.backend as K
 import keras.constraints
 import keras.layers
 import keras.regularizers
-from keras.utils import conv_utils
-
 import numpy as np
+from keras.utils import conv_utils
 
 import innvestigate.utils as iutils
 from innvestigate.utils.keras import backend as iK
-
 
 __all__ = [
     "Constant",

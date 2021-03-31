@@ -1,10 +1,11 @@
-from keras import Sequential
-from keras.layers import Conv1D, Dense, Embedding, GlobalMaxPooling1D
-
 import numpy as np
+from keras import Sequential
+from keras.layers import Conv1D
+from keras.layers import Dense
+from keras.layers import Embedding
+from keras.layers import GlobalMaxPooling1D
 
 import innvestigate
-
 
 # Creat Keras Sequential Model
 model = Sequential()

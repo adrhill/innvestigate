@@ -11,7 +11,6 @@ from innvestigate.utils import keras as kutils
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
 
-
 __all__ = [
     "BaselineGradient",
     "Gradient",

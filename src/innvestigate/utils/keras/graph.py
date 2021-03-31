@@ -1,21 +1,19 @@
 from __future__ import annotations
 
 import inspect
-from builtins import range, zip
+from builtins import range
+from builtins import zip
 
 import keras.backend as K
 import keras.engine.topology
 import keras.layers
 import keras.models
-
 import numpy as np
-
 import six
 
 import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 from innvestigate.utils.keras import checks as kchecks
-
 
 __all__ = [
     "get_kernel",

@@ -29,11 +29,9 @@ import keras.applications.vgg16
 import keras.applications.vgg19
 import keras.backend as K
 import keras.utils.data_utils
-
 import numpy as np
 
 from ..utils.keras import graph as kgraph
-
 
 __all__ = [
     "vgg16",

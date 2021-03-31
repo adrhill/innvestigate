@@ -7,7 +7,6 @@ from innvestigate.analyzer import PatternNet
 
 from tests.pytest_utils import dryrun
 
-
 # TODO: add again a train/test case for mnist
 
 

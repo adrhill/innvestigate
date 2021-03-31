@@ -4,7 +4,6 @@ import keras.backend as K
 
 from innvestigate.utils.networks import base
 
-
 __all__ = [
     "log_reg",
     "mlp_2dense",

@@ -7,9 +7,7 @@ import keras
 import keras.backend as K
 import keras.layers
 import keras.models
-
 import numpy as np
-
 import six
 
 import innvestigate.analyzer
@@ -17,7 +15,6 @@ import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
-
 
 __all__ = [
     "NotAnalyzeableModelException",

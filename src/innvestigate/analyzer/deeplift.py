@@ -6,7 +6,6 @@ import warnings
 
 import keras.backend as K
 import keras.layers
-
 import numpy as np
 
 from innvestigate import layers as ilayers

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import keras.layers
 
-
 __all__ = [
     "log_reg",
     "mlp_2dense",

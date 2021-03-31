@@ -9,7 +9,6 @@ import keras.layers
 import keras.layers.core
 import keras.layers.pooling
 import keras.models
-
 import numpy as np
 
 from innvestigate import layers as ilayers
@@ -19,7 +18,6 @@ from innvestigate.analyzer import base
 from innvestigate.utils import keras as kutils
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
-
 
 __all__ = [
     "PatternNet",

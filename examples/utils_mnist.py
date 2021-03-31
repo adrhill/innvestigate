@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 import keras
+import numpy as np
 from keras import backend as K
 from keras.datasets import mnist
 from keras.models import Model
 from keras.optimizers import Adam
-
-import numpy as np
 
 import innvestigate
 import innvestigate.applications.mnist
@@ -15,7 +13,6 @@ import innvestigate.utils
 import innvestigate.utils as iutils
 import innvestigate.utils.networks
 import innvestigate.utils.visualizations as ivis
-
 
 ###############################################################################
 # Data Preprocessing Utility

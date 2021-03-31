@@ -3,9 +3,7 @@ from __future__ import annotations
 from builtins import range
 
 import matplotlib.pyplot as plt
-
 import numpy as np
-
 
 __all__ = [
     "project",

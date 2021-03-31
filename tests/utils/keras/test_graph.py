@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import keras.models
-
 import pytest
 
 from innvestigate.utils import networks

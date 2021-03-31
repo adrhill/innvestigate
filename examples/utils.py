@@ -5,12 +5,9 @@ import shutil
 from builtins import range
 from io import open
 
-import PIL.Image
-
 import matplotlib.pyplot as plt
-
 import numpy as np
-
+import PIL.Image
 import six
 
 ###############################################################################

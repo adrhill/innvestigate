@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import keras.backend as K
-
 import tensorflow
 
 # TODO: remove this file -A.

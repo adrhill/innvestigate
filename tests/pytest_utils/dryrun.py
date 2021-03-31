@@ -4,14 +4,11 @@ import unittest
 
 import keras.backend as K
 import keras.models
-
 import numpy as np
-
 import six
 
 from innvestigate.analyzer.base import AnalyzerBase
 from innvestigate.utils import networks
-
 
 __all__ = [
     "AnalyzerTestCase",

@@ -6,7 +6,6 @@ import subprocess
 import sys
 from io import open
 
-
 if __name__ == "__main__":
     # TODO: reduce complexity
 

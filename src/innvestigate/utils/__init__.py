@@ -7,7 +7,6 @@ import keras.utils as kutils
 
 from innvestigate.utils.keras.graph import model_wo_softmax
 
-
 __all__ = [
     "model_wo_softmax",
     "to_list",

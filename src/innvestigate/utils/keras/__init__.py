@@ -3,11 +3,9 @@ from __future__ import annotations
 from builtins import zip
 
 import keras.backend as K
-
 import numpy as np
 
 import innvestigate.utils as iutils
-
 
 __all__ = [
     "apply",

@@ -1,8 +1,10 @@
+"""Test function 'innvestigate.create_analyzer'"""
 from __future__ import annotations
+
+import logging
 
 import keras.layers
 import keras.models
-
 import pytest
 
 from innvestigate import create_analyzer

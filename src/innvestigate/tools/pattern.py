@@ -8,16 +8,14 @@ import keras.layers
 import keras.models
 import keras.optimizers
 import keras.utils
-
 import numpy as np
-
 import six
 
+import innvestigate.analyzer.pattern_based
 from innvestigate import layers as ilayers
 from innvestigate import utils as iutils
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
-
 
 __all__ = [
     "get_active_neuron_io",

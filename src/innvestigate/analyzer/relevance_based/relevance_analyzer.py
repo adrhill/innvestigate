@@ -14,7 +14,6 @@ import keras.layers.noise
 import keras.layers.normalization
 import keras.layers.pooling
 import keras.models
-
 import six
 
 import innvestigate.utils.keras as kutils
@@ -25,7 +24,6 @@ from innvestigate.analyzer.relevance_based import relevance_rule as rrule
 from innvestigate.analyzer.relevance_based import utils as rutils
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
-
 
 __all__ = [
     "BaselineLRPZ",

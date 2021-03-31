@@ -4,14 +4,12 @@ from builtins import zip
 
 import keras.backend as K
 import keras.models
-
 import numpy as np
 
 from innvestigate import layers as ilayers
 from innvestigate import utils as iutils
 from innvestigate.analyzer import base
 from innvestigate.utils import keras as kutils
-
 
 __all__ = [
     "WrapperBase",

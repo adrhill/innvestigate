@@ -5,12 +5,10 @@ import unittest
 import keras.layers
 import keras.models
 import keras.optimizers
+import numpy as np
+import pytest
 from keras.datasets import mnist
 from keras.models import Model
-
-import numpy as np
-
-import pytest
 
 import innvestigate
 from innvestigate.tools import PatternComputer

@@ -4,7 +4,6 @@ from innvestigate import layers as ilayers
 from innvestigate import utils as iutils
 from innvestigate.analyzer.base import AnalyzerNetworkBase
 
-
 __all__ = ["Random", "Input"]
 
 

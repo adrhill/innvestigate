@@ -7,7 +7,6 @@ import keras.models
 
 import innvestigate.utils as iutils
 
-
 __all__ = [
     "TestAnalysisHelper",
 ]

@@ -13,7 +13,6 @@ import keras.layers.noise
 import keras.layers.normalization
 import keras.layers.pooling
 import keras.models
-
 import numpy as np
 
 import innvestigate.utils.keras as kutils
@@ -22,7 +21,6 @@ from innvestigate import utils as iutils
 from innvestigate.analyzer.relevance_based import utils as rutils
 from innvestigate.utils.keras import backend as iK
 from innvestigate.utils.keras import graph as kgraph
-
 
 # TODO: differentiate between LRP and DTD rules?
 # DTD rules are special cases of LRP rules with additional assumptions

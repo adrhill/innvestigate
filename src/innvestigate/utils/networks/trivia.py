@@ -4,7 +4,6 @@ import keras.layers
 
 from innvestigate.utils.networks import base
 
-
 __all__ = [
     "dot",
     # TODO: check why this makes problems to wrapper implementation.
