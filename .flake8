@@ -7,7 +7,7 @@ select =
     # C: McCabe complexity
     # E: pycodestyle / PEP8
     # F: pyflakes
-    # I: flake8-import-order
+    # I: flake8-isort
     # N8: pep8-naming
     # W: pycodestyle / PEP8
     A, B, B9, BLK, C, E, F, I, W,
@@ -23,6 +23,3 @@ max-line-length =
 max-complexity = 
     # for McCabe complexity checker
     10
-application-import-names = 
-    innvestigate,
-    tests,
