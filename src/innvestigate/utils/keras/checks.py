@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+from typing import Any, Callable
 
 import keras.engine.topology
 import keras.layers
@@ -17,6 +18,10 @@ import keras.layers.pooling
 import keras.layers.recurrent
 import keras.layers.wrappers
 import keras.legacy.layers
+from keras.layers import Layer as KerasLayer
+
+# Define type of checks, using Any for kwargs
+ModelCheck = Callable[[KerasLayer, Any], bool]
 
 
 def get_kgraph():
@@ -187,7 +192,7 @@ def get_activation_search_safe_layers():
 ###############################################################################
 
 
-def contains_activation(layer, activation=None):
+def contains_activation(layer: KerasLayer, activation=None) -> bool:
     """
     Check whether the layer contains an activation function.
     activation is None then we only check if layer can contain an activation.
@@ -223,7 +228,7 @@ def contains_activation(layer, activation=None):
         return False
 
 
-def contains_kernel(layer):
+def contains_kernel(layer: KerasLayer) -> bool:
     """
     Check whether the layer contains a kernel.
     """
@@ -240,7 +245,7 @@ def contains_kernel(layer):
         return False
 
 
-def contains_bias(layer):
+def contains_bias(layer: KerasLayer) -> bool:
     """
     Check whether the layer contains a bias.
     """
@@ -253,7 +258,7 @@ def contains_bias(layer):
         return False
 
 
-def only_relu_activation(layer):
+def only_relu_activation(layer: KerasLayer) -> bool:
     """Checks if layer contains no or only a ReLU activation."""
     return (
         not contains_activation(layer)
@@ -263,14 +268,14 @@ def only_relu_activation(layer):
     )
 
 
-def is_network(layer):
+def is_network(layer: KerasLayer) -> bool:
     """
     Is network in network?
     """
     return isinstance(layer, keras.engine.topology.Network)
 
 
-def is_conv_layer(layer, *args, **kwargs):
+def is_conv_layer(layer: KerasLayer) -> bool:
     """Checks if layer is a convolutional layer."""
     CONV_LAYERS = (
         keras.layers.convolutional.Conv1D,
@@ -285,26 +290,26 @@ def is_conv_layer(layer, *args, **kwargs):
     return isinstance(layer, CONV_LAYERS)
 
 
-def is_embedding_layer(layer, *args, **kwargs):
+def is_embedding_layer(layer: KerasLayer) -> bool:
     return isinstance(layer, keras.layers.Embedding)
 
 
-def is_batch_normalization_layer(layer, *args, **kwargs):
+def is_batch_normalization_layer(layer: KerasLayer) -> bool:
     """Checks if layer is a batchnorm layer."""
     return isinstance(layer, keras.layers.normalization.BatchNormalization)
 
 
-def is_add_layer(layer, *args, **kwargs):
+def is_add_layer(layer: KerasLayer) -> bool:
     """Checks if layer is an addition-merge layer."""
     return isinstance(layer, keras.layers.Add)
 
 
-def is_dense_layer(layer, *args, **kwargs):
+def is_dense_layer(layer: KerasLayer) -> bool:
     """Checks if layer is a dense layer."""
     return isinstance(layer, keras.layers.core.Dense)
 
 
-def is_convnet_layer(layer):
+def is_convnet_layer(layer: KerasLayer) -> bool:
     """Checks if layer is from a convolutional network."""
     # Inside function to not break import if Keras changes.
     CONVNET_LAYERS = (
@@ -374,12 +379,12 @@ def is_convnet_layer(layer):
     return isinstance(layer, CONVNET_LAYERS)
 
 
-def is_relu_convnet_layer(layer):
+def is_relu_convnet_layer(layer: KerasLayer) -> bool:
     """Checks if layer is from a convolutional network with ReLUs."""
     return is_convnet_layer(layer) and only_relu_activation(layer)
 
 
-def is_average_pooling(layer):
+def is_average_pooling(layer: KerasLayer) -> bool:
     """Checks if layer is an average-pooling layer."""
     AVERAGEPOOLING_LAYERS = (
         keras.layers.pooling.AveragePooling1D,
@@ -392,7 +397,7 @@ def is_average_pooling(layer):
     return isinstance(layer, AVERAGEPOOLING_LAYERS)
 
 
-def is_max_pooling(layer):
+def is_max_pooling(layer: KerasLayer) -> bool:
     """Checks if layer is a max-pooling layer."""
     MAXPOOLING_LAYERS = (
         keras.layers.pooling.MaxPooling1D,
@@ -405,7 +410,7 @@ def is_max_pooling(layer):
     return isinstance(layer, MAXPOOLING_LAYERS)
 
 
-def is_input_layer(layer, ignore_reshape_layers=True):
+def is_input_layer(layer: KerasLayer, ignore_reshape_layers: bool = True) -> bool:
     """Checks if layer is an input layer."""
     # Triggers if ALL inputs of layer are connected
     # to a Keras input layer object.
@@ -437,7 +442,7 @@ def is_input_layer(layer, ignore_reshape_layers=True):
         return False
 
 
-def is_layer_at_idx(layer, index, ignore_reshape_layers=True):
+def is_layer_at_idx(layer: KerasLayer, index, ignore_reshape_layers=True) -> bool:
     """Checks if layer is a layer at index index,
     by repeatedly applying is_input_layer()."""
     # TODO: check if this is unused dead code -A.

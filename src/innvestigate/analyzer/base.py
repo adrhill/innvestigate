@@ -15,6 +15,7 @@ import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 from innvestigate.utils.keras import checks as kchecks
 from innvestigate.utils.keras import graph as kgraph
+from innvestigate.utils.keras.checks import ModelCheck
 
 __all__ = [
     "NotAnalyzeableModelException",
@@ -54,14 +55,35 @@ class AnalyzerBase(object):
       :class:`AnalyzerNetworkBase`.
     """
 
-    def __init__(self, model, disable_model_checks=False):
+    def __init__(
+        self,
+        model: keras.Model,
+        disable_model_checks: bool = False,
+        _model_check_done: bool = False,
+    ) -> None:
         self._model = model
         self._disable_model_checks = disable_model_checks
+        self._model_check_done = _model_check_done
 
-        self._do_model_checks()
+        # Run all model checks in self._model_checks
+        if not self._disable_model_checks:
+            self._do_model_checks()
 
-    def _add_model_check(self, check, message, check_type="exception"):
-        if getattr(self, "_model_check_done", False):
+    def _add_model_check(
+        self, check: ModelCheck, message: str, check_type: str = "exception"
+    ):
+        """Add model check to list of checks`self._model_checks`.
+
+        :param check: Callable that performs a boolean check on a Keras layers.
+        :type check: ModelCheck
+        :param message: Error message if check fails.
+        :type message: str
+        :param check_type: Either "exception" or "warning". Defaults to "exception"
+        :type check_type: str, optional
+        :raises Exception: [description]
+        """
+
+        if self._model_check_done:
             raise Exception(
                 "Cannot add model check anymore. Check was already performed."
             )
