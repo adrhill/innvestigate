@@ -153,7 +153,7 @@ def get_known_layers():
         keras.layers.wrappers.Wrapper,
         keras.legacy.layers.Highway,
         keras.legacy.layers.MaxoutDense,
-        keras.legacy.layers.Merge,
+        # keras.legacy.layers.Merge,
         keras.legacy.layers.Recurrent,
     )
     return KNOWN_LAYERS
