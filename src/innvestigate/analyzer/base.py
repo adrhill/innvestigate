@@ -63,7 +63,7 @@ class AnalyzerBase(object):
     def _add_model_check(self, check, message, check_type="exception"):
         if getattr(self, "_model_check_done", False):
             raise Exception(
-                "Cannot add model check anymore." " Check was already performed."
+                "Cannot add model check anymore. Check was already performed."
             )
 
         if not hasattr(self, "_model_checks"):
@@ -114,8 +114,7 @@ class AnalyzerBase(object):
         """
         disable_no_training_warning = kwargs.pop("disable_no_training_warning", False)
         if not disable_no_training_warning:
-            # issue warning if not training is foreseen,
-            # but is fit is still called.
+            # issue warning if no training is foreseen, but fit() is still called.
             warnings.warn(
                 "This analyzer does not need to be trained." " Still fit() is called.",
                 RuntimeWarning,
@@ -131,8 +130,7 @@ class AnalyzerBase(object):
         """
         disable_no_training_warning = kwargs.pop("disable_no_training_warning", False)
         if not disable_no_training_warning:
-            # issue warning if not training is foreseen,
-            # but is fit is still called.
+            # issue warning if no training is foreseen, but fit() is still called.
             warnings.warn(
                 "This analyzer does not need to be trained."
                 " Still fit_generator() is called.",
@@ -210,10 +208,10 @@ class AnalyzerBase(object):
 
         :param fname: The file's name.
         """
-        f = np.load(fname)
+        npz_file = np.load(fname)
 
-        class_name = f["class_name"].item()
-        state = f["state"].item()
+        class_name = npz_file["class_name"].item()
+        state = npz_file["state"].item()
         return AnalyzerBase.load(class_name, state)
 
 

@@ -260,9 +260,9 @@ class LinearPattern(BasePattern):
         W = kgraph.get_kernel(self.layer)
         W2D = W.reshape((-1, W.shape[-1]))
 
-        mean_x, cnt_x = self.mean_x.get_weights()
-        mean_y, cnt_y = self.mean_y.get_weights()
-        mean_xy, cnt_xy = self.mean_xy.get_weights()
+        mean_x, _cnt_x = self.mean_x.get_weights()
+        mean_y, _cnt_y = self.mean_y.get_weights()
+        mean_xy, _cnt_xy = self.mean_xy.get_weights()
 
         ExEy = mean_x * mean_y
         cov_xy = mean_xy - ExEy
@@ -463,8 +463,7 @@ class PatternComputer(object):
         # We only pass the training data once.
         if "epochs" in kwargs and kwargs["epochs"] != 1:
             raise ValueError(
-                "Pattern are computed with "
-                "a closed form solution. "
+                "Pattern are computed with a closed form solution. "
                 "Only need to do one epoch."
             )
         kwargs["epochs"] = 1

@@ -61,7 +61,7 @@ class ZRule(kgraph.ReverseMappingBase):
             layer, keep_bias=bias, name_template="reversed_kernel_%s"
         )
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state):
         grad = ilayers.GradientWRT(len(Xs))
 
         # Get activations.
