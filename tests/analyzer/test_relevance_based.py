@@ -10,6 +10,10 @@ from innvestigate.analyzer import LRPAlpha2Beta1IgnoreBias
 from innvestigate.analyzer import LRPEpsilon
 from innvestigate.analyzer import LRPEpsilonIgnoreBias
 from innvestigate.analyzer import LRPFlat
+from innvestigate.analyzer import LRPSequentialPresetA
+from innvestigate.analyzer import LRPSequentialPresetAFlat
+from innvestigate.analyzer import LRPSequentialPresetB
+from innvestigate.analyzer import LRPSequentialPresetBFlat
 from innvestigate.analyzer import LRPWSquare
 from innvestigate.analyzer import LRPZ
 from innvestigate.analyzer import LRPZIgnoreBias
@@ -180,6 +184,23 @@ def test_fast__LRPAlpha1Beta0():
 def test_fast__LRPAlpha1Beta0IgnoreBias():
     def method(model):
         return LRPAlpha1Beta0IgnoreBias(model)
+
+    dryrun.test_analyzer(method, "trivia.*:mnist.log_reg")
+
+@pytest.mark.fast
+@pytest.mark.precommit
+def test_fast__LRPSequentialPresetAFlat():
+    def method(model):
+        return LRPSequentialPresetAFlat(model)
+
+    dryrun.test_analyzer(method, "trivia.*:mnist.log_reg")
+
+
+@pytest.mark.fast
+@pytest.mark.precommit
+def test_fast__LRPSequentialPresetBFlat():
+    def method(model):
+        return LRPSequentialPresetBFlat(model)
 
     dryrun.test_analyzer(method, "trivia.*:mnist.log_reg")
 
