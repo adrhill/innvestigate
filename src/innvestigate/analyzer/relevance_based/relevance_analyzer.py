@@ -407,7 +407,6 @@ class LRP(base.ReverseAnalyzerBase):
                 rules.insert(
                     0,
                     (
-                        # TODO: is_layer_at_idx seems to be dead code -A.
                         lambda layer, foo, bound_i=i: kchecks.is_layer_at_idx(
                             layer, bound_i
                         ),
