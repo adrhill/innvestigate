@@ -187,6 +187,7 @@ def test_fast__LRPAlpha1Beta0IgnoreBias():
 
     dryrun.test_analyzer(method, "trivia.*:mnist.log_reg")
 
+
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__LRPSequentialPresetAFlat():

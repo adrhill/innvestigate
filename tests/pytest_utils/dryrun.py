@@ -44,7 +44,7 @@ class BaseLayerTestCase(unittest.TestCase):
         network_filter = kwargs.pop("network_filter", None)
         if network_filter is not None:
             self._network_filter = network_filter
-        super(BaseLayerTestCase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _apply_test(self, network):
         raise NotImplementedError("Set in subclass.")
@@ -77,7 +77,7 @@ class AnalyzerTestCase(BaseLayerTestCase):
         method = kwargs.pop("method", None)
         if method is not None:
             self._method = method
-        super(AnalyzerTestCase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _method(self, model):
         raise NotImplementedError("Set in subclass.")
@@ -121,7 +121,7 @@ class AnalyzerTrainTestCase(BaseLayerTestCase):
         method = kwargs.pop("method", None)
         if method is not None:
             self._method = method
-        super(AnalyzerTrainTestCase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _method(self, model):
         raise NotImplementedError("Set in subclass.")
@@ -174,7 +174,7 @@ class EqualAnalyzerTestCase(BaseLayerTestCase):
         if method2 is not None:
             self._method2 = method2
 
-        super(EqualAnalyzerTestCase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _method1(self, model):
         raise NotImplementedError("Set in subclass.")
@@ -242,7 +242,7 @@ class SerializeAnalyzerTestCase(BaseLayerTestCase):
         method = kwargs.pop("method", None)
         if method is not None:
             self._method = method
-        super(SerializeAnalyzerTestCase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _method(self, model):
         raise NotImplementedError("Set in subclass.")
@@ -290,7 +290,7 @@ class PatternComputerTestCase(BaseLayerTestCase):
         method = kwargs.pop("method", None)
         if method is not None:
             self._method = method
-        super(PatternComputerTestCase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _method(self, model):
         raise NotImplementedError("Set in subclass.")

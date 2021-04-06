@@ -288,7 +288,7 @@ class OneEpochTrainerMixin(TrainerMixin):
         Same interface as :func:`fit` of :class:`TrainerMixin` except that
         the parameter epoch is fixed to 1.
         """
-        return super(OneEpochTrainerMixin, self).fit(*args, epochs=1, **kwargs)
+        return super().fit(*args, epochs=1, **kwargs)
 
     def fit_generator(self, *args, **kwargs):
         """
@@ -296,9 +296,7 @@ class OneEpochTrainerMixin(TrainerMixin):
         the parameter epoch is fixed to 1.
         """
         steps = kwargs.pop("steps", None)
-        return super(OneEpochTrainerMixin, self).fit_generator(
-            *args, steps_per_epoch=steps, epochs=1, **kwargs
-        )
+        return super().fit_generator(*args, steps_per_epoch=steps, epochs=1, **kwargs)
 
 
 ###############################################################################
@@ -530,7 +528,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
         return ret
 
     def _get_state(self):
-        state = super(AnalyzerNetworkBase, self)._get_state()
+        state = super()._get_state()
         state.update({"neuron_selection_mode": self._neuron_selection_mode})
         state.update({"allow_lambda_layers": self._allow_lambda_layers})
         return state
@@ -539,7 +537,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
     def _state_to_kwargs(cls, state):
         neuron_selection_mode = state.pop("neuron_selection_mode")
         allow_lambda_layers = state.pop("allow_lambda_layers")
-        kwargs = super(AnalyzerNetworkBase, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update(
             {
                 "neuron_selection_mode": neuron_selection_mode,
@@ -615,7 +613,8 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         self._reverse_check_finite = reverse_check_finite
         self._reverse_keep_tensors = reverse_keep_tensors
         self._reverse_reapply_on_copied_layers = reverse_reapply_on_copied_layers
-        super(ReverseAnalyzerBase, self).__init__(model, **kwargs)
+
+        super().__init__(model, **kwargs)
 
     def _gradient_reverse_mapping(self, Xs, Ys, reversed_Ys, reverse_state):
         mask = [x not in reverse_state["stop_mapping_at_tensors"] for x in Xs]
@@ -837,7 +836,7 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
             self._reversed_tensors = tmp
 
     def _get_state(self):
-        state = super(ReverseAnalyzerBase, self)._get_state()
+        state = super()._get_state()
         state.update({"reverse_verbose": self._reverse_verbose})
         state.update({"reverse_clip_values": self._reverse_clip_values})
         state.update(
@@ -866,7 +865,7 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         reverse_check_finite = state.pop("reverse_check_finite")
         reverse_keep_tensors = state.pop("reverse_keep_tensors")
         reverse_reapply_on_copied_layers = state.pop("reverse_reapply_on_copied_layers")
-        kwargs = super(ReverseAnalyzerBase, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update(
             {
                 "reverse_verbose": reverse_verbose,
