@@ -117,6 +117,9 @@ class BaselineLRPZ(base.AnalyzerNetworkBase):
             keras.layers.pooling.MaxPooling3D,
         )
 
+        self._model_check_done = False
+        self._model_checks = []
+
         self._add_model_softmax_check()
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
@@ -359,6 +362,9 @@ class LRP(base.ReverseAnalyzerBase):
         bn_layer_rule = kwargs.pop("bn_layer_rule", None)
         bn_layer_fuse_mode = kwargs.pop("bn_layer_fuse_mode", "one_linear")
         assert bn_layer_fuse_mode in ["one_linear", "two_linear"]
+
+        self._model_check_done = False
+        self._model_checks = []
 
         self._add_model_softmax_check()
         self._add_model_check(
@@ -774,6 +780,8 @@ class LRPSequentialPresetA(_LRPFixedParams):  # for the lack of a better name
     """Special LRP-configuration for ConvNets"""
 
     def __init__(self, model, epsilon=1e-1, *args, **kwargs):
+        self._model_check_done = False
+        self._model_checks = []
 
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
@@ -806,6 +814,9 @@ class LRPSequentialPresetB(_LRPFixedParams):
     """Special LRP-configuration for ConvNets"""
 
     def __init__(self, model, epsilon=1e-1, *args, **kwargs):
+        self._model_check_done = False
+        self._model_checks = []
+
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
             # TODO: fix. specify. extend.

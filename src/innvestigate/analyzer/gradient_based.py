@@ -40,6 +40,8 @@ class BaselineGradient(base.AnalyzerNetworkBase):
             )
         self._postprocess = postprocess
 
+        self._model_check_done = False
+        self._model_checks = []
         self._add_model_softmax_check()
 
         super(BaselineGradient, self).__init__(model, **kwargs)
@@ -96,6 +98,8 @@ class Gradient(base.ReverseAnalyzerBase):
             )
         self._postprocess = postprocess
 
+        self._model_check_done = False
+        self._model_checks = []
         self._add_model_softmax_check()
 
         super(Gradient, self).__init__(model, **kwargs)
@@ -140,8 +144,6 @@ class InputTimesGradient(Gradient):
     """
 
     def __init__(self, model, **kwargs):
-
-        self._add_model_softmax_check()
 
         super(InputTimesGradient, self).__init__(model, **kwargs)
 
@@ -190,6 +192,8 @@ class Deconvnet(base.ReverseAnalyzerBase):
     """
 
     def __init__(self, model, **kwargs):
+        self._model_check_done = False
+        self._model_checks = []
 
         self._add_model_softmax_check()
         self._add_model_check(
@@ -229,6 +233,8 @@ class GuidedBackprop(base.ReverseAnalyzerBase):
     """
 
     def __init__(self, model, **kwargs):
+        self._model_check_done = False
+        self._model_checks = []
 
         self._add_model_softmax_check()
         self._add_model_check(

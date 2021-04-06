@@ -60,10 +60,16 @@ class AnalyzerBase(object):
         model: keras.Model,
         disable_model_checks: bool = False,
         _model_check_done: bool = False,
+        _model_checks: list = None,
     ) -> None:
         self._model = model
         self._disable_model_checks = disable_model_checks
         self._model_check_done = _model_check_done
+
+        # If no checks have been run, create a new empty list to collect them
+        if _model_checks is None:
+            _model_checks = []
+        self._model_checks = _model_checks
 
         # Run all model checks in self._model_checks
         if not self._disable_model_checks:
@@ -88,9 +94,6 @@ class AnalyzerBase(object):
                 "Cannot add model check anymore. Check was already performed."
             )
 
-        if not hasattr(self, "_model_checks"):
-            self._model_checks = []
-
         check_instance = {
             "check": check,
             "message": message,
@@ -99,12 +102,11 @@ class AnalyzerBase(object):
         self._model_checks.append(check_instance)
 
     def _do_model_checks(self):
-        model_checks = getattr(self, "_model_checks", [])
 
-        if not self._disable_model_checks and len(model_checks) > 0:
-            check = [x["check"] for x in model_checks]
-            types = [x["type"] for x in model_checks]
-            messages = [x["message"] for x in model_checks]
+        if not self._disable_model_checks and len(self._model_checks) > 0:
+            check = [x["check"] for x in self._model_checks]
+            types = [x["type"] for x in self._model_checks]
+            messages = [x["message"] for x in self._model_checks]
 
             checked = kgraph.model_contains(self._model, check)
             tmp = zip(iutils.to_list(checked), messages, types)
@@ -159,7 +161,7 @@ class AnalyzerBase(object):
                 RuntimeWarning,
             )
 
-    def analyze(self, X):
+    def analyze(self, X, *args, **kwargs):
         """
         Analyze the behavior of model on input `X`.
 
@@ -333,6 +335,9 @@ class AnalyzerNetworkBase(AnalyzerBase):
             raise ValueError("neuron_selection parameter is not valid.")
         self._neuron_selection_mode = neuron_selection_mode
 
+        self._model_check_done = False
+        self._model_checks = []
+
         self._allow_lambda_layers = allow_lambda_layers
         self._add_model_check(
             lambda layer: (
@@ -349,6 +354,8 @@ class AnalyzerNetworkBase(AnalyzerBase):
         self._special_helper_layers = []
 
         super(AnalyzerNetworkBase, self).__init__(model, **kwargs)
+
+        super().__init__(model, **kwargs)
 
     def _add_model_softmax_check(self):
         """

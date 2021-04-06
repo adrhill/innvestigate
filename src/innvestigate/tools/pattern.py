@@ -128,7 +128,7 @@ class BasePattern(object):
     """
 
     def __init__(self, model, layer, model_tensors=None, execution_list=None):
-        self.model = model
+        self._model = model
         self.layer = layer
         # All the tensors used by the model.
         # Allows to filter nodes in layers that do not

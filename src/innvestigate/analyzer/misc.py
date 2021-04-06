@@ -15,6 +15,9 @@ class Input(AnalyzerNetworkBase):
     :param model: A Keras model.
     """
 
+    def __init__(self, model, **kwargs) -> None:
+        super().__init__(model, **kwargs)
+
     def _create_analysis(self, model, stop_analysis_at_tensors=None):
         if stop_analysis_at_tensors is None:
             stop_analysis_at_tensors = []

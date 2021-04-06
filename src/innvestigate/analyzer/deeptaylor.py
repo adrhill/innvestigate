@@ -24,6 +24,8 @@ class DeepTaylor(base.ReverseAnalyzerBase):
     """
 
     def __init__(self, model, *args, **kwargs):
+        self._model_check_done = False
+        self._model_checks = []
 
         self._add_model_softmax_check()
         self._add_model_check(
