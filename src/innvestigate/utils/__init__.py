@@ -48,7 +48,7 @@ class BatchSequence(kutils.Sequence):
         if not self.single_tensor:
             for X in self.Xs[1:]:
                 assert X.shape[0] == self.Xs[0].shape[0]
-        super(BatchSequence, self).__init__()
+        super().__init__()
 
     def __len__(self):
         return int(math.ceil(float(len(self.Xs[0])) / self.batch_size))
@@ -78,7 +78,7 @@ class TargetAugmentedSequence(kutils.Sequence):
         self.sequence = sequence
         self.augment_f = augment_f
 
-        super(TargetAugmentedSequence, self).__init__()
+        super().__init__()
 
     def __len__(self):
         return len(self.sequence)

@@ -160,7 +160,7 @@ class PatternNet(base.OneEpochTrainerMixin, base.ReverseAnalyzerBase):
         else:
             kwargs["reverse_project_bottleneck_layers"] = True
 
-        super(PatternNet, self).__init__(model, **kwargs)
+        super().__init__(model, **kwargs)
 
     def _get_pattern_for_layer(self, layer, state):
         layers = [
@@ -190,7 +190,7 @@ class PatternNet(base.OneEpochTrainerMixin, base.ReverseAnalyzerBase):
             name="patternnet_kernel_layer_mapping",
         )
 
-        return super(PatternNet, self)._create_analysis(*args, **kwargs)
+        return super()._create_analysis(*args, **kwargs)
 
     def _fit_generator(
         self,
@@ -226,7 +226,7 @@ class PatternNet(base.OneEpochTrainerMixin, base.ReverseAnalyzerBase):
         )
 
     def _get_state(self):
-        state = super(PatternNet, self)._get_state()
+        state = super()._get_state()
         state.update({"patterns": self._patterns, "pattern_type": self._pattern_type})
         return state
 
@@ -234,7 +234,7 @@ class PatternNet(base.OneEpochTrainerMixin, base.ReverseAnalyzerBase):
     def _state_to_kwargs(cls, state):
         patterns = state.pop("patterns")
         pattern_type = state.pop("pattern_type")
-        kwargs = super(PatternNet, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update({"patterns": patterns, "pattern_type": pattern_type})
         return kwargs
 

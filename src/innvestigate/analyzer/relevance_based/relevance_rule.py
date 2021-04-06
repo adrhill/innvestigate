@@ -81,7 +81,7 @@ class ZIgnoreBiasRule(ZRule):
     """
 
     def __init__(self, *args, **kwargs):
-        super(ZIgnoreBiasRule, self).__init__(*args, bias=False, **kwargs)
+        super().__init__(*args, bias=False, **kwargs)
 
 
 class EpsilonRule(kgraph.ReverseMappingBase):
@@ -124,7 +124,7 @@ class EpsilonIgnoreBiasRule(EpsilonRule):
     """Same as EpsilonRule but ignores the bias."""
 
     def __init__(self, *args, **kwargs):
-        super(EpsilonIgnoreBiasRule, self).__init__(*args, bias=False, **kwargs)
+        super().__init__(*args, bias=False, **kwargs)
 
 
 class WSquareRule(kgraph.ReverseMappingBase):
@@ -289,43 +289,35 @@ class AlphaBetaIgnoreBiasRule(AlphaBetaRule):
     """Same as AlphaBetaRule but ignores biases."""
 
     def __init__(self, *args, **kwargs):
-        super(AlphaBetaIgnoreBiasRule, self).__init__(*args, bias=False, **kwargs)
+        super().__init__(*args, bias=False, **kwargs)
 
 
 class Alpha2Beta1Rule(AlphaBetaRule):
     """AlphaBetaRule with alpha=2, beta=1"""
 
     def __init__(self, *args, **kwargs):
-        super(Alpha2Beta1Rule, self).__init__(
-            *args, alpha=2, beta=1, bias=True, **kwargs
-        )
+        super().__init__(*args, alpha=2, beta=1, bias=True, **kwargs)
 
 
 class Alpha2Beta1IgnoreBiasRule(AlphaBetaRule):
     """AlphaBetaRule with alpha=2, beta=1 and ignores biases"""
 
     def __init__(self, *args, **kwargs):
-        super(Alpha2Beta1IgnoreBiasRule, self).__init__(
-            *args, alpha=2, beta=1, bias=False, **kwargs
-        )
+        super().__init__(*args, alpha=2, beta=1, bias=False, **kwargs)
 
 
 class Alpha1Beta0Rule(AlphaBetaRule):
     """AlphaBetaRule with alpha=1, beta=0"""
 
     def __init__(self, *args, **kwargs):
-        super(Alpha1Beta0Rule, self).__init__(
-            *args, alpha=1, beta=0, bias=True, **kwargs
-        )
+        super().__init__(*args, alpha=1, beta=0, bias=True, **kwargs)
 
 
 class Alpha1Beta0IgnoreBiasRule(AlphaBetaRule):
     """AlphaBetaRule with alpha=1, beta=0 and ignores biases"""
 
     def __init__(self, *args, **kwargs):
-        super(Alpha1Beta0IgnoreBiasRule, self).__init__(
-            *args, alpha=1, beta=0, bias=False, **kwargs
-        )
+        super().__init__(*args, alpha=1, beta=0, bias=False, **kwargs)
 
 
 class AlphaBetaXRule(kgraph.ReverseMappingBase):
@@ -427,30 +419,22 @@ class AlphaBetaXRule(kgraph.ReverseMappingBase):
 
 class AlphaBetaX1000Rule(AlphaBetaXRule):
     def __init__(self, *args, **kwargs):
-        super(AlphaBetaX1000Rule, self).__init__(
-            *args, alpha=(1, 0), beta=(0, 0), bias=True, **kwargs
-        )
+        super().__init__(*args, alpha=(1, 0), beta=(0, 0), bias=True, **kwargs)
 
 
 class AlphaBetaX1010Rule(AlphaBetaXRule):
     def __init__(self, *args, **kwargs):
-        super(AlphaBetaX1010Rule, self).__init__(
-            *args, alpha=(1, 0), beta=(0, -1), bias=True, **kwargs
-        )
+        super().__init__(*args, alpha=(1, 0), beta=(0, -1), bias=True, **kwargs)
 
 
 class AlphaBetaX1001Rule(AlphaBetaXRule):
     def __init__(self, *args, **kwargs):
-        super(AlphaBetaX1001Rule, self).__init__(
-            *args, alpha=(1, 1), beta=(0, 0), bias=True, **kwargs
-        )
+        super().__init__(*args, alpha=(1, 1), beta=(0, 0), bias=True, **kwargs)
 
 
 class AlphaBetaX2m100Rule(AlphaBetaXRule):
     def __init__(self, *args, **kwargs):
-        super(AlphaBetaX2m100Rule, self).__init__(
-            *args, alpha=(2, 0), beta=(1, 0), bias=True, **kwargs
-        )
+        super().__init__(*args, alpha=(2, 0), beta=(1, 0), bias=True, **kwargs)
 
 
 class BoundedRule(kgraph.ReverseMappingBase):
@@ -542,7 +526,7 @@ class ZPlusRule(Alpha1Beta0IgnoreBiasRule):
 
     # TODO: assert that layer inputs are always >= 0
     def __init__(self, *args, **kwargs):
-        super(ZPlusRule, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class ZPlusFastRule(kgraph.ReverseMappingBase):

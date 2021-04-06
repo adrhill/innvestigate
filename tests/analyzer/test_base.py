@@ -92,7 +92,7 @@ def test_fast__AnalyzerNetworkBase_neuron_selection_index():
     class CustomAnalyzer(Gradient):
         def analyze(self, X):
             index = 0
-            return super(CustomAnalyzer, self).analyze(X, index)
+            return super().analyze(X, index)
 
     def method(model):
         return CustomAnalyzer(model, neuron_selection_mode="index")
@@ -105,7 +105,7 @@ def test_precommit__AnalyzerNetworkBase_neuron_selection_index():
     class CustomAnalyzer(Gradient):
         def analyze(self, X):
             index = 3
-            return super(CustomAnalyzer, self).analyze(X, index)
+            return super().analyze(X, index)
 
     def method(model):
         return CustomAnalyzer(model, neuron_selection_mode="index")

@@ -33,7 +33,7 @@ class DeepTaylor(base.ReverseAnalyzerBase):
             "This DeepTaylor implementation only supports ReLU activations.",
             check_type="exception",
         )
-        super(DeepTaylor, self).__init__(model, *args, **kwargs)
+        super().__init__(model, *args, **kwargs)
 
     def _create_analysis(self, *args, **kwargs):
         def do_nothing(Xs, Ys, As, reverse_state):
@@ -130,7 +130,7 @@ class DeepTaylor(base.ReverseAnalyzerBase):
             name="deep_taylor_no_transform",
         )
 
-        return super(DeepTaylor, self)._create_analysis(*args, **kwargs)
+        return super()._create_analysis(*args, **kwargs)
 
     def _default_reverse_mapping(self, Xs, Ys, reversed_Ys, reverse_state):
         """
@@ -148,7 +148,7 @@ class DeepTaylor(base.ReverseAnalyzerBase):
             inputs=model.inputs, outputs=positive_outputs
         )
 
-        return super(DeepTaylor, self)._prepare_model(model_with_positive_output)
+        return super()._prepare_model(model_with_positive_output)
 
 
 class BoundedDeepTaylor(DeepTaylor):
@@ -173,7 +173,7 @@ class BoundedDeepTaylor(DeepTaylor):
         self._bounds_low = low
         self._bounds_high = high
 
-        super(BoundedDeepTaylor, self).__init__(model, **kwargs)
+        super().__init__(model, **kwargs)
 
     def _create_analysis(self, *args, **kwargs):
 
@@ -181,9 +181,7 @@ class BoundedDeepTaylor(DeepTaylor):
 
         class BoundedProxyRule(lrp_rules.BoundedRule):
             def __init__(self, *args, **kwargs):
-                super(BoundedProxyRule, self).__init__(
-                    *args, low=low, high=high, **kwargs
-                )
+                super().__init__(*args, low=low, high=high, **kwargs)
 
         self._add_conditional_reverse_mapping(
             lambda l: kchecks.is_input_layer(l) and kchecks.contains_kernel(l),
@@ -192,4 +190,4 @@ class BoundedDeepTaylor(DeepTaylor):
             priority=10,  # do first
         )
 
-        return super(BoundedDeepTaylor, self)._create_analysis(*args, **kwargs)
+        return super()._create_analysis(*args, **kwargs)

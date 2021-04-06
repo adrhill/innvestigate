@@ -40,7 +40,7 @@ class Random(AnalyzerNetworkBase):
     def __init__(self, model, stddev=1, **kwargs):
         self._stddev = stddev
 
-        super(Random, self).__init__(model, **kwargs)
+        super().__init__(model, **kwargs)
 
     def _create_analysis(self, model, stop_analysis_at_tensors=None):
         if stop_analysis_at_tensors is None:
@@ -53,13 +53,13 @@ class Random(AnalyzerNetworkBase):
         return [noise(x) for x in tensors_to_analyze]
 
     def _get_state(self):
-        state = super(Random, self)._get_state()
+        state = super()._get_state()
         state.update({"stddev": self._stddev})
         return state
 
     @classmethod
     def _state_to_kwargs(cls, state):
         stddev = state.pop("stddev")
-        kwargs = super(Random, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update({"stddev": stddev})
         return kwargs

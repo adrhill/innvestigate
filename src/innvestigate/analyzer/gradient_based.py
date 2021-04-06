@@ -44,7 +44,7 @@ class BaselineGradient(base.AnalyzerNetworkBase):
         self._model_checks = []
         self._add_model_softmax_check()
 
-        super(BaselineGradient, self).__init__(model, **kwargs)
+        super().__init__(model, **kwargs)
 
     def _create_analysis(self, model, stop_analysis_at_tensors=None):
         if stop_analysis_at_tensors is None:
@@ -65,14 +65,14 @@ class BaselineGradient(base.AnalyzerNetworkBase):
         return iutils.to_list(ret)
 
     def _get_state(self):
-        state = super(BaselineGradient, self)._get_state()
+        state = super()._get_state()
         state.update({"postprocess": self._postprocess})
         return state
 
     @classmethod
     def _state_to_kwargs(cls, state):
         postprocess = state.pop("postprocess")
-        kwargs = super(BaselineGradient, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update(
             {
                 "postprocess": postprocess,
@@ -108,7 +108,7 @@ class Gradient(base.ReverseAnalyzerBase):
         return ilayers.OnesLike()(X)
 
     def _postprocess_analysis(self, X):
-        ret = super(Gradient, self)._postprocess_analysis(X)
+        ret = super()._postprocess_analysis(X)
 
         if self._postprocess == "abs":
             ret = ilayers.Abs()(ret)
@@ -118,14 +118,14 @@ class Gradient(base.ReverseAnalyzerBase):
         return iutils.to_list(ret)
 
     def _get_state(self):
-        state = super(Gradient, self)._get_state()
+        state = super()._get_state()
         state.update({"postprocess": self._postprocess})
         return state
 
     @classmethod
     def _state_to_kwargs(cls, state):
         postprocess = state.pop("postprocess")
-        kwargs = super(Gradient, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update(
             {
                 "postprocess": postprocess,
@@ -154,7 +154,7 @@ class InputTimesGradient(Gradient):
         tensors_to_analyze = [
             x for x in iutils.to_list(model.inputs) if x not in stop_analysis_at_tensors
         ]
-        gradients = super(InputTimesGradient, self)._create_analysis(
+        gradients = super()._create_analysis(
             model, stop_analysis_at_tensors=stop_analysis_at_tensors
         )
         return [
@@ -202,7 +202,7 @@ class Deconvnet(base.ReverseAnalyzerBase):
             check_type="exception",
         )
 
-        super(Deconvnet, self).__init__(model, **kwargs)
+        super().__init__(model, **kwargs)
 
     def _create_analysis(self, *args, **kwargs):
 
@@ -212,7 +212,7 @@ class Deconvnet(base.ReverseAnalyzerBase):
             name="deconvnet_reverse_relu_layer",
         )
 
-        return super(Deconvnet, self)._create_analysis(*args, **kwargs)
+        return super()._create_analysis(*args, **kwargs)
 
 
 def GuidedBackpropReverseReLULayer(Xs, Ys, reversed_Ys, reverse_state):
@@ -243,7 +243,7 @@ class GuidedBackprop(base.ReverseAnalyzerBase):
             check_type="exception",
         )
 
-        super(GuidedBackprop, self).__init__(model, **kwargs)
+        super().__init__(model, **kwargs)
 
     def _create_analysis(self, *args, **kwargs):
 
@@ -253,7 +253,7 @@ class GuidedBackprop(base.ReverseAnalyzerBase):
             name="guided_backprop_reverse_relu_layer",
         )
 
-        return super(GuidedBackprop, self)._create_analysis(*args, **kwargs)
+        return super()._create_analysis(*args, **kwargs)
 
 
 ###############################################################################
@@ -276,7 +276,7 @@ class IntegratedGradients(wrapper.PathIntegrator):
                 subanalyzer_kwargs[key] = kwargs.pop(key)
         subanalyzer = Gradient(model, **subanalyzer_kwargs)
 
-        super(IntegratedGradients, self).__init__(subanalyzer, steps=steps, **kwargs)
+        super().__init__(subanalyzer, steps=steps, **kwargs)
 
 
 ###############################################################################
@@ -299,6 +299,4 @@ class SmoothGrad(wrapper.GaussianSmoother):
                 subanalyzer_kwargs[key] = kwargs.pop(key)
         subanalyzer = Gradient(model, **subanalyzer_kwargs)
 
-        super(SmoothGrad, self).__init__(
-            subanalyzer, augment_by_n=augment_by_n, **kwargs
-        )
+        super().__init__(subanalyzer, augment_by_n=augment_by_n, **kwargs)

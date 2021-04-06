@@ -31,7 +31,7 @@ class WrapperBase(base.AnalyzerBase):
         self._subanalyzer = subanalyzer
         model = None
 
-        super(WrapperBase, self).__init__(model, *args, **kwargs)
+        super().__init__(model, *args, **kwargs)
 
     def analyze(self, *args, **kwargs):
         return self._subanalyzer.analyze(*args, **kwargs)
@@ -76,7 +76,7 @@ class AugmentReduceBase(WrapperBase):
         if self._neuron_selection_mode != "all":
             # TODO: this is not transparent, find a better way.
             subanalyzer._neuron_selection_mode = "index"
-        super(AugmentReduceBase, self).__init__(subanalyzer, *args, **kwargs)
+        super().__init__(subanalyzer, *args, **kwargs)
 
         if isinstance(self._subanalyzer, base.AnalyzerNetworkBase):
             # Take the keras analyzer model and
@@ -170,14 +170,14 @@ class AugmentReduceBase(WrapperBase):
             # revert the tempering in __init__
             tmp = self._neuron_selection_mode
             self._subanalyzer._neuron_selection_mode = tmp
-        state = super(AugmentReduceBase, self)._get_state()
+        state = super()._get_state()
         state.update({"augment_by_n": self._augment_by_n})
         return state
 
     @classmethod
     def _state_to_kwargs(cls, state):
         augment_by_n = state.pop("augment_by_n")
-        kwargs = super(AugmentReduceBase, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update({"augment_by_n": augment_by_n})
         return kwargs
 
@@ -198,22 +198,22 @@ class GaussianSmoother(AugmentReduceBase):
 
     def __init__(self, subanalyzer, *args, **kwargs):
         self._noise_scale = kwargs.pop("noise_scale", 1)
-        super(GaussianSmoother, self).__init__(subanalyzer, *args, **kwargs)
+        super().__init__(subanalyzer, *args, **kwargs)
 
     def _augment(self, X):
-        tmp = super(GaussianSmoother, self)._augment(X)
+        tmp = super()._augment(X)
         noise = ilayers.TestPhaseGaussianNoise(stddev=self._noise_scale)
         return [noise(x) for x in tmp]
 
     def _get_state(self):
-        state = super(GaussianSmoother, self)._get_state()
+        state = super()._get_state()
         state.update({"noise_scale": self._noise_scale})
         return state
 
     @classmethod
     def _state_to_kwargs(cls, state):
         noise_scale = state.pop("noise_scale")
-        kwargs = super(GaussianSmoother, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update({"noise_scale": noise_scale})
         return kwargs
 
@@ -242,9 +242,7 @@ class PathIntegrator(AugmentReduceBase):
         steps = kwargs.pop("steps", 16)
         self._reference_inputs = kwargs.pop("reference_inputs", 0)
         self._keras_constant_inputs = None
-        super(PathIntegrator, self).__init__(
-            subanalyzer, *args, augment_by_n=steps, **kwargs
-        )
+        super().__init__(subanalyzer, *args, augment_by_n=steps, **kwargs)
 
     def _keras_set_constant_inputs(self, inputs):
         tmp = [K.variable(x) for x in inputs]
@@ -266,7 +264,7 @@ class PathIntegrator(AugmentReduceBase):
         return [keras.layers.Subtract()([x, ri]) for x, ri in zip(X, reference_inputs)]
 
     def _augment(self, X):
-        tmp = super(PathIntegrator, self)._augment(X)
+        tmp = super()._augment(X)
         tmp = [
             ilayers.Reshape((-1, self._augment_by_n) + K.int_shape(x)[1:])(x)
             for x in tmp
@@ -291,21 +289,21 @@ class PathIntegrator(AugmentReduceBase):
         return ret
 
     def _reduce(self, X):
-        tmp = super(PathIntegrator, self)._reduce(X)
+        tmp = super()._reduce(X)
         difference = self._keras_difference
         del self._keras_difference
 
         return [keras.layers.Multiply()([x, d]) for x, d in zip(tmp, difference)]
 
     def _get_state(self):
-        state = super(PathIntegrator, self)._get_state()
+        state = super()._get_state()
         state.update({"reference_inputs": self._reference_inputs})
         return state
 
     @classmethod
     def _state_to_kwargs(cls, state):
         reference_inputs = state.pop("reference_inputs")
-        kwargs = super(PathIntegrator, cls)._state_to_kwargs(state)
+        kwargs = super()._state_to_kwargs(state)
         kwargs.update({"reference_inputs": reference_inputs})
         # We use steps instead.
         kwargs.update({"steps": kwargs["augment_by_n"]})
