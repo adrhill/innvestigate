@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from innvestigate import layers as ilayers
-from innvestigate import utils as iutils
+import innvestigate.layers as ilayers
+import innvestigate.utils as iutils
 from innvestigate.analyzer.base import AnalyzerNetworkBase
 
 __all__ = ["Random", "Input"]

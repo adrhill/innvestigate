@@ -11,13 +11,14 @@ import keras.layers.pooling
 import keras.models
 import numpy as np
 
-from innvestigate import layers as ilayers
-from innvestigate import tools as itools
-from innvestigate import utils
-from innvestigate.analyzer import base
-from innvestigate.utils import keras as kutils
-from innvestigate.utils.keras import checks as kchecks
-from innvestigate.utils.keras import graph as kgraph
+import innvestigate.layers as ilayers
+import innvestigate.tools as itools
+import innvestigate.utils as iutils
+import innvestigate.utils.keras as kutils
+import innvestigate.utils.keras.checks as kchecks
+import innvestigate.utils.keras.graph as kgraph
+from innvestigate.analyzer.base import OneEpochTrainerMixin
+from innvestigate.analyzer.base import ReverseAnalyzerBase
 
 __all__ = [
     "PatternNet",
@@ -98,13 +99,13 @@ class PatternNetReverseKernelLayer(kgraph.ReverseMappingBase):
             tmp = reversed_Ys
         else:
             # if linear activation this behaves strange
-            tmp = utils.to_list(grad_act(act_Xs + act_Ys + reversed_Ys))
+            tmp = iutils.to_list(grad_act(act_Xs + act_Ys + reversed_Ys))
 
         # Second step: propagate through the pattern layer.
         return grad_pattern(Xs + pattern_Ys + tmp)
 
 
-class PatternNet(base.OneEpochTrainerMixin, base.ReverseAnalyzerBase):
+class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
     """PatternNet analyzer.
 
     Applies the "PatternNet" algorithm to analyze the model's predictions.

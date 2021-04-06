@@ -6,10 +6,11 @@ import keras.backend as K
 import keras.models
 import numpy as np
 
-from innvestigate import layers as ilayers
-from innvestigate import utils as iutils
-from innvestigate.analyzer import base
-from innvestigate.utils import keras as kutils
+import innvestigate.layers as ilayers
+import innvestigate.utils as iutils
+import innvestigate.utils.keras as kutils
+from innvestigate.analyzer.base import AnalyzerBase
+from innvestigate.analyzer.base import AnalyzerNetworkBase
 
 __all__ = [
     "WrapperBase",
@@ -19,7 +20,7 @@ __all__ = [
 ]
 
 
-class WrapperBase(base.AnalyzerBase):
+class WrapperBase(AnalyzerBase):
     """Interface for wrappers around analyzers
 
     This class is the basic interface for wrappers around analyzers.
@@ -50,7 +51,7 @@ class WrapperBase(base.AnalyzerBase):
         sa_state = state.pop("subanalyzer_state")
         assert len(state) == 0
 
-        subanalyzer = base.AnalyzerBase.load(sa_class_name, sa_state)
+        subanalyzer = super().load(sa_class_name, sa_state)
         kwargs = {"subanalyzer": subanalyzer}
         return kwargs
 
@@ -78,7 +79,7 @@ class AugmentReduceBase(WrapperBase):
             subanalyzer._neuron_selection_mode = "index"
         super().__init__(subanalyzer, *args, **kwargs)
 
-        if isinstance(self._subanalyzer, base.AnalyzerNetworkBase):
+        if isinstance(self._subanalyzer, AnalyzerNetworkBase):
             # Take the keras analyzer model and
             # add augment and reduce functionality.
             self._keras_based_augment_reduce = True

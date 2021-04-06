@@ -3,10 +3,10 @@ from __future__ import annotations
 import keras.layers
 import keras.models
 
-from innvestigate.analyzer import base
-from innvestigate.analyzer.relevance_based import relevance_rule as lrp_rules
-from innvestigate.utils.keras import checks as kchecks
-from innvestigate.utils.keras import graph as kgraph
+import innvestigate.analyzer.base as base
+import innvestigate.analyzer.relevance_based.relevance_rule as lrp_rules
+import innvestigate.utils.keras.checks as kchecks
+import innvestigate.utils.keras.graph as kgraph
 
 __all__ = [
     "DeepTaylor",

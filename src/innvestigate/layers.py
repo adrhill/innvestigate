@@ -12,7 +12,7 @@ import numpy as np
 from keras.utils import conv_utils
 
 import innvestigate.utils as iutils
-from innvestigate.utils.keras import backend as iK
+import innvestigate.utils.keras.backend as iK
 
 __all__ = [
     "Constant",

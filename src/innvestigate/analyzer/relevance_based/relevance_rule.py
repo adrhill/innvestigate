@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from builtins import zip
+from typing import Iterable
+from typing import Tuple
 
 import keras
 import keras.backend as K
@@ -14,13 +16,15 @@ import keras.layers.normalization
 import keras.layers.pooling
 import keras.models
 import numpy as np
+from keras.layers import Layer
+from tensorflow import Tensor
 
+import innvestigate.analyzer.relevance_based.utils as rutils
+import innvestigate.layers as ilayers
+import innvestigate.utils as iutils
 import innvestigate.utils.keras as kutils
-from innvestigate import layers as ilayers
-from innvestigate import utils as iutils
-from innvestigate.analyzer.relevance_based import utils as rutils
-from innvestigate.utils.keras import backend as iK
-from innvestigate.utils.keras import graph as kgraph
+import innvestigate.utils.keras.backend as iK
+import innvestigate.utils.keras.graph as kgraph
 
 # TODO: differentiate between LRP and DTD rules?
 # DTD rules are special cases of LRP rules with additional assumptions

@@ -24,7 +24,7 @@ import keras.layers.wrappers
 import keras.legacy.layers
 from keras.layers import Layer as KerasLayer
 
-from innvestigate.utils.keras import graph as kgraph
+import innvestigate.utils.keras.graph as kgraph
 
 # Define type of checks, using Any for kwargs
 ModelCheck = Callable[[KerasLayer, Any], bool]

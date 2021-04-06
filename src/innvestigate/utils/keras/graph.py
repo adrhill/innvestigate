@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 from builtins import range
 from builtins import zip
+from typing import Iterable
 
 import keras.backend as K
 import keras.engine.topology
@@ -10,10 +11,12 @@ import keras.layers
 import keras.models
 import numpy as np
 import six
+from keras.layers import Layer
+from tensorflow import Tensor
 
 import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
-from innvestigate.utils.keras import checks as kchecks
+import innvestigate.utils.keras.checks as kchecks
 
 __all__ = [
     "get_kernel",
@@ -889,10 +892,16 @@ def get_bottleneck_tensors(inputs, outputs, execution_list):
 
 
 class ReverseMappingBase(object):
-    def __init__(self, layer, state):
+    def __init__(self, layer: Layer, state):
         pass
 
-    def apply(self, Xs, Yx, reversed_Ys, reverse_state):
+    def apply(
+        self,
+        Xs: Iterable[Tensor],
+        Ys: Iterable[Tensor],
+        Rs: Iterable[Tensor],
+        reverse_state,
+    ) -> Iterable[Tensor]:
         raise NotImplementedError()
 
 

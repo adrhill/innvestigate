@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import warnings
 from builtins import zip
+from typing import Iterable
+from typing import Tuple
 
 import keras
 import keras.backend as K
@@ -9,12 +11,14 @@ import keras.layers
 import keras.models
 import numpy as np
 import six
+from keras.layers import Layer
+from tensorflow import Tensor
 
 import innvestigate.analyzer
 import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
-from innvestigate.utils.keras import checks as kchecks
-from innvestigate.utils.keras import graph as kgraph
+import innvestigate.utils.keras.checks as kchecks
+import innvestigate.utils.keras.graph as kgraph
 from innvestigate.utils.keras.checks import ModelCheck
 
 __all__ = [
