@@ -1,7 +1,11 @@
+"""Check Keras Layers for properties,
+e.g. if it is an input or a pooling layer"""
+
 from __future__ import annotations
 
 import inspect
-from typing import Any, Callable
+from typing import Any
+from typing import Callable
 
 import keras.engine.topology
 import keras.layers
@@ -51,16 +55,14 @@ def get_current_layers():
     """
     Returns a list of currently available layers in Keras.
     """
-    class_set = set(
-        [
-            (getattr(keras.layers, name), name)
-            for name in dir(keras.layers)
-            if (
-                inspect.isclass(getattr(keras.layers, name))
-                and issubclass(getattr(keras.layers, name), keras.engine.topology.Layer)
-            )
-        ]
-    )
+    class_set = {
+        (getattr(keras.layers, name), name)
+        for name in dir(keras.layers)
+        if (
+            inspect.isclass(getattr(keras.layers, name))
+            and issubclass(getattr(keras.layers, name), keras.engine.topology.Layer)
+        )
+    }
     return [x[1] for x in sorted((str(x[0]), x[1]) for x in class_set)]
 
 
@@ -70,7 +72,7 @@ def get_known_layers():
     """
 
     # Inside function to not break import if Keras changes.
-    KNOWN_LAYERS = (
+    known_layers = (
         keras.engine.topology.InputLayer,
         keras.layers.advanced_activations.ELU,
         keras.layers.advanced_activations.LeakyReLU,
@@ -153,7 +155,7 @@ def get_known_layers():
         # keras.legacy.layers.Merge,
         keras.legacy.layers.Recurrent,
     )
-    return KNOWN_LAYERS
+    return known_layers
 
 
 def get_activation_search_safe_layers():
@@ -163,7 +165,7 @@ def get_activation_search_safe_layers():
     """
 
     # Inside function to not break import if Keras changes.
-    ACTIVATION_SEARCH_SAFE_LAYERS = (
+    activation_search_safe_layers = (
         keras.layers.advanced_activations.ELU,
         keras.layers.advanced_activations.LeakyReLU,
         keras.layers.advanced_activations.PReLU,
@@ -178,7 +180,7 @@ def get_activation_search_safe_layers():
         keras.layers.noise.GaussianNoise,
         keras.layers.normalization.BatchNormalization,
     )
-    return ACTIVATION_SEARCH_SAFE_LAYERS
+    return activation_search_safe_layers
 
 
 ###############################################################################
@@ -190,18 +192,16 @@ def contains_activation(layer: KerasLayer, activation=None) -> bool:
     activation is None then we only check if layer can contain an activation.
     """
 
-    # todo: add test and check this more throughroughly.
+    # TODO: add test and check this more throughroughly.
     # rely on Keras convention.
     if hasattr(layer, "activation"):
         if activation is not None:
             return layer.activation == keras.activations.get(activation)
-        else:
-            return True
+        return True
     elif isinstance(layer, keras.layers.ReLU):
         if activation is not None:
             return keras.activations.get("relu") == keras.activations.get(activation)
-        else:
-            return True
+        return True
     elif isinstance(
         layer,
         (
@@ -214,10 +214,8 @@ def contains_activation(layer: KerasLayer, activation=None) -> bool:
     ):
         if activation is not None:
             raise Exception("Cannot detect activation type.")
-        else:
-            return True
-    else:
-        return False
+        return True
+    return False
 
 
 def contains_kernel(layer: KerasLayer) -> bool:
@@ -227,14 +225,11 @@ def contains_kernel(layer: KerasLayer) -> bool:
 
     # TODO: add test and check this more throughroughly.
     # rely on Keras convention.
-    if (
+    return (
         hasattr(layer, "kernel")
         or hasattr(layer, "depthwise_kernel")
         or hasattr(layer, "pointwise_kernel")
-    ):
-        return True
-    else:
-        return False
+    )
 
 
 def contains_bias(layer: KerasLayer) -> bool:
@@ -244,10 +239,7 @@ def contains_bias(layer: KerasLayer) -> bool:
 
     # TODO: add test and check this more throughroughly.
     # rely on Keras convention.
-    if hasattr(layer, "bias"):
-        return True
-    else:
-        return False
+    return hasattr(layer, "bias")
 
 
 def only_relu_activation(layer: KerasLayer) -> bool:
@@ -267,9 +259,9 @@ def is_network(layer: KerasLayer) -> bool:
     return isinstance(layer, keras.engine.topology.Network)
 
 
-def is_conv_layer(layer: KerasLayer, *args, **kwargs) -> bool:
+def is_conv_layer(layer: KerasLayer, *_args, **_kwargs) -> bool:
     """Checks if layer is a convolutional layer."""
-    CONV_LAYERS = (
+    conv_layers = (
         keras.layers.convolutional.Conv1D,
         keras.layers.convolutional.Conv2D,
         keras.layers.convolutional.Conv2DTranspose,
@@ -279,24 +271,25 @@ def is_conv_layer(layer: KerasLayer, *args, **kwargs) -> bool:
         keras.layers.convolutional.SeparableConv2D,
         keras.layers.convolutional.DepthwiseConv2D,
     )
-    return isinstance(layer, CONV_LAYERS)
+    return isinstance(layer, conv_layers)
 
 
-def is_embedding_layer(layer: KerasLayer, *args, **kwargs) -> bool:
+def is_embedding_layer(layer: KerasLayer, *_args, **_kwargs) -> bool:
+    """Checks if layer is an embedding layer."""
     return isinstance(layer, keras.layers.Embedding)
 
 
-def is_batch_normalization_layer(layer: KerasLayer, *args, **kwargs) -> bool:
+def is_batch_normalization_layer(layer: KerasLayer, *_args, **_kwargs) -> bool:
     """Checks if layer is a batchnorm layer."""
     return isinstance(layer, keras.layers.normalization.BatchNormalization)
 
 
-def is_add_layer(layer: KerasLayer, *args, **kwargs) -> bool:
+def is_add_layer(layer: KerasLayer, *_args, **_kwargs) -> bool:
     """Checks if layer is an addition-merge layer."""
     return isinstance(layer, keras.layers.Add)
 
 
-def is_dense_layer(layer: KerasLayer, *args, **kwargs) -> bool:
+def is_dense_layer(layer: KerasLayer, *_args, **_kwargs) -> bool:
     """Checks if layer is a dense layer."""
     return isinstance(layer, keras.layers.core.Dense)
 
@@ -304,7 +297,7 @@ def is_dense_layer(layer: KerasLayer, *args, **kwargs) -> bool:
 def is_convnet_layer(layer: KerasLayer) -> bool:
     """Checks if layer is from a convolutional network."""
     # Inside function to not break import if Keras changes.
-    CONVNET_LAYERS = (
+    convnet_layers = (
         keras.engine.topology.InputLayer,
         keras.layers.advanced_activations.ELU,
         keras.layers.advanced_activations.LeakyReLU,
@@ -368,7 +361,7 @@ def is_convnet_layer(layer: KerasLayer) -> bool:
         keras.layers.pooling.MaxPooling2D,
         keras.layers.pooling.MaxPooling3D,
     )
-    return isinstance(layer, CONVNET_LAYERS)
+    return isinstance(layer, convnet_layers)
 
 
 def is_relu_convnet_layer(layer: KerasLayer) -> bool:
@@ -378,7 +371,7 @@ def is_relu_convnet_layer(layer: KerasLayer) -> bool:
 
 def is_average_pooling(layer: KerasLayer) -> bool:
     """Checks if layer is an average-pooling layer."""
-    AVERAGEPOOLING_LAYERS = (
+    averagepooling_layers = (
         keras.layers.pooling.AveragePooling1D,
         keras.layers.pooling.AveragePooling2D,
         keras.layers.pooling.AveragePooling3D,
@@ -386,12 +379,12 @@ def is_average_pooling(layer: KerasLayer) -> bool:
         keras.layers.pooling.GlobalAveragePooling2D,
         keras.layers.pooling.GlobalAveragePooling3D,
     )
-    return isinstance(layer, AVERAGEPOOLING_LAYERS)
+    return isinstance(layer, averagepooling_layers)
 
 
 def is_max_pooling(layer: KerasLayer) -> bool:
     """Checks if layer is a max-pooling layer."""
-    MAXPOOLING_LAYERS = (
+    maxpooling_layers = (
         keras.layers.pooling.MaxPooling1D,
         keras.layers.pooling.MaxPooling2D,
         keras.layers.pooling.MaxPooling3D,
@@ -399,7 +392,7 @@ def is_max_pooling(layer: KerasLayer) -> bool:
         keras.layers.pooling.GlobalMaxPooling2D,
         keras.layers.pooling.GlobalMaxPooling3D,
     )
-    return isinstance(layer, MAXPOOLING_LAYERS)
+    return isinstance(layer, maxpooling_layers)
 
 
 def is_input_layer(layer: KerasLayer, ignore_reshape_layers: bool = True) -> bool:
@@ -412,25 +405,22 @@ def is_input_layer(layer: KerasLayer, ignore_reshape_layers: bool = True) -> boo
     layer_inputs = kgraph.get_input_layers(layer)
     # We ignore certain layers, that do not modify
     # the data content.
-    # todo: update this list!
-    IGNORED_LAYERS = (
+    # TODO: update this list!
+    ignored_layers = (
         keras.layers.Flatten,
         keras.layers.Permute,
         keras.layers.Reshape,
     )
-    while any([isinstance(x, IGNORED_LAYERS) for x in layer_inputs]):
+    while any(isinstance(x, ignored_layers) for x in layer_inputs):
         tmp = set()
         for layer_input in layer_inputs:
-            if ignore_reshape_layers and isinstance(layer_input, IGNORED_LAYERS):
+            if ignore_reshape_layers and isinstance(layer_input, ignored_layers):
                 tmp.update(kgraph.get_input_layers(layer_input))
             else:
                 tmp.add(layer_input)
         layer_inputs = tmp
 
-    if all([isinstance(x, keras.layers.InputLayer) for x in layer_inputs]):
-        return True
-    else:
-        return False
+    return all(isinstance(x, keras.layers.InputLayer) for x in layer_inputs)
 
 
 def is_layer_at_idx(layer: KerasLayer, index, ignore_reshape_layers=True) -> bool:
