@@ -275,7 +275,7 @@ def is_network(layer: KerasLayer) -> bool:
     return isinstance(layer, keras.engine.topology.Network)
 
 
-def is_conv_layer(layer: KerasLayer) -> bool:
+def is_conv_layer(layer: KerasLayer, *args, **kwargs) -> bool:
     """Checks if layer is a convolutional layer."""
     CONV_LAYERS = (
         keras.layers.convolutional.Conv1D,
@@ -290,21 +290,21 @@ def is_conv_layer(layer: KerasLayer) -> bool:
     return isinstance(layer, CONV_LAYERS)
 
 
-def is_embedding_layer(layer: KerasLayer) -> bool:
+def is_embedding_layer(layer: KerasLayer, *args, **kwargs) -> bool:
     return isinstance(layer, keras.layers.Embedding)
 
 
-def is_batch_normalization_layer(layer: KerasLayer) -> bool:
+def is_batch_normalization_layer(layer: KerasLayer, *args, **kwargs) -> bool:
     """Checks if layer is a batchnorm layer."""
     return isinstance(layer, keras.layers.normalization.BatchNormalization)
 
 
-def is_add_layer(layer: KerasLayer) -> bool:
+def is_add_layer(layer: KerasLayer, *args, **kwargs) -> bool:
     """Checks if layer is an addition-merge layer."""
     return isinstance(layer, keras.layers.Add)
 
 
-def is_dense_layer(layer: KerasLayer) -> bool:
+def is_dense_layer(layer: KerasLayer, *args, **kwargs) -> bool:
     """Checks if layer is a dense layer."""
     return isinstance(layer, keras.layers.core.Dense)
 
