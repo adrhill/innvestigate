@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 import math
+from typing import Callable
+from typing import List
+from typing import Tuple
+from typing import Union
 
 import keras.backend as K
 import keras.utils as kutils
+from tensorflow import Tensor
 
 from innvestigate.utils.keras.graph import model_wo_softmax
 
@@ -17,14 +22,11 @@ __all__ = [
 ]
 
 
-def to_list(x):
+def to_list(X: Union[Tensor, List[Tensor]]) -> List[Tensor]:
     """ If not list, wraps parameter into a list."""
-    if not isinstance(x, list):
-        return [
-            x,
-        ]
-    else:
-        return x
+    if isinstance(X, list):
+        return X
+    return [X]
 
 
 ###############################################################################
@@ -40,26 +42,27 @@ class BatchSequence(kutils.Sequence):
     :param batch_size: Batch size. Default 32.
     """
 
-    def __init__(self, Xs, batch_size=32):
-        self.Xs = to_list(Xs)
-        self.single_tensor = len(Xs) == 1
-        self.batch_size = batch_size
+    def __init__(self, Xs: Union[Tensor, List[Tensor]], batch_size: int = 32) -> None:
+        self.Xs: List[Tensor] = to_list(Xs)
+        self.single_tensor: bool = len(Xs) == 1
+        self.batch_size: int = batch_size
 
         if not self.single_tensor:
             for X in self.Xs[1:]:
                 assert X.shape[0] == self.Xs[0].shape[0]
         super().__init__()
 
-    def __len__(self):
+    def __len__(self) -> int:
         return int(math.ceil(float(len(self.Xs[0])) / self.batch_size))
 
-    def __getitem__(self, idx):
-        ret = [X[idx * self.batch_size : (idx + 1) * self.batch_size] for X in self.Xs]
+    def __getitem__(self, idx: int) -> Union[Tensor, Tuple[Tensor]]:
+        ret: List[Tensor] = [
+            X[idx * self.batch_size : (idx + 1) * self.batch_size] for X in self.Xs
+        ]
 
         if self.single_tensor:
             return ret[0]
-        else:
-            return tuple(ret)
+        return tuple(ret)
 
 
 class TargetAugmentedSequence(kutils.Sequence):
@@ -74,7 +77,7 @@ class TargetAugmentedSequence(kutils.Sequence):
     :param augment_f: Takes a batch and returns a target.
     """
 
-    def __init__(self, sequence, augment_f):
+    def __init__(self, sequence: List, augment_f: Callable) -> None:
         self.sequence = sequence
         self.augment_f = augment_f
 
@@ -83,7 +86,7 @@ class TargetAugmentedSequence(kutils.Sequence):
     def __len__(self):
         return len(self.sequence)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int):
         inputs = self.sequence[idx]
         if isinstance(inputs, tuple):
             assert len(inputs) == 1
@@ -96,7 +99,7 @@ class TargetAugmentedSequence(kutils.Sequence):
 ###############################################################################
 
 
-def preprocess_images(images, color_coding=None):
+def preprocess_images(images: Tensor, color_coding: str = None) -> Tensor:
     """Image preprocessing
 
     Takes a batch of images and:
@@ -109,10 +112,11 @@ def preprocess_images(images, color_coding=None):
     :return: The preprocessed batch.
     """
 
-    ret = images
-    image_data_format = K.image_data_format()
+    ret: Tensor = images
+    image_data_format: str = K.image_data_format()
+
     # TODO: not very general:
-    channels_first = images.shape[1] in [1, 3]
+    channels_first: bool = images.shape[1] in [1, 3]
     if image_data_format == "channels_first" and not channels_first:
         ret = ret.transpose(0, 3, 1, 2)
     if image_data_format == "channels_last" and channels_first:
@@ -128,7 +132,9 @@ def preprocess_images(images, color_coding=None):
     return ret
 
 
-def postprocess_images(images, color_coding=None, channels_first=None):
+def postprocess_images(
+    images: Tensor, color_coding: str = None, channels_first: bool = None
+) -> Tensor:
     """Image postprocessing
 
     Takes a batch of images and reverts the preprocessing.
@@ -140,8 +146,9 @@ def postprocess_images(images, color_coding=None, channels_first=None):
     :return: The postprocessed images.
     """
 
-    ret = images
-    image_data_format = K.image_data_format()
+    ret: Tensor = images
+    image_data_format: str = K.image_data_format()
+
     assert color_coding in [None, "RGBtoBGR", "BGRtoRGB"]
     if color_coding in ["RGBtoBGR", "BGRtoRGB"]:
         if image_data_format == "channels_first":

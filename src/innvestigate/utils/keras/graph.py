@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 from builtins import range
 from builtins import zip
-from typing import Iterable
+from typing import List
 
 import keras.backend as K
 import keras.engine.topology
@@ -897,11 +897,11 @@ class ReverseMappingBase(object):
 
     def apply(
         self,
-        Xs: Iterable[Tensor],
-        Ys: Iterable[Tensor],
-        Rs: Iterable[Tensor],
+        Xs: List[Tensor],
+        Ys: List[Tensor],
+        Rs: List[Tensor],
         reverse_state,
-    ) -> Iterable[Tensor]:
+    ) -> List[Tensor]:
         raise NotImplementedError()
 
 

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from typing import List
+
 import keras.backend as K
 import tensorflow
+from tensorflow import Tensor
 
 # TODO: remove this file -A.
 
@@ -15,11 +18,14 @@ __all__ = [
 ]
 
 
-def to_floatx(x):
-    return K.cast(x, K.floatx())
+def to_floatx(X: Tensor) -> Tensor:
+    """Cast Tensor to default float type."""
+    return K.cast(X, K.floatx())
 
 
-def gradients(Xs, Ys, known_Ys):
+def gradients(
+    Xs: List[Tensor], Ys: List[Tensor], known_Ys: List[Tensor]
+) -> List[Tensor]:
     """Partial derivatives
 
     Computes the partial derivatives between Ys and Xs and
@@ -33,13 +39,13 @@ def gradients(Xs, Ys, known_Ys):
     return tensorflow.gradients(Ys, Xs, grad_ys=known_Ys, stop_gradients=Xs)
 
 
-def is_not_finite(x):
+def is_not_finite(X: Tensor) -> Tensor:  # returns Tensor of dtype bool
     """Checks if tensor x is finite, if not throws an exception."""
     # x = tensorflow.check_numerics(x, "innvestigate - is_finite check")
-    return tensorflow.logical_not(tensorflow.is_finite(x))
+    return tensorflow.logical_not(tensorflow.is_finite(X))
 
 
-def extract_conv2d_patches(x, kernel_shape, strides, rates, padding):
+def extract_conv2d_patches(X: Tensor, kernel_shape, strides, rates, padding) -> Tensor:
     """Extracts conv2d patches like TF function extract_image_patches.
 
     :param x: Input image.
@@ -50,12 +56,12 @@ def extract_conv2d_patches(x, kernel_shape, strides, rates, padding):
     :return: The extracted patches.
     """
     if K.image_data_format() == "channels_first":
-        x = K.permute_dimensions(x, (0, 2, 3, 1))
+        X = K.permute_dimensions(X, (0, 2, 3, 1))
     kernel_shape = [1, kernel_shape[0], kernel_shape[1], 1]
     strides = [1, strides[0], strides[1], 1]
     rates = [1, rates[0], rates[1], 1]
     ret = tensorflow.extract_image_patches(
-        x, kernel_shape, strides, rates, padding.upper()
+        X, kernel_shape, strides, rates, padding.upper()
     )
 
     if K.image_data_format() == "channels_first":
@@ -64,11 +70,21 @@ def extract_conv2d_patches(x, kernel_shape, strides, rates, padding):
     return ret
 
 
-def gather(x, axis, indices):
-    """TensorFlow's gather."""
-    return tensorflow.gather(x, indices, axis=axis)
+def gather(
+    X: Tensor,
+    axis: Tensor,  # Tensor of integer dtype
+    indices: Tensor,  # Tensor of integer dtype
+) -> Tensor:
+    """TensorFlow's gather:
+    Gather slices from `X` axis `axis` according to `indices`.
+    """
+    return tensorflow.gather(X, indices, axis=axis)
 
 
-def gather_nd(x, indices):
-    """TensorFlow's gather_nd."""
-    return tensorflow.gather_nd(x, indices)
+def gather_nd(
+    X: Tensor,
+    indices: Tensor,  # Tensor of integer dtype
+) -> Tensor:
+    """TensorFlow's gather_nd:
+    Gather slices from `X` into a Tensor with shape specified by `indices`."""
+    return tensorflow.gather_nd(X, indices)

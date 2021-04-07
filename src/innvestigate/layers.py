@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from builtins import range
 from builtins import zip
+from typing import List
+from typing import Tuple
+from typing import Union
 
 import keras
 import keras.backend as K
@@ -10,6 +13,7 @@ import keras.layers
 import keras.regularizers
 import numpy as np
 from keras.utils import conv_utils
+from tensorflow import Tensor
 
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.backend as iK
@@ -61,39 +65,43 @@ __all__ = [
 ###############################################################################
 
 
-def Constant(c, reference=None):
+def Constant(c, reference: Tensor = None) -> Tensor:
     if reference is None:
         return K.constant(c)
     else:
-        dtype = K.dtype(reference)
+        dtype: str = K.dtype(reference)
         return K.constant(np.dtype(dtype)(c), dtype=dtype)
 
 
-def Zero(reference=None):
+def Zero(reference: Tensor = None):
     return Constant(0, reference=reference)
 
 
-def One(reference=None):
+def One(reference: Tensor = None):
     return Constant(1, reference=reference)
 
 
 class ZerosLike(keras.layers.Layer):
-    def call(self, x):
+    """Create list of all-zero tensors of the same shapes as provided tensors."""
+
+    def call(self, x: Union[Tensor, List[Tensor]], **_kwargs) -> List[Tensor]:
         return [K.zeros_like(tmp) for tmp in iutils.to_list(x)]
 
 
 class OnesLike(keras.layers.Layer):
-    def call(self, x):
+    """Create list of all-ones tensors of the same shapes as provided tensors."""
+
+    def call(self, x: Union[Tensor, List[Tensor]], **_kwargs) -> List[Tensor]:
         return [K.ones_like(tmp) for tmp in iutils.to_list(x)]
 
 
 class AsFloatX(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Union[Tensor, List[Tensor]], **_kwargs) -> List[Tensor]:
         return [iK.to_floatx(tmp) for tmp in iutils.to_list(x)]
 
 
 class FiniteCheck(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Union[Tensor, List[Tensor]], **_kwargs) -> List[Tensor]:
         return [K.sum(iK.to_floatx(iK.is_not_finite(tmp))) for tmp in iutils.to_list(x)]
 
 
@@ -205,32 +213,32 @@ class _Reduce(keras.layers.Layer):
                     axes[i] = 1
             return tuple([idx for i, idx in enumerate(input_shape) if i in axes])
 
-    def _apply_reduce(self, x, axis, keepdims):
+    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
         raise NotImplementedError()
 
 
 class Min(_Reduce):
-    def _apply_reduce(self, x, axis, keepdims):
+    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
         return K.min(x, axis=axis, keepdims=keepdims)
 
 
 class Max(_Reduce):
-    def _apply_reduce(self, x, axis, keepdims):
+    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
         return K.max(x, axis=axis, keepdims=keepdims)
 
 
 class Sum(_Reduce):
-    def _apply_reduce(self, x, axis, keepdims):
+    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
         return K.sum(x, axis=axis, keepdims=keepdims)
 
 
 class Mean(_Reduce):
-    def _apply_reduce(self, x, axis, keepdims):
+    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
         return K.mean(x, axis=axis, keepdims=keepdims)
 
 
 class CountNonZero(_Reduce):
-    def _apply_reduce(self, x, axis, keepdims):
+    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
         return K.sum(
             iK.to_floatx(K.not_equal(x, K.constant(0))), axis=axis, keepdims=keepdims
         )
@@ -240,77 +248,81 @@ class CountNonZero(_Reduce):
 
 
 class _Map(keras.layers.Layer):
-    def call(self, x):
-        if isinstance(x, list) and len(x) == 1:
-            x = x[0]
-        return self._apply_map(x)
+    def call(self, X: Union[Tensor, List[Tensor]]) -> Union[Tensor, List[Tensor]]:
+        if isinstance(X, list) and len(X) == 1:
+            X = X[0]
+        return self._apply_map(X)
 
     def compute_output_shape(self, input_shape):
         return input_shape
 
-    def _apply_map(self, x):
+    def _apply_map(self, X: Tensor):
         raise NotImplementedError()
 
 
 class Identity(_Map):
-    def _apply_map(self, x):
-        return K.identity(x)
+    def _apply_map(self, X: Tensor) -> Tensor:
+        return K.identity(X)
 
 
 class Abs(_Map):
-    def _apply_map(self, x):
-        return K.abs(x)
+    def _apply_map(self, X: Tensor) -> Tensor:
+        return K.abs(X)
 
 
 class Square(_Map):
-    def _apply_map(self, x):
-        return K.square(x)
+    def _apply_map(self, X: Tensor) -> Tensor:
+        return K.square(X)
 
 
 class Clip(_Map):
-    def __init__(self, min_value, max_value):
+    def __init__(
+        self, min_value: Union[float, int, Tensor], max_value: Union[float, int, Tensor]
+    ) -> None:
         self._min_value = min_value
         self._max_value = max_value
-        return super().__init__()
+        super().__init__()
 
-    def _apply_map(self, x):
-        return K.clip(x, self._min_value, self._max_value)
+    def _apply_map(self, X: Tensor) -> Tensor:
+        return K.clip(X, self._min_value, self._max_value)
 
 
 class Project(_Map):
-    def __init__(self, output_range=False, input_is_postive_only=False):
+    def __init__(self, output_range=False, input_is_postive_only: bool = False) -> None:
+        # TODO: add type of output_range
         self._output_range = output_range
         self._input_is_positive_only = input_is_postive_only
-        return super().__init__()
+        super().__init__()
 
-    def _apply_map(self, x):
-        def safe_divide(a, b):
-            return a / (b + iK.to_floatx(K.equal(b, K.constant(0))) * 1)
+    def _apply_map(self, X: Tensor):
+        def safe_divide(A: Tensor, B: Tensor) -> Tensor:
+            return A / (B + iK.to_floatx(K.equal(B, K.constant(0))) * 1)
 
-        dims = K.int_shape(x)
-        n_dim = len(dims)
+        dims: Tuple[int] = K.int_shape(X)
+        n_dim: int = len(dims)
         axes = tuple(range(1, n_dim))
+
         if len(axes) == 1:
             # TODO(albermax): this is only the case when the dimension in this
             # axis is 1, fix this.
             # Cannot reduce
-            return x
+            return X
 
-        absmax = K.max(K.abs(x), axis=axes, keepdims=True)
-        x = safe_divide(x, absmax)
+        absmax = K.max(K.abs(X), axis=axes, keepdims=True)
+        X = safe_divide(X, absmax)
 
         if self._output_range not in (False, True):  # True = (-1, +1)
             output_range = self._output_range
 
             if not self._input_is_positive_only:
-                x = (x + 1) / 2
-            x = K.clip(x, 0, 1)
+                X = (X + 1) / 2
+            X = K.clip(X, 0, 1)
 
-            x = output_range[0] + (x * (output_range[1] - output_range[0]))
+            X = output_range[0] + (X * (output_range[1] - output_range[0]))
         else:
-            x = K.clip(x, -1, 1)
+            X = K.clip(X, -1, 1)
 
-        return x
+        return X
 
 
 class Print(_Map):
