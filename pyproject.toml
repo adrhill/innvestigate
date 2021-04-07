@@ -39,6 +39,7 @@ Pillow = "^8.1.1"
 future = "^0.18.2"
 numpy = "^1.18.5"
 matplotlib = "^3.4.0"
+typing-extensions = "^3.7.4"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.7.0"
@@ -58,6 +59,7 @@ rope = "^0.18.0"
 pylint = "^2.7.3"
 ipykernel = "^5.5.0"
 isort = "^5.8.0"
+mypy = "^0.812"
 
 [tool.isort]
 profile = "black"
