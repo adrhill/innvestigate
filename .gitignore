@@ -127,3 +127,6 @@ nosetests.cfg
 
 # ignore nbconvert script output
 examples/nbconvert_tmp
+
+# ignore MonkeyType call traces
+monkeytype.sqlite3

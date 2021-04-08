@@ -60,6 +60,7 @@ pylint = "^2.7.3"
 ipykernel = "^5.5.0"
 isort = "^5.8.0"
 mypy = "^0.812"
+MonkeyType = "^20.5.0"
 
 [tool.isort]
 profile = "black"
