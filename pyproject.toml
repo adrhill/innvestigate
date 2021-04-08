@@ -72,8 +72,8 @@ group_by_package = "True"
 force_alphabetical_sort_within_sections = "True"
 
 [tool.pytest.ini_options]
-addopts = "-v -m fast --strict-markers"
-# addopts = "-v -m precommit --strict-markers"
+addopts = "-v -m fast --strict-markers --cov"
+# addopts = "-v -m precommit --strict-markers --cov"
 filterwarnings = [
     "ignore::DeprecationWarning:tensorflow",
     "ignore::DeprecationWarning:keras",
@@ -91,7 +91,7 @@ source = ["src", "*/site-packages"]
 
 [tool.coverage.run]
 branch = true
-source = "innvestigate"
+source = ["innvestigate"]
 
 [tool.coverage.report]
 show_missing = false
