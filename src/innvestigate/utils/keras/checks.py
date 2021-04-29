@@ -27,10 +27,6 @@ from keras.layers import Layer
 
 import innvestigate.utils.keras.graph as kgraph
 
-# Define type of checks, using Any for kwargs
-ModelCheck = Union[Callable[[Layer], bool], Callable[[Layer, Any], bool]]
-
-
 __all__ = [
     "get_current_layers",
     "get_known_layers",
@@ -187,7 +183,7 @@ def get_activation_search_safe_layers():
 ###############################################################################
 
 
-def contains_activation(layer: Layer, activation=None) -> bool:
+def contains_activation(layer: Layer, activation: str = None) -> bool:
     """
     Check whether the layer contains an activation function.
     activation is None then we only check if layer can contain an activation.
@@ -197,11 +193,15 @@ def contains_activation(layer: Layer, activation=None) -> bool:
     # rely on Keras convention.
     if hasattr(layer, "activation"):
         if activation is not None:
-            return layer.activation == keras.activations.get(activation)
+            is_activation: bool = layer.activation == keras.activations.get(activation)
+            return is_activation
         return True
     elif isinstance(layer, keras.layers.ReLU):
         if activation is not None:
-            return keras.activations.get("relu") == keras.activations.get(activation)
+            is_relu: bool = keras.activations.get("relu") == keras.activations.get(
+                activation
+            )
+            return is_relu
         return True
     elif isinstance(
         layer,

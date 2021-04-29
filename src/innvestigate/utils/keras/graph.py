@@ -3,7 +3,14 @@ from __future__ import annotations
 import inspect
 from builtins import range
 from builtins import zip
+from typing import Callable
+from typing import Dict
 from typing import List
+from typing import Optional
+from typing import Set
+from typing import Sequence
+from typing import Tuple
+from typing import Union
 
 import keras.backend as K
 import keras.engine.topology
@@ -11,12 +18,16 @@ import keras.layers
 import keras.models
 import numpy as np
 import six
-from keras.layers import Layer
-from tensorflow import Tensor
 
 import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.checks as kchecks
+from innvestigate.utils.keras import apply as kapply
+from innvestigate.utils.types import NodeDict
+from innvestigate.utils.types import Layer
+from innvestigate.utils.types import LayerCheck
+from innvestigate.utils.types import Model
+from innvestigate.utils.types import Tensor
 
 __all__ = [
     "get_kernel",
@@ -40,14 +51,14 @@ __all__ = [
 ]
 
 
-def get_kernel(layer):
+def get_kernel(layer: Layer) -> Tensor:
     """Returns the kernel weights of a layer, i.e, w/o biases."""
     ret = [x for x in layer.get_weights() if len(x.shape) > 1]
     assert len(ret) == 1
     return ret[0]
 
 
-def get_input_layers(layer):
+def get_input_layers(layer: Layer) -> Set[Layer]:
     """Returns all layers that created this layer's inputs."""
     ret = set()
 
@@ -62,18 +73,23 @@ def get_input_layers(layer):
 ###############################################################################
 
 
-def get_layer_inbound_count(layer):
+def get_layer_inbound_count(layer: Layer) -> int:
     """Returns the number inbound nodes of a layer."""
     return len(layer._inbound_nodes)
 
 
-def get_layer_outbound_count(layer):
+def get_layer_outbound_count(layer: Layer) -> int:
     """Returns the number outbound nodes of a layer."""
     return len(layer.outbound_nodes)
 
 
 def get_layer_neuronwise_io(
-    layer, node_index=0, Xs=None, Ys=None, return_i=True, return_o=True
+    layer: Layer,
+    node_index: int = 0,
+    Xs: List[Tensor] = None,
+    Ys: List[Tensor] = None,
+    return_i: bool = True,
+    return_o: bool = True,
 ):
     """Returns the input and output for each neuron in a layer
 
@@ -126,18 +142,18 @@ def get_layer_neuronwise_io(
             # Get Ys into shape (samples, channels)
             if K.image_data_format() == "channels_first":
                 # Ys shape is [samples, channels, out_row, out_col]
-                def reshape(x):
+                def _reshape(x):
                     x = ilayers.Transpose((0, 2, 3, 1))(x)
                     x = ilayers.Reshape((-1, n_channels))(x)
                     return x
 
             else:
                 # Ys shape is [samples, out_row, out_col, channels]
-                def reshape(x):
+                def _reshape(x):
                     x = ilayers.Reshape((-1, n_channels))(x)
                     return x
 
-            ret_Ys = [reshape(x) for x in Ys]
+            ret_Ys = [_reshape(x) for x in Ys]
 
     else:
         raise NotImplementedError()
@@ -153,7 +169,7 @@ def get_layer_neuronwise_io(
         raise Exception()
 
 
-def get_symbolic_weight_names(layer, weights=None):
+def get_symbolic_weight_names(layer: Layer, weights: List[Tensor] = None) -> List[str]:
     """Attribute names for weights
 
     Looks up the attribute names of weight tensors.
@@ -191,7 +207,7 @@ def get_symbolic_weight_names(layer, weights=None):
     return ret
 
 
-def update_symbolic_weights(layer, weight_mapping):
+def update_symbolic_weights(layer: Layer, weight_mapping: Dict[str, Tensor]):
     """Updates the symbolic tensors of a layer
 
     Updates the symbolic tensors of a layer by replacing them.
@@ -308,16 +324,14 @@ def copy_layer_wo_activation(
 
 
 def copy_layer(
-    layer,
-    keep_bias=True,
-    name_template=None,
-    weights=None,
-    reuse_symbolic_tensors=True,
+    layer: Layer,
+    keep_bias: bool = True,
+    name_template: bool = None,
+    weights: Optional[Union[Tensor, np.ndarray]] = None,
+    reuse_symbolic_tensors: bool = True,
     **kwargs
-):
-    """Copy a Keras layer
-
-    Copies a Keras layer.
+) -> Layer:
+    """Copy a Keras layer.
 
     :param layer: A layer that should be copied.
     :param keep_bias: Keep a potential bias.
@@ -345,7 +359,7 @@ def copy_layer(
     return get_layer_from_config(layer, config, weights=weights, **kwargs)
 
 
-def pre_softmax_tensors(Xs, should_find_softmax=True):
+def pre_softmax_tensors(Xs: Tensor, should_find_softmax: bool = True) -> List[Tensor]:
     """Finds the tensors that were preceeding a potential softmax."""
     softmax_found = False
 
@@ -367,7 +381,7 @@ def pre_softmax_tensors(Xs, should_find_softmax=True):
     return ret
 
 
-def model_wo_softmax(model):
+def model_wo_softmax(model: Model) -> Model:
     """Creates a new model w/o the final softmax activation."""
     return keras.models.Model(
         inputs=model.inputs, outputs=pre_softmax_tensors(model.outputs), name=model.name
@@ -377,7 +391,7 @@ def model_wo_softmax(model):
 ###############################################################################
 
 
-def get_model_layers(model):
+def get_model_layers(model: Model) -> List[Layer]:
     """Returns all layers of a model."""
     ret = []
 
@@ -433,7 +447,7 @@ def model_contains(
 ###############################################################################
 
 
-def apply_mapping_to_fused_bn_layer(mapping, fuse_mode="one_linear"):
+def apply_mapping_to_fused_bn_layer(mapping, fuse_mode: str = "one_linear"):
     """
     Applies a mapping to a linearized Batch Normalization layer.
 
@@ -447,7 +461,7 @@ def apply_mapping_to_fused_bn_layer(mapping, fuse_mode="one_linear"):
     if fuse_mode not in ["one_linear", "two_linear"]:
         raise ValueError("fuse_mode can only be 'one_linear' or 'two_linear'")
 
-    # todo(alber): remove this workaround and make a proper class
+    # TODO (alber): remove this workaround and make a proper class
     def ScaleLayer(kernel, bias):
         _kernel = kernel
         _bias = bias
@@ -486,7 +500,7 @@ def apply_mapping_to_fused_bn_layer(mapping, fuse_mode="one_linear"):
 
         return ScaleLayer()
 
-    def meta_mapping(layer, reverse_state):
+    def meta_mapping(layer: Layer, reverse_state):
         # get bn params
         weights = layer.weights[:]
         if layer.scale:
@@ -522,16 +536,20 @@ def apply_mapping_to_fused_bn_layer(mapping, fuse_mode="one_linear"):
             # init layers
             surrogate_layer1(inputs)
             surrogate_layer2(inputs)
-            # todo(alber): update reverse state
+            # TODO (alber): update reverse state
             actual_mapping_1 = mapping(surrogate_layer1, reverse_state).apply
             actual_mapping_2 = mapping(surrogate_layer2, reverse_state).apply
 
-            def actual_mapping(Xs, Ys, reversed_Ys, reverse_state):
-                from . import apply as kapply
+            def actual_mapping(
+                Xs: List[Tensor],
+                Ys: List[Tensor],
+                reversed_Ys: List[Tensor],
+                reverse_state,
+            ):
 
                 X2s = kapply(surrogate_layer1, Xs)
                 # Apply first mapping
-                # todo(alber): update reverse state
+                # TODO (alber): update reverse state
                 reversed_X2s = actual_mapping_2(X2s, Ys, reversed_Ys, reverse_state)
                 return actual_mapping_1(Xs, X2s, reversed_X2s, reverse_state)
 
@@ -543,7 +561,9 @@ def apply_mapping_to_fused_bn_layer(mapping, fuse_mode="one_linear"):
 ###############################################################################
 
 
-def trace_model_execution(model, reapply_on_copied_layers=False):
+def trace_model_execution(
+    model: Model, reapply_on_copied_layers: bool = False
+) -> Tuple[List[Layer], List[Tuple[Layer, List[Tensor], List[Tensor]]], List[Tensor]]:
     """
     Trace and linearize excecution of a model and it's possible containers.
     Return a triple with all layers, a list with a linearized execution
@@ -557,13 +577,15 @@ def trace_model_execution(model, reapply_on_copied_layers=False):
     """
 
     # Get all layers in model.
-    layers = get_model_layers(model)
+    layers: List[Layer] = get_model_layers(model)
 
     # Check if some layers are containers.
     # Ignoring the outermost container, i.e. the passed model.
-    contains_container = any(
+    contains_container: bool = any(
         [((l is not model) and kchecks.is_network(l)) for l in layers]
     )
+
+    outputs: List[Tensor]
 
     # If so rebuild the graph, otherwise recycle computations,
     # and create executed node list. (Keep track of paths?)
@@ -582,16 +604,18 @@ def trace_model_execution(model, reapply_on_copied_layers=False):
         # and outbound nodes of the model itself. We copy the model
         # so the passed model should not be affected from the
         # reapplication.
-        executed_nodes = []
+        executed_nodes: List[Tuple[Layer, List[Tensor], List[Tensor]]] = []
 
         # Monkeypatch the call function in all the used layer classes.
-        monkey_patches = [(layer, layer.call) for layer in layers]
+        monkey_patches: List[Tuple[Layer, Callable]] = [
+            (layer, layer.call) for layer in layers
+        ]
         try:
 
-            def patch(self, method):
+            def patch(self, method: Callable):
                 if hasattr(method, "__patched__") is True:
                     raise Exception(
-                        "Should not happen as we patch " "objects not classes."
+                        "Should not happen as we patch objects, not classes."
                     )
 
                 def f(*args, **kwargs):
@@ -600,7 +624,7 @@ def trace_model_execution(model, reapply_on_copied_layers=False):
                     executed_nodes.append((self, input_tensors, output_tensors))
                     return output_tensors
 
-                f.__patched__ = True
+                f.__patched__ = True  # type: ignore
                 return f
 
             # Apply the patches.
@@ -608,7 +632,9 @@ def trace_model_execution(model, reapply_on_copied_layers=False):
                 layer.call = patch(layer, layer.call)
 
             # Trigger reapplication of model.
-            model_copy = keras.models.Model(inputs=model.inputs, outputs=model.outputs)
+            model_copy: Model = keras.models.Model(
+                inputs=model.inputs, outputs=model.outputs
+            )
             outputs = iutils.to_list(model_copy(model.inputs))
         finally:
             # Revert the monkey patches
@@ -618,10 +644,11 @@ def trace_model_execution(model, reapply_on_copied_layers=False):
         # Now we have the problem that all the tensors
         # do not have a keras_history attribute as they are not part
         # of any node. Apply the flat model to get it.
-        from . import apply as kapply
 
-        new_executed_nodes = []
-        tensor_mapping = {tmp: tmp for tmp in model.inputs}
+        tensor_mapping: Dict[Tensor, Tensor] = {tmp: tmp for tmp in model.inputs}
+        layer_mapping: Dict[Layer, Layer]
+        new_executed_nodes: List[Tuple[Layer, List[Tensor], List[Tensor]]] = []
+
         if reapply_on_copied_layers is True:
             layer_mapping = {layer: copy_layer(layer) for layer in layers}
         else:
@@ -638,6 +665,7 @@ def trace_model_execution(model, reapply_on_copied_layers=False):
                 new_Xs = [tensor_mapping[x] for x in Xs]
                 new_Ys = iutils.to_list(kapply(layer, new_Xs))
 
+            # Update values of Ys in tensor_mapping with new_Ys
             tensor_mapping.update({k: v for k, v in zip(Ys, new_Ys)})
             new_executed_nodes.append((layer, new_Xs, new_Ys))
 
@@ -646,23 +674,23 @@ def trace_model_execution(model, reapply_on_copied_layers=False):
         executed_nodes = new_executed_nodes
     else:
         # Easy and safe way.
-        reverse_executed_nodes = [
+        reverse_executed_nodes: List[Tuple[Layer, List[Tensor], List[Tensor]]] = [
             (node.outbound_layer, node.input_tensors, node.output_tensors)
             for depth in sorted(model._nodes_by_depth.keys())
             for node in model._nodes_by_depth[depth]
         ]
         outputs = model.outputs
 
-        executed_nodes = reversed(reverse_executed_nodes)
+        executed_nodes = list(reversed(reverse_executed_nodes))
 
-    # This list contains potentially nodes that are not part
-    # final execution graph.
-    # E.g., a layer was also applied outside of the model. Then its
+    # `executed_nodes` potentially contains nodes that are not part
+    # of the final execution graph.
+    # E.g. if a layer was also applied outside of the model. Then its
     # node list contains nodes that do not contribute to the model's output.
     # Those nodes are filtered here.
     used_as_input = [x for x in outputs]
     tmp = []
-    for l, Xs, Ys in reversed(list(executed_nodes)):
+    for l, Xs, Ys in reversed(executed_nodes):
         if all([y in used_as_input for y in Ys]):
             used_as_input += Xs
             tmp.append((l, Xs, Ys))
@@ -672,22 +700,22 @@ def trace_model_execution(model, reapply_on_copied_layers=False):
 
 
 def get_model_execution_trace(
-    model, keep_input_layers=False, reapply_on_copied_layers=False
-):
+    model: Model, keep_input_layers=False, reapply_on_copied_layers=False
+) -> List[NodeDict]:
     """
     Returns a list representing the execution graph.
     Each key is the node's id as it is used by the reverse_model method.
 
     Each associated value contains a dictionary with the following items:
 
-    * nid: the node id.
-    * layer: the layer creating this node.
-    * Xs: the input tensors (only valid if not in a nested container).
-    * Ys: the output tensors (only valid if not in a nested container).
-    * Xs_nids: the ids of the nodes creating the Xs.
-    * Ys_nids: the ids of nodes using the according output tensor.
-    * Xs_layers: the layer that created the accodring input tensor.
-    * Ys_layers: the layers using the according output tensor.
+    * `nid`: the node id.
+    * `layer`: the layer creating this node.
+    * `Xs`: the input tensors (only valid if not in a nested container).
+    * `Ys`: the output tensors (only valid if not in a nested container).
+    * `Xs_nids`: the ids of the nodes creating the Xs.
+    * `Ys_nids`: the ids of nodes using the according output tensor.
+    * `Xs_layers`: the layer that created the according input tensor.
+    * `Ys_layers`: the layers using the according output tensor.
 
     :param model: A kera model.
     :param keep_input_layers: Keep input layers.
@@ -695,25 +723,35 @@ def get_model_execution_trace(
       reapply with copied layers. Might be slow. Prevents changes of the
       original layer's node lists.
     """
+    # Get execution_trace: list with a linearized execution
+    # consisting of `(layer, input_tensors, output_tensors)`.
+    execution_trace: List[Tuple[Layer, List[Tensor], List[Tensor]]]
     _, execution_trace, _ = trace_model_execution(
         model, reapply_on_copied_layers=reapply_on_copied_layers
     )
 
-    # Enrich trace with node ids.
+    # Enrich execution_trace with node ids to get id_execution_trace
+    nid: Optional[int]
+    current_nid: int
+    id_execution_trace: List[Tuple[Optional[int], Layer, List[Tensor], List[Tensor]]]
+    tmp: List[Tuple[Optional[int], Layer, List[Tensor], List[Tensor]]]
+
     current_nid = 0
-    tmp = []
+    id_execution_trace = []
     for l, Xs, Ys in execution_trace:
         if isinstance(l, keras.layers.InputLayer):
-            tmp.append((None, l, Xs, Ys))
+            id_execution_trace.append((None, l, Xs, Ys))
         else:
-            tmp.append((current_nid, l, Xs, Ys))
+            id_execution_trace.append((current_nid, l, Xs, Ys))
             current_nid += 1
-    execution_trace = tmp
 
     # Create lookups from tensor to creating or receiving layer-node
+    inputs_to_node: Dict[int, List[int]]
+    outputs_to_node: Dict[int, Optional[int]]
+
     inputs_to_node = {}
     outputs_to_node = {}
-    for nid, _l, Xs, Ys in execution_trace:
+    for nid, _l, Xs, Ys in id_execution_trace:
         if nid is not None:
             for X in Xs:
                 Xid = id(X)
@@ -730,9 +768,20 @@ def get_model_execution_trace(
                 outputs_to_node[Yid] = nid
 
     # Enrich trace with this info.
-    nid_to_nodes = {t[0]: t for t in execution_trace}
-    tmp = []
-    for nid, l, Xs, Ys in execution_trace:
+    nid_to_nodes: Dict[Layer, Tuple[Optional[int], Layer, List[Tensor], List[Tensor]]]
+    model_execution_trace: List[NodeDict]
+
+    # TODO: fix invariance of type hints
+    Xs_nids: List[Optional[int]]
+    Ys_nids: List[Union[List[int], List[None]]]
+    # Xs_layers = List[Layer]
+    # Ys_layers = List[List[Layer]]
+
+    nid_to_nodes = {t[0]: t for t in id_execution_trace}
+
+    model_execution_trace = []
+    for nid, l, Xs, Ys in id_execution_trace:
+
         if isinstance(l, keras.layers.InputLayer):
             # The nids that created or receive the tensors.
             Xs_nids = []  # Input layer does not receive.
@@ -753,7 +802,7 @@ def get_model_execution_trace(
                 for Ynids2 in Ys_nids
             ]
 
-        entry = {
+        entry: NodeDict = {
             "nid": nid,
             "layer": l,
             "Xs": Xs,
@@ -763,82 +812,102 @@ def get_model_execution_trace(
             "Xs_layers": Xs_layers,
             "Ys_layers": Ys_layers,
         }
-        tmp.append(entry)
-    execution_trace = tmp
+        model_execution_trace.append(entry)
 
     if not keep_input_layers:
-        execution_trace = [tmp for tmp in execution_trace if tmp["nid"] is not None]
+        model_execution_trace = [
+            tmp for tmp in model_execution_trace if tmp["nid"] is not None
+        ]
 
-    return execution_trace
+    return model_execution_trace
 
 
-def get_model_execution_graph(model, keep_input_layers=False):
+def get_model_execution_graph(
+    model: Model, keep_input_layers: bool = False
+) -> Dict[Optional[int], Union[NodeDict, List[NodeDict]]]:
     """
     Returns a dictionary representing the execution graph.
     Each key is the node's id as it is used by the reverse_model method.
 
     Each associated value contains a dictionary with the following items:
 
-    * nid: the node id.
-    * layer: the layer creating this node.
-    * Xs: the input tensors (only valid if not in a nested container).
-    * Ys: the output tensors (only valid if not in a nested container).
-    * Xs_nids: the ids of the nodes creating the Xs.
-    * Ys_nids: the ids of nodes using the according output tensor.
-    * Xs_layers: the layer that created the accodring input tensor.
-    * Ys_layers: the layers using the according output tensor.
+    * `nid`: the node id.
+    * `layer`: the layer creating this node.
+    * `Xs`: the input tensors (only valid if not in a nested container).
+    * `Ys`: the output tensors (only valid if not in a nested container).
+    * `Xs_nids`: the ids of the nodes creating the Xs.
+    * `Ys_nids`: the ids of nodes using the according output tensor.
+    * `Xs_layers`: the layer that created the according input tensor.
+    * `Ys_layers`: the layers using the according output tensor.
 
     :param model: A kera model.
     :param keep_input_layers: Keep input layers.
     """
+    trace: List[NodeDict]
+    input_layers: List[NodeDict]
+    graph: Dict[Optional[int], Union[NodeDict, List[NodeDict]]]
+
     trace = get_model_execution_trace(
         model, keep_input_layers=keep_input_layers, reapply_on_copied_layers=False
     )
 
-    input_layers = [tmp for tmp in trace if tmp["nid"] is None]
-    graph = {tmp["nid"]: tmp for tmp in trace}
+    # Input layers in graph have Node-ID `nid=None`.
+    # Extract these from list of all nodes `trace`.
+    input_layers = [node for node in trace if node["nid"] is None]
+
+    # Create graph which maps Node-IDs to node information from full trace.
+    graph = {node["nid"]: node for node in trace}
     if keep_input_layers:
         graph[None] = input_layers
 
     return graph
 
 
-def print_model_execution_graph(graph):
+def print_model_execution_graph(
+    graph: Dict[Optional[int], Union[NodeDict, List[NodeDict]]]
+) -> None:
     """Pretty print of a model execution graph."""
+    # TODO: check types
 
-    def nids_as_str(nids):
-        return ", ".join(["%s" % nid for nid in nids])
+    def nids_as_str(nids: List[Optional[int]]) -> str:  # type: ignore
+        return ", ".join(["%s" % nid for nid in nids])  # type: ignore
 
-    def print_node(node):
+    def print_node(node: NodeDict):
         print(
-            "  [NID: %4s] [Layer: %20s] "
-            "[Inputs from: %20s] [Outputs to: %20s]"
+            "  [NID: %4s] [Layer: %20s] [Inputs from: %20s] [Outputs to: %20s]"
             % (
                 node["nid"],
                 node["layer"].name,
-                nids_as_str(node["Xs_nids"]),
+                nids_as_str(node["Xs_nids"]),  # type: ignore
                 nids_as_str(node["Ys_nids"]),
             )
         )
 
-    if None in graph:
+    if None in graph:  # Input layers in graph have Node-ID `None`
         print("Graph input layers:")
-        for tmp in graph[None]:
-            print_node(tmp)
+        for input_node in graph[None]:
+            print_node(input_node)
 
     print("Graph nodes:")
-    for nid in sorted([k for k in graph if k is not None]):
+    for nid in sorted([key for key in graph if key is not None]):
         if nid is None:
             continue
         print_node(graph[nid])
 
 
-def get_bottleneck_nodes(inputs, outputs, execution_list):
+def get_bottleneck_nodes(
+    inputs: List[Tensor],
+    outputs: List[Tensor],
+    execution_list: List[Tuple[Layer, List[Tensor], List[Tensor]]],
+) -> List[Tuple[Layer, Tuple[List[Tensor], List[Tensor]]]]:
     """
     Given an execution list this function returns all nodes that
     are a bottleneck in the network, i.e., "all information" must pass
     through this node.
     """
+    forward_connections: Dict[Tensor, List[Tensor]]
+    open_connections: Dict[Tensor, bool]
+    ret: List[Tuple[Layer, Tuple[List[Tensor], List[Tensor]]]]
 
     forward_connections = {}
     for l, Xs, Ys in execution_list:
@@ -853,11 +922,11 @@ def get_bottleneck_nodes(inputs, outputs, execution_list):
                 forward_connections[x] = list(Ys)
 
     open_connections = {}
-    for x in inputs:
-        for fw_c in forward_connections[x]:
+    for X in inputs:
+        for fw_c in forward_connections[X]:
             open_connections[fw_c] = True
 
-    ret = list()
+    ret = []
     for l, Xs, Ys in execution_list:
         if isinstance(l, keras.layers.InputLayer):
             # Special case, do nothing.
@@ -865,31 +934,35 @@ def get_bottleneck_nodes(inputs, outputs, execution_list):
             # this is not detected.
             continue
 
-        for y in Ys:
-            assert y in open_connections
-            del open_connections[y]
+        for Y in Ys:
+            assert Y in open_connections
+            del open_connections[Y]
 
         if len(open_connections) == 0:
             ret.append((l, (Xs, Ys)))
 
-        for y in Ys:
-            if y not in outputs:
-                for fw_c in forward_connections[y]:
+        for Y in Ys:
+            if Y not in outputs:
+                for fw_c in forward_connections[Y]:
                     open_connections[fw_c] = True
 
     return ret
 
 
-def get_bottleneck_tensors(inputs, outputs, execution_list):
+def get_bottleneck_tensors(
+    inputs: List[Tensor],
+    outputs: List[Tensor],
+    execution_list: List[Tuple[Layer, List[Tensor], List[Tensor]]],
+) -> List[Tensor]:
     """
     Given an execution list this function returns all tensors that
     are a bottleneck in the network, i.e., "all information" must pass
     through this tensor.
     """
-
+    nodes: List[Tuple[Layer, Tuple[List[Tensor], List[Tensor]]]]
     nodes = get_bottleneck_nodes(inputs, outputs, execution_list)
 
-    ret = list()
+    ret = []
     for _l, (Xs, Ys) in nodes:
         for tensor_list in (Xs, Ys):
             if len(tensor_list) == 1:
@@ -920,17 +993,19 @@ class ReverseMappingBase(object):
 
 
 def reverse_model(
-    model,
+    model: Model,
     reverse_mappings,
     default_reverse_mapping=None,
     head_mapping=None,
-    stop_mapping_at_tensors=None,
-    verbose=False,
-    return_all_reversed_tensors=False,
-    clip_all_reversed_tensors=False,
-    project_bottleneck_tensors=False,
-    execution_trace=None,
-    reapply_on_copied_layers=False,
+    stop_mapping_at_tensors: List[Tensor] = None,
+    verbose: bool = False,
+    return_all_reversed_tensors: bool = False,
+    clip_all_reversed_tensors: bool = False,
+    project_bottleneck_tensors: bool = False,
+    execution_trace: Optional[
+        Tuple[List[Layer], List[Tuple[Layer, List[Tensor], List[Tensor]]], List[Tensor]]
+    ] = None,
+    reapply_on_copied_layers: bool = False,
 ):
     """
     Reverses a Keras model based on the given reverse functions.

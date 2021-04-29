@@ -36,7 +36,10 @@ def gradients(
     :param known_Ys: Gradients for Ys.
     :return: Gradients for Xs given known_Ys
     """
-    return tensorflow.gradients(Ys, Xs, grad_ys=known_Ys, stop_gradients=Xs)
+    grads: List[Tensor] = tensorflow.gradients(
+        Ys, Xs, grad_ys=known_Ys, stop_gradients=Xs
+    )
+    return grads
 
 
 def is_not_finite(X: Tensor) -> Tensor:  # returns Tensor of dtype bool
