@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import warnings
 from builtins import zip
+from typing import Any
+from typing import Callable
+from typing import Dict
 from typing import Iterable
 from typing import List
 from typing import Optional
@@ -14,17 +17,18 @@ import keras.layers
 import keras.models
 import numpy as np
 import six
-from keras import Model
-from keras.layers import Layer
-from tensorflow import Tensor
-from typing_extensions import TypedDict
 
 import innvestigate.analyzer
 import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.utils.keras.checks import ModelCheck
+from innvestigate.utils.types import CondReverseMapping
+from innvestigate.utils.types import Layer
+from innvestigate.utils.types import LayerCheck
+from innvestigate.utils.types import Model
+from innvestigate.utils.types import ModelCheckDict
+from innvestigate.utils.types import Tensor
 
 __all__ = [
     "NotAnalyzeableModelException",
@@ -34,22 +38,6 @@ __all__ = [
     "AnalyzerNetworkBase",
     "ReverseAnalyzerBase",
 ]
-
-
-class ModelCheckDict(TypedDict):
-    """"Adds type hints to model check dicts."""
-
-    check: ModelCheck
-    message: str
-    check_type: str
-
-
-class StateDict(TypedDict):
-    """Adds type hints to state dicts."""
-
-    model_json: str  # JSON string
-    model_weights: Iterable[np.ndarray]
-    disable_model_checks: bool
 
 
 class NotAnalyzeableModelException(Exception):
@@ -101,12 +89,12 @@ class AnalyzerBase(object):
             self._do_model_checks()
 
     def _add_model_check(
-        self, check: ModelCheck, message: str, check_type: str = "exception"
+        self, check: LayerCheck, message: str, check_type: str = "exception"
     ) -> None:
         """Add model check to list of checks `self._model_checks`.
 
         :param check: Callable that performs a boolean check on a Keras layers.
-        :type check: ModelCheck
+        :type check: LayerCheck
         :param message: Error message if check fails.
         :type message: str
         :param check_type: Either "exception" or "warning". Defaults to "exception"
@@ -186,7 +174,9 @@ class AnalyzerBase(object):
                 RuntimeWarning,
             )
 
-    def analyze(self, X: Tensor, *args, **kwargs):
+    def analyze(
+        self, X: Union[np.ndarray, List[np.ndarray]], *args: Any, **kwargs: Any
+    ) -> Union[np.ndarray, List[np.ndarray]]:
         """
         Analyze the behavior of model on input `X`.
 
@@ -194,15 +184,15 @@ class AnalyzerBase(object):
         """
         raise NotImplementedError()
 
-    def _get_state(self) -> StateDict:
-        state: StateDict = {
+    def _get_state(self) -> dict:
+        state = {
             "model_json": self._model.to_json(),
             "model_weights": self._model.get_weights(),
             "disable_model_checks": self._disable_model_checks,
         }
         return state
 
-    def save(self) -> Tuple[str, StateDict]:
+    def save(self) -> Tuple[str, dict]:
         """
         Save state of analyzer, can be passed to :func:`Analyzer.load`
         to resemble the analyzer.
@@ -224,7 +214,7 @@ class AnalyzerBase(object):
         np.savez(fname, **{"class_name": class_name, "state": state})
 
     @classmethod
-    def _state_to_kwargs(cls, state: StateDict) -> dict:
+    def _state_to_kwargs(cls, state: dict) -> dict:
         model_json = state.pop("model_json")
         model_weights = state.pop("model_weights")
         disable_model_checks = state.pop("disable_model_checks")
@@ -355,7 +345,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
         **kwargs
     ) -> None:
         if neuron_selection_mode not in ["max_activation", "index", "all"]:
-            raise ValueError("neuron_selection parameter is not valid.")
+            raise ValueError("neuron_selection_mode parameter is not valid.")
         self._neuron_selection_mode: str = neuron_selection_mode
 
         self._model_check_done: bool = False
@@ -363,7 +353,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
 
         self._allow_lambda_layers: bool = allow_lambda_layers
 
-        check_lambda_layers: ModelCheck = lambda layer: (
+        check_lambda_layers: LayerCheck = lambda layer: (
             not self._allow_lambda_layers
             and isinstance(layer, keras.layers.core.Lambda)
         )
@@ -379,7 +369,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
         self._special_helper_layers: List[Layer] = []
 
         # Attributes defined by functions
-        self._analysis_inputs: int = None
+        self._analysis_inputs = None
         self._n_data_input: int = 0
         self._n_constant_input: int = 0
         self._n_data_output: int = 0
@@ -391,7 +381,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
         """
         Adds check that prevents models from containing a softmax.
         """
-        contains_softmax: ModelCheck = lambda layer: kchecks.contains_activation(
+        contains_softmax: LayerCheck = lambda layer: kchecks.contains_activation(
             layer, activation="softmax"
         )
         self._add_model_check(
@@ -406,14 +396,14 @@ class AnalyzerNetworkBase(AnalyzerBase):
 
         This class adds the code to select a specific output neuron.
         """
-        neuron_selection_mode = self._neuron_selection_mode
+        neuron_selection_mode: str = self._neuron_selection_mode
         model_inputs: List[Tensor] = model.inputs
         model_output: List[Tensor] = model.outputs
 
         if len(model_output) > 1:
             raise ValueError("Only models with one output tensor are allowed.")
-        analysis_inputs = []
-        stop_analysis_at_tensors = []
+        analysis_inputs: List[Tensor] = []
+        stop_analysis_at_tensors: List[Tensor] = []
 
         # Flatten to form (batch_size, other_dimensions):
         if K.ndim(model_output[0]) > 2:
@@ -490,7 +480,13 @@ class AnalyzerNetworkBase(AnalyzerBase):
             outputs=analysis_outputs + debug_outputs,
         )
 
-    def _create_analysis(self, model, stop_analysis_at_tensors=None):
+    def _create_analysis(
+        self, model: Model, stop_analysis_at_tensors: List[Tensor] = None
+    ) -> Union[
+        Tuple[List[Tensor]],
+        Tuple[List[Tensor], List[Tensor]],
+        Tuple[List[Tensor], List[Tensor], List[Tensor]],
+    ]:
         """
         Interface that needs to be implemented by a derived class.
 
@@ -517,8 +513,10 @@ class AnalyzerNetworkBase(AnalyzerBase):
         raise NotImplementedError()
 
     def analyze(
-        self, X: Union[Tensor, List[Tensor]], neuron_selection: str = None
-    ) -> Union[Tensor, List[Tensor]]:
+        self,
+        X: Union[np.ndarray, List[np.ndarray]],
+        neuron_selection: Optional[int] = None,
+    ) -> Union[np.ndarray, List[np.ndarray]]:
         """
         Same interface as :class:`Analyzer` besides
 
@@ -532,28 +530,27 @@ class AnalyzerNetworkBase(AnalyzerBase):
 
         if neuron_selection is not None and self._neuron_selection_mode != "index":
             raise ValueError(
-                "Only neuron_selection_mode 'index' expects "
-                "the neuron_selection parameter."
+                "neuron_selection_mode 'index' expects 'neuron_selection' parameter."
             )
         if neuron_selection is None and self._neuron_selection_mode == "index":
             raise ValueError(
-                "neuron_selection_mode 'index' expects "
-                "the neuron_selection parameter."
+                "neuron_selection_mode 'index' expects 'neuron_selection' parameter."
             )
 
+        # TODO: Comment what happens here
         if self._neuron_selection_mode == "index":
-            neuron_selection = np.asarray(neuron_selection).flatten()
-            if neuron_selection.size == 1:
-                neuron_selection = np.repeat(neuron_selection, len(X[0]))
+            neuron_selection_array: np.ndarray = np.asarray(neuron_selection).flatten()
+            if neuron_selection_array.size == 1:
+                neuron_selection_array = np.repeat(neuron_selection_array, len(X[0]))
 
             # Add first axis indices for gather_nd
-            neuron_selection = np.hstack(
+            neuron_selection_array = np.hstack(
                 (
-                    np.arange(len(neuron_selection)).reshape((-1, 1)),
-                    neuron_selection.reshape((-1, 1)),
+                    np.arange(len(neuron_selection_array)).reshape((-1, 1)),
+                    neuron_selection_array.reshape((-1, 1)),
                 )
             )
-            ret = self._analyzer_model.predict_on_batch(X + [neuron_selection])
+            ret = self._analyzer_model.predict_on_batch(X + [neuron_selection_array])
         else:
             ret = self._analyzer_model.predict_on_batch(X)
 
@@ -644,7 +641,6 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         reverse_reapply_on_copied_layers: bool = False,
         **kwargs
     ) -> None:
-
         self._reverse_verbose = reverse_verbose
         self._reverse_clip_values = reverse_clip_values
         self._reverse_project_bottleneck_layers = reverse_project_bottleneck_layers
@@ -652,6 +648,15 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         self._reverse_check_finite = reverse_check_finite
         self._reverse_keep_tensors = reverse_keep_tensors
         self._reverse_reapply_on_copied_layers = reverse_reapply_on_copied_layers
+
+        # TODO: check how this plays with inheritance
+        self._reverse_mapping_applied: bool = False
+
+        # map priorities to lists of conditional reverse mappings
+        self._conditional_reverse_mappings: Dict[int, List[CondReverseMapping]] = {}
+
+        # Maps keys "min", "max", "finite", "keep" to tuples of indices
+        self._debug_tensors_indices: Dict[str, Tuple[int, int]] = {}
 
         super().__init__(model, **kwargs)
 
@@ -683,7 +688,11 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         return self._apply_conditional_reverse_mappings(layer)
 
     def _add_conditional_reverse_mapping(
-        self, condition, mapping, priority=-1, name=None
+        self,
+        condition: Callable[[Layer], bool],
+        mapping: Callable,  # TODO: specify type of Callable
+        priority: int = -1,
+        name: Optional[str] = None,
     ):
         """
         This function should return a reverse mapping for the passed layer.
@@ -704,18 +713,21 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
           evaluated.
         :param name: An identifying name.
         """
-        if getattr(self, "_reverse_mapping_applied", False):
+        if self._reverse_mapping_applied is True:
             raise Exception(
                 "Cannot add conditional mapping " "after first application."
             )
 
-        if not hasattr(self, "_conditional_reverse_mappings"):
-            self._conditional_reverse_mappings = {}
-
+        # Add key `priority` to dict _conditional_reverse_mappings if it doesn't exist yet
         if priority not in self._conditional_reverse_mappings:
             self._conditional_reverse_mappings[priority] = []
 
-        tmp = {"condition": condition, "mapping": mapping, "name": name}
+        # Add Conditional Reveserse mapping at given priority
+        tmp: CondReverseMapping = {
+            "condition": condition,
+            "mapping": mapping,
+            "name": name,
+        }
         self._conditional_reverse_mappings[priority].append(tmp)
 
     def _apply_conditional_reverse_mappings(self, layer):
@@ -750,7 +762,10 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         return X
 
     def _reverse_model(
-        self, model, stop_analysis_at_tensors=None, return_all_reversed_tensors=False
+        self,
+        model: Model,
+        stop_analysis_at_tensors: List[Tensor] = None,
+        return_all_reversed_tensors=False,
     ):
         if stop_analysis_at_tensors is None:
             stop_analysis_at_tensors = []
@@ -767,7 +782,14 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
             return_all_reversed_tensors=return_all_reversed_tensors,
         )
 
-    def _create_analysis(self, model, stop_analysis_at_tensors=None):
+    def _create_analysis(
+        self, model: Model, stop_analysis_at_tensors: List[Tensor] = None
+    ) -> Union[
+        Tuple[List[Tensor]],
+        Tuple[List[Tensor], List[Tensor]],
+        Tuple[List[Tensor], List[Tensor], List[Tensor]],
+    ]:
+
         if stop_analysis_at_tensors is None:
             stop_analysis_at_tensors = []
 
@@ -788,14 +810,14 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
             ret = self._postprocess_analysis(ret)
 
         if return_all_reversed_tensors:
-            debug_tensors = []
-            self._debug_tensors_indices = {}
+            debug_tensors: List[Tensor] = []
 
             values = list(six.itervalues(ret[1]))
             mapping = {i: v["id"] for i, v in enumerate(values)}
             tensors = [v["final_tensor"] for v in values]
             self._reverse_tensors_mapping = mapping
 
+            tmp: List[Tensor]
             if self._reverse_check_min_max_values:
                 tmp = [ilayers.Min(None)(x) for x in tensors]
                 self._debug_tensors_indices["min"] = (

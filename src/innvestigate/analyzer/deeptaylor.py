@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+from typing import Any
+from typing import List
+from typing import Tuple
+from typing import Union
+
 import keras.layers
 import keras.models
 
@@ -7,6 +12,10 @@ import innvestigate.analyzer.base as base
 import innvestigate.analyzer.relevance_based.relevance_rule as lrp_rules
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
+from innvestigate.utils.types import Layer
+from innvestigate.utils.types import Model
+from innvestigate.utils.types import ModelCheckDict
+from innvestigate.utils.types import Tensor
 
 __all__ = [
     "DeepTaylor",
@@ -23,9 +32,9 @@ class DeepTaylor(base.ReverseAnalyzerBase):
     :param model: A Keras model.
     """
 
-    def __init__(self, model, *args, **kwargs):
-        self._model_check_done = False
-        self._model_checks = []
+    def __init__(self, model: Model, *args, **kwargs) -> None:
+        self._model_check_done: bool = False
+        self._model_checks: List[ModelCheckDict] = []
 
         self._add_model_softmax_check()
         self._add_model_check(
@@ -35,8 +44,16 @@ class DeepTaylor(base.ReverseAnalyzerBase):
         )
         super().__init__(model, *args, **kwargs)
 
-    def _create_analysis(self, *args, **kwargs):
-        def do_nothing(Xs, Ys, As, reverse_state):
+    def _create_analysis(
+        self, *args: Any, **kwargs: Any
+    ) -> Union[
+        Tuple[List[Tensor]],
+        Tuple[List[Tensor], List[Tensor]],
+        Tuple[List[Tensor], List[Tensor], List[Tensor]],
+    ]:
+        def do_nothing(
+            _Xs: List[Tensor], _Ys: List[Tensor], As: List[Tensor], _reverse_state
+        ) -> List[Tensor]:
             return As
 
         # Kernel layers.
