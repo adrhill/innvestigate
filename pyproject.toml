@@ -61,6 +61,7 @@ ipykernel = "^5.5.0"
 isort = "^5.8.0"
 mypy = "^0.812"
 MonkeyType = "^20.5.0"
+vulture = "^2.3"
 
 [tool.isort]
 profile = "black"
