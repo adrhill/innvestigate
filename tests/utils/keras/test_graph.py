@@ -3,8 +3,8 @@ from __future__ import annotations
 import keras.models
 import pytest
 
-from innvestigate.utils import networks
 import innvestigate.utils.keras.graph as kgraph
+from innvestigate.utils import networks
 
 
 @pytest.mark.fast

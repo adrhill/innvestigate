@@ -1,43 +1,59 @@
 from __future__ import annotations
 
-from .base import NotAnalyzeableModelException
-from .deeptaylor import BoundedDeepTaylor
-from .deeptaylor import DeepTaylor
-from .gradient_based import BaselineGradient
-from .gradient_based import Deconvnet
-from .gradient_based import Gradient
-from .gradient_based import GuidedBackprop
-from .gradient_based import InputTimesGradient
-from .gradient_based import IntegratedGradients
-from .gradient_based import SmoothGrad
-from .misc import Input
-from .misc import Random
-from .pattern_based import PatternAttribution
-from .pattern_based import PatternNet
-from .relevance_based.relevance_analyzer import BaselineLRPZ
-from .relevance_based.relevance_analyzer import LRP
-from .relevance_based.relevance_analyzer import LRPAlpha1Beta0
-from .relevance_based.relevance_analyzer import LRPAlpha1Beta0IgnoreBias
-from .relevance_based.relevance_analyzer import LRPAlpha2Beta1
-from .relevance_based.relevance_analyzer import LRPAlpha2Beta1IgnoreBias
-from .relevance_based.relevance_analyzer import LRPAlphaBeta
-from .relevance_based.relevance_analyzer import LRPEpsilon
-from .relevance_based.relevance_analyzer import LRPEpsilonIgnoreBias
-from .relevance_based.relevance_analyzer import LRPFlat
-from .relevance_based.relevance_analyzer import LRPSequentialPresetA
-from .relevance_based.relevance_analyzer import LRPSequentialPresetAFlat
-from .relevance_based.relevance_analyzer import LRPSequentialPresetB
-from .relevance_based.relevance_analyzer import LRPSequentialPresetBFlat
-from .relevance_based.relevance_analyzer import LRPSequentialPresetBFlatUntilIdx
-from .relevance_based.relevance_analyzer import LRPWSquare
-from .relevance_based.relevance_analyzer import LRPZ
-from .relevance_based.relevance_analyzer import LRPZIgnoreBias
-from .relevance_based.relevance_analyzer import LRPZPlus
-from .relevance_based.relevance_analyzer import LRPZPlusFast
-from .wrapper import AugmentReduceBase
-from .wrapper import GaussianSmoother
-from .wrapper import PathIntegrator
-from .wrapper import WrapperBase
+from innvestigate.analyzer.base import NotAnalyzeableModelException
+from innvestigate.analyzer.deeptaylor import BoundedDeepTaylor
+from innvestigate.analyzer.deeptaylor import DeepTaylor
+from innvestigate.analyzer.gradient_based import BaselineGradient
+from innvestigate.analyzer.gradient_based import Deconvnet
+from innvestigate.analyzer.gradient_based import Gradient
+from innvestigate.analyzer.gradient_based import GuidedBackprop
+from innvestigate.analyzer.gradient_based import InputTimesGradient
+from innvestigate.analyzer.gradient_based import IntegratedGradients
+from innvestigate.analyzer.gradient_based import SmoothGrad
+from innvestigate.analyzer.misc import Input
+from innvestigate.analyzer.misc import Random
+from innvestigate.analyzer.pattern_based import PatternAttribution
+from innvestigate.analyzer.pattern_based import PatternNet
+from innvestigate.analyzer.relevance_based.relevance_analyzer import BaselineLRPZ
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRP
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPAlpha1Beta0
+from innvestigate.analyzer.relevance_based.relevance_analyzer import (
+    LRPAlpha1Beta0IgnoreBias,
+)
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPAlpha2Beta1
+from innvestigate.analyzer.relevance_based.relevance_analyzer import (
+    LRPAlpha2Beta1IgnoreBias,
+)
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPAlphaBeta
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPEpsilon
+from innvestigate.analyzer.relevance_based.relevance_analyzer import (
+    LRPEpsilonIgnoreBias,
+)
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPFlat
+from innvestigate.analyzer.relevance_based.relevance_analyzer import (
+    LRPSequentialPresetA,
+)
+from innvestigate.analyzer.relevance_based.relevance_analyzer import (
+    LRPSequentialPresetAFlat,
+)
+from innvestigate.analyzer.relevance_based.relevance_analyzer import (
+    LRPSequentialPresetB,
+)
+from innvestigate.analyzer.relevance_based.relevance_analyzer import (
+    LRPSequentialPresetBFlat,
+)
+from innvestigate.analyzer.relevance_based.relevance_analyzer import (
+    LRPSequentialPresetBFlatUntilIdx,
+)
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPWSquare
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPZ
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPZIgnoreBias
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPZPlus
+from innvestigate.analyzer.relevance_based.relevance_analyzer import LRPZPlusFast
+from innvestigate.analyzer.wrapper import AugmentReduceBase
+from innvestigate.analyzer.wrapper import GaussianSmoother
+from innvestigate.analyzer.wrapper import PathIntegrator
+from innvestigate.analyzer.wrapper import WrapperBase
 
 # Disable pyflaks warnings:
 assert NotAnalyzeableModelException

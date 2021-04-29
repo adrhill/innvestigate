@@ -7,8 +7,8 @@ from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Optional
-from typing import Set
 from typing import Sequence
+from typing import Set
 from typing import Tuple
 from typing import Union
 
@@ -23,10 +23,10 @@ import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.checks as kchecks
 from innvestigate.utils.keras import apply as kapply
-from innvestigate.utils.types import NodeDict
 from innvestigate.utils.types import Layer
 from innvestigate.utils.types import LayerCheck
 from innvestigate.utils.types import Model
+from innvestigate.utils.types import NodeDict
 from innvestigate.utils.types import Tensor
 
 __all__ = [

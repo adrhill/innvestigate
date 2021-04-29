@@ -57,11 +57,11 @@ class TestAnalysisHelper(object):
             inputs = iutils.to_list(inputs)
 
         augmented = []
-        for i in range(len(inputs)):
-            if len(inputs[i].shape) == len(self._input_shapes[i]) - 1:
+        for i, inp in enumerate(inputs):
+            if len(inp.shape) == len(self._input_shapes[i]) - 1:
                 # Augment by batch axis.
                 augmented.append(i)
-                inputs[i] = inputs[i].reshape((1,) + inputs[i].shape)
+                inputs[i] = inp.reshape((1,) + inp.shape)
 
         outputs = iutils.to_list(self._model.predict_on_batch(inputs))
         analysis = iutils.to_list(self._analyzer.analyze(inputs))

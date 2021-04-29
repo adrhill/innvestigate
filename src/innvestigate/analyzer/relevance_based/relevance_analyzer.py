@@ -188,7 +188,7 @@ class EmbeddingReverseLayer(kgraph.ReverseMappingBase):
 
         # relevances are given shaped [batch_size, sequence_length, embedding_dims]
         pool_relevance = keras.layers.Lambda(lambda x: keras.backend.sum(x, axis=-1))
-        return [pool_relevance(r) for r in Rs]
+        return [pool_relevance(R) for R in Rs]
 
 
 class BatchNormalizationReverseLayer(kgraph.ReverseMappingBase):
@@ -280,7 +280,7 @@ class AddReverseLayer(kgraph.ReverseMappingBase):
         # TODO: implement rule support.
         # super().__init__(layer, state)
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state):
         # The outputs of the pooling operation at each location
         # is the sum of its inputs.
         # The forward message must be known in this case,
@@ -313,7 +313,7 @@ class AveragePoolingReverseLayer(kgraph.ReverseMappingBase):
         # TODO: implement rule support.
         # super().__init__(layer, state)
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state):
         # The outputs of the pooling operation at each location
         # is the sum of its inputs.
         # The forward message must be known in this case,
