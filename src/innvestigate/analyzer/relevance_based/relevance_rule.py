@@ -59,12 +59,18 @@ class ZRule(kgraph.ReverseMappingBase):
     which considers the bias a constant input neuron.
     """
 
-    def __init__(self, layer, state, bias=True):
+    def __init__(self, layer: Layer, state, bias: bool = True) -> None:
         self._layer_wo_act = kgraph.copy_layer_wo_activation(
             layer, keep_bias=bias, name_template="reversed_kernel_%s"
         )
 
-    def apply(self, Xs, _Ys, Rs, reverse_state):
+    def apply(
+        self,
+        Xs: List[Tensor],
+        _Ys: List[Tensor],
+        Rs: List[Tensor],
+        _reverse_state,
+    ) -> List[Tensor]:
         grad = ilayers.GradientWRT(len(Xs))
 
         # Get activations.
@@ -96,13 +102,19 @@ class EpsilonRule(kgraph.ReverseMappingBase):
     0 is considered to be positive, ie sign(0) = 1
     """
 
-    def __init__(self, layer, state, epsilon=1e-7, bias=True):
+    def __init__(self, layer: Layer, state, epsilon=1e-7, bias: bool = True):
         self._epsilon = rutils.assert_lrp_epsilon_param(epsilon, self)
         self._layer_wo_act = kgraph.copy_layer_wo_activation(
             layer, keep_bias=bias, name_template="reversed_kernel_%s"
         )
 
-    def apply(self, Xs, _Ys, Rs, reverse_state):
+    def apply(
+        self,
+        Xs: List[Tensor],
+        _Ys: List[Tensor],
+        Rs: List[Tensor],
+        reverse_state,
+    ):
         grad = ilayers.GradientWRT(len(Xs))
         # The epsilon rule aligns epsilon with the (extended) sign:
         # 0 is considered to be positive
@@ -133,7 +145,7 @@ class EpsilonIgnoreBiasRule(EpsilonRule):
 class WSquareRule(kgraph.ReverseMappingBase):
     """W**2 rule from Deep Taylor Decomposition"""
 
-    def __init__(self, layer, state, copy_weights=False):
+    def __init__(self, layer: Layer, state, copy_weights=False) -> None:
         # W-square rule works with squared weights and no biases.
         if copy_weights:
             weights = layer.get_weights()
@@ -147,7 +159,13 @@ class WSquareRule(kgraph.ReverseMappingBase):
             layer, keep_bias=False, weights=weights, name_template="reversed_kernel_%s"
         )
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(
+        self,
+        Xs: List[Tensor],
+        Ys: List[Tensor],
+        Rs: List[Tensor],
+        reverse_state,
+    ) -> List[Tensor]:
         grad = ilayers.GradientWRT(len(Xs))
         # Create dummy forward path to take the derivative below.
         Ys = kutils.apply(self._layer_wo_act_b, Xs)
@@ -165,7 +183,7 @@ class WSquareRule(kgraph.ReverseMappingBase):
 class FlatRule(WSquareRule):
     """Same as W**2 rule but sets all weights to ones."""
 
-    def __init__(self, layer, state, copy_weights=False):
+    def __init__(self, layer: Layer, state, copy_weights: bool = False) -> None:
         # The flat rule works with weights equal to one and
         # no biases.
         if copy_weights:
@@ -204,8 +222,14 @@ class AlphaBetaRule(kgraph.ReverseMappingBase):
     """
 
     def __init__(
-        self, layer, state, alpha=None, beta=None, bias=True, copy_weights=False
-    ):
+        self,
+        layer: Layer,
+        state,
+        alpha=None,
+        beta=None,
+        bias: bool = True,
+        copy_weights=False,
+    ) -> None:
         alpha, beta = rutils.assert_infer_lrp_alpha_beta_param(alpha, beta, self)
         self._alpha = alpha
         self._beta = beta
@@ -330,13 +354,13 @@ class AlphaBetaXRule(kgraph.ReverseMappingBase):
 
     def __init__(
         self,
-        layer,
+        layer: Layer,
         state,
         alpha=(0.5, 0.5),
         beta=(0.5, 0.5),
-        bias=True,
-        copy_weights=False,
-    ):
+        bias: bool = True,
+        copy_weights: bool = False,
+    ) -> None:
         self._alpha = alpha
         self._beta = beta
 
@@ -382,7 +406,7 @@ class AlphaBetaXRule(kgraph.ReverseMappingBase):
             lambda x: x * K.cast(K.less(x, 0), K.floatx())
         )
 
-        def f(layer, X):
+        def f(layer: Layer, X):
             Zs = kutils.apply(layer, X)
             # Divide incoming relevance by the activations.
             tmp = [ilayers.SafeDivide()([a, b]) for a, b in zip(Rs, Zs)]
@@ -445,7 +469,7 @@ class BoundedRule(kgraph.ReverseMappingBase):
 
     # TODO: this only works for relu networks, needs to be extended.
     # TODO: check
-    def __init__(self, layer, state, low=-1, high=1, copy_weights=False):
+    def __init__(self, layer: Layer, state, low=-1, high=1, copy_weights=False) -> None:
         self._low = low
         self._high = high
 
@@ -538,7 +562,7 @@ class ZPlusFastRule(kgraph.ReverseMappingBase):
     for alpha=1, beta=0 and assumes inputs x >= 0.
     """
 
-    def __init__(self, layer, state, copy_weights=False):
+    def __init__(self, layer: Layer, state, copy_weights=False):
         # The z-plus rule only works with positive weights and
         # no biases.
         # TODO: assert that layer inputs are always >= 0

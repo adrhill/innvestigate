@@ -108,24 +108,26 @@ class FiniteCheck(keras.layers.Layer):
 class Gradient(keras.layers.Layer):
     "Returns gradient of sum(output), expects inputs+[output,]."
 
-    def call(self, x):
+    def call(self, x: List[Tensor]):
         inputs, output = x[:-1], x[-1]
         return K.gradients(K.sum(output), inputs)
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return input_shapes[:-1]
 
 
 class GradientWRT(keras.layers.Layer):
-    "Returns gradient wrt to another layer and given gradient,"
-    " expects inputs+[output,]."
+    """Returns gradient wrt to another layer and given gradient,
+    expects inputs+[output,]."""
+
+    # TODO: add documentation
 
     def __init__(self, n_inputs, mask=None, **kwargs):
         self.n_inputs = n_inputs
         self.mask = mask
         super().__init__(**kwargs)
 
-    def call(self, x):
+    def call(self, x: Union[Tensor, List[Tensor]]):
         assert isinstance(x, (list, tuple))
         Xs, tmp_Ys = x[: self.n_inputs], x[self.n_inputs :]
         assert len(tmp_Ys) % 2 == 0
@@ -137,7 +139,7 @@ class GradientWRT(keras.layers.Layer):
         self.__workaround__len_ret = len(ret)
         return ret
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         if self.mask is None:
             return input_shapes[: self.n_inputs]
         else:
@@ -191,7 +193,7 @@ class _Reduce(keras.layers.Layer):
         self.keepdims = keepdims
         super(_Reduce, self).__init__(*args, **kwargs)
 
-    def call(self, x):
+    def call(self, x: Union[Tensor, List[Tensor]]):
         return self._apply_reduce(x, axis=self.axis, keepdims=self.keepdims)
 
     def compute_output_shape(self, input_shape):
@@ -323,7 +325,7 @@ class Project(_Map):
 
 
 class Print(_Map):
-    def _apply_map(self, x):
+    def _apply_map(self, x: Tensor) -> None:
         return K.print_tensor(x)
 
 
@@ -331,46 +333,46 @@ class Print(_Map):
 
 
 class Greater(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
         return K.greater(a, b)
 
 
 class Less(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
         return K.less(a, b)
 
 
 class GreaterThanZero(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tensor) -> Tensor:
         return K.greater(x, K.constant(0))
 
 
 class LessThanZero(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tensor) -> Tensor:
         return K.less(x, K.constant(0))
 
 
 class GreaterEqual(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
         return K.greater_equal(a, b)
 
 
 class LessEqual(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
         return K.less_equal(a, b)
 
 
 class GreaterEqualThanZero(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tensor) -> Tensor:
         return K.greater_equal(x, K.constant(0))
 
 
 class LessEqualThanZero(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tensor) -> Tensor:
         return K.less_equal(x, K.constant(0))
 
 
@@ -379,13 +381,13 @@ class Transpose(keras.layers.Layer):
         self._axes = axes
         super().__init__(**kwargs)
 
-    def call(self, x):
+    def call(self, x: Tensor) -> Tensor:
         if self._axes is None:
             return K.transpose(x)
         else:
             return K.permute_dimensions(x, self._axes)
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: List[Tuple]) -> Tuple:
         if self._axes is None:
             return input_shape[::-1]
         else:
@@ -393,20 +395,20 @@ class Transpose(keras.layers.Layer):
 
 
 class Dot(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
         return K.dot(a, b)
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return (input_shapes[0][0], input_shapes[1][1])
 
 
 class Divide(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
         return a / b
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return input_shapes[0]
 
 
@@ -419,11 +421,11 @@ class SafeDivide(keras.layers.Layer):
 
         return super().__init__(*args, **kwargs)
 
-    def call(self, x):
+    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
         return a / (b + iK.to_floatx(K.equal(b, K.constant(0))) * self._factor)
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return input_shapes[0]
 
 
@@ -431,15 +433,15 @@ class SafeDivide(keras.layers.Layer):
 
 
 class Repeat(keras.layers.Layer):
-    def __init__(self, n, axis, *args, **kwargs):
+    def __init__(self, n: int, axis, *args, **kwargs):
         self._n = n
         self._axis = axis
         return super().__init__(*args, **kwargs)
 
-    def call(self, x):
+    def call(self, x: Tensor) -> Tensor:
         return K.repeat_elements(x, self._n, self._axis)
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         if isinstance(input_shapes, list):
             input_shape = input_shapes[0]
         else:
@@ -456,10 +458,10 @@ class Reshape(keras.layers.Layer):
         self._shape = shape
         return super().__init__(*args, **kwargs)
 
-    def call(self, x):
+    def call(self, x: Tensor) -> Tensor:
         return K.reshape(x, self._shape)
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return tuple(x if x >= 0 else None for x in self._shape)
 
 
@@ -471,7 +473,7 @@ class MultiplyWithLinspace(keras.layers.Layer):
         self._axis = axis
         return super().__init__(*args, **kwargs)
 
-    def call(self, x):
+    def call(self, x: Tensor) -> Tensor:
         linspace = self._start + (self._end - self._start) * (
             K.arange(self._n, dtype=K.floatx()) / self._n
         )
@@ -482,7 +484,7 @@ class MultiplyWithLinspace(keras.layers.Layer):
         linspace = K.reshape(linspace, shape)
         return x * linspace
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         ret = input_shapes[:]
         ret = (
             ret[: self._axis] + (max(self._n, ret[self._axis]),) + ret[self._axis + 1 :]
@@ -510,7 +512,7 @@ class ExtractConv2DPatches(keras.layers.Layer):
             x, self._kernel_shape, self._strides, self._rates, self._padding
         )
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         if K.image_data_format() == "channels_first":
             space = input_shapes[2:]
             new_space = []
@@ -549,7 +551,7 @@ class RunningMeans(keras.layers.Layer):
         self.stateful = True
         super().__init__(*args, **kwargs)
 
-    def build(self, input_shapes):
+    def build(self, input_shapes: Union[Tuple, List[Tuple]]):
         means_shape, counts_shape = input_shapes
 
         self.means = self.add_weight(
@@ -586,7 +588,7 @@ class RunningMeans(keras.layers.Layer):
 
         return [new_means, new_counts]
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return input_shapes
 
 
@@ -595,7 +597,7 @@ class Broadcast(keras.layers.Layer):
         target_shapped, x = x
         return target_shapped * 0 + x
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return input_shapes[0]
 
 
@@ -604,7 +606,7 @@ class Gather(keras.layers.Layer):
         x, index = inputs
         return iK.gather(x, 1, index)
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return (input_shapes[0][0], input_shapes[1][0]) + input_shapes[0][2:]
 
 
@@ -613,5 +615,5 @@ class GatherND(keras.layers.Layer):
         x, indices = inputs
         return iK.gather_nd(x, indices)
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return input_shapes[1][:2] + input_shapes[0][2:]

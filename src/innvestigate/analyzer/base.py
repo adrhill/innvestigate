@@ -739,7 +739,13 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
 
         return None
 
-    def _default_reverse_mapping(self, Xs, Ys, reversed_Ys, reverse_state):
+    def _default_reverse_mapping(
+        self,
+        Xs: Union[Tensor, List[Tensor]],
+        Ys: Union[Tensor, List[Tensor]],
+        reversed_Ys: Union[Tensor, List[Tensor]],
+        reverse_state,
+    ):
         """
         Fallback function to map reversed_Ys to reversed_Xs
         (which should contain tensors of the same shape and type).
