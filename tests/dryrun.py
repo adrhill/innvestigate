@@ -8,7 +8,8 @@ import numpy as np
 import six
 
 from innvestigate.analyzer.base import AnalyzerBase
-from innvestigate.utils import networks
+
+from tests import networks
 
 __all__ = [
     "AnalyzerTestCase",
@@ -38,18 +39,16 @@ class BaseLayerTestCase(unittest.TestCase):
     and executed with random inputs.
     """
 
-    _network_filter = "trivia.*"
-
     def __init__(self, *args, **kwargs):
-        network_filter = kwargs.pop("network_filter", None)
+        network_filter: str = kwargs.pop("network_filter", None)
         if network_filter is not None:
-            self._network_filter = network_filter
+            self._network_filter: str = network_filter
         super().__init__(*args, **kwargs)
 
     def _apply_test(self, network):
         raise NotImplementedError("Set in subclass.")
 
-    def runTest(self):
+    def runTest(self):  # noqa : name required by unittest
         np.random.seed(2349784365)
         K.clear_session()
 
@@ -73,16 +72,11 @@ class AnalyzerTestCase(BaseLayerTestCase):
     :param method: A function that returns an Analyzer class.
     """
 
-    def __init__(self, *args, **kwargs):
-        method = kwargs.pop("method", None)
-        if method is not None:
-            self._method = method
+    def __init__(self, method: AnalyzerBase, *args, **kwargs):
+        self._method = method
         super().__init__(*args, **kwargs)
 
-    def _method(self, model):
-        raise NotImplementedError("Set in subclass.")
-
-    def _apply_test(self, network):
+    def _apply_test(self, network: keras.models.Model):
         # Create model.
         model = keras.models.Model(inputs=network["in"], outputs=network["out"])
         model.set_weights(_set_zero_weights_to_random(model.get_weights()))
@@ -98,11 +92,11 @@ class AnalyzerTestCase(BaseLayerTestCase):
         self.assertFalse(np.any(np.isnan(analysis.ravel())))
 
 
-def test_analyzer(method, network_filter):
+def test_analyzer(method: AnalyzerBase, network_filter):
     """Workaround for move from unit-tests to pytest."""
     # todo: Mixing of pytest and unittest is not ideal.
     # Move completely to pytest.
-    test_case = AnalyzerTestCase(method=method, network_filter=network_filter)
+    test_case = AnalyzerTestCase(method, network_filter=network_filter)
     test_result = unittest.TextTestRunner().run(test_case)
     assert len(test_result.errors) == 0
     assert len(test_result.failures) == 0

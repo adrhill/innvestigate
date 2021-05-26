@@ -4,18 +4,15 @@ import fnmatch
 
 import keras.backend as K
 
-from innvestigate.utils.networks import cifar10
-from innvestigate.utils.networks import imagenet
-from innvestigate.utils.networks import mnist
-from innvestigate.utils.networks import trivia
+from tests.networks import cifar10, imagenet, mnist, trivia
 
 
-def iterator(network_filter="*", clear_sessions=False):
+def iterator(network_filter: str = "*", clear_sessions: bool = False):
     """
     Iterator over various networks.
     """
 
-    def fetch_networks(module_name, module):
+    def fetch_networks(module_name: str, module):
         ret = [
             ("%s.%s" % (module_name, name), (module, name))
             for name in module.__all__

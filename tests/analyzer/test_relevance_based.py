@@ -2,25 +2,27 @@ from __future__ import annotations
 
 import pytest
 
-from innvestigate.analyzer import BaselineLRPZ
-from innvestigate.analyzer import LRPAlpha1Beta0
-from innvestigate.analyzer import LRPAlpha1Beta0IgnoreBias
-from innvestigate.analyzer import LRPAlpha2Beta1
-from innvestigate.analyzer import LRPAlpha2Beta1IgnoreBias
-from innvestigate.analyzer import LRPEpsilon
-from innvestigate.analyzer import LRPEpsilonIgnoreBias
-from innvestigate.analyzer import LRPFlat
-from innvestigate.analyzer import LRPSequentialPresetA
-from innvestigate.analyzer import LRPSequentialPresetAFlat
-from innvestigate.analyzer import LRPSequentialPresetB
-from innvestigate.analyzer import LRPSequentialPresetBFlat
-from innvestigate.analyzer import LRPWSquare
-from innvestigate.analyzer import LRPZ
-from innvestigate.analyzer import LRPZIgnoreBias
-from innvestigate.analyzer import LRPZPlus
-from innvestigate.analyzer import LRPZPlusFast
+from innvestigate.analyzer import (
+    LRPZ,
+    BaselineLRPZ,
+    LRPAlpha1Beta0,
+    LRPAlpha1Beta0IgnoreBias,
+    LRPAlpha2Beta1,
+    LRPAlpha2Beta1IgnoreBias,
+    LRPEpsilon,
+    LRPEpsilonIgnoreBias,
+    LRPFlat,
+    LRPSequentialPresetA,
+    LRPSequentialPresetAFlat,
+    LRPSequentialPresetB,
+    LRPSequentialPresetBFlat,
+    LRPWSquare,
+    LRPZIgnoreBias,
+    LRPZPlus,
+    LRPZPlusFast,
+)
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
 
 
 @pytest.mark.fast

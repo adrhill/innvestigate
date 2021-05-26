@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import keras.layers
 
-from innvestigate.utils.networks import base
+from tests.networks import base
 
 __all__ = [
     "dot",

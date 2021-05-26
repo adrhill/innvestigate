@@ -13,7 +13,8 @@ from keras.models import Model
 import innvestigate
 from innvestigate.tools import PatternComputer
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
+from tests.networks import base
 
 
 @pytest.mark.fast
@@ -184,7 +185,7 @@ def train_model(model, data, epochs=20):
 class MnistPatternExample_dense_linear(unittest.TestCase):
     def test(self):
         np.random.seed(234354346)
-        model_class = innvestigate.utils.networks.base.mlp_2dense
+        model_class = base.mlp_2dense
 
         data = fetch_data()
         model, modelp = create_model(model_class)
@@ -225,7 +226,7 @@ class MnistPatternExample_dense_linear(unittest.TestCase):
 class MnistPatternExample_dense_relu(unittest.TestCase):
     def test(self):
         np.random.seed(234354346)
-        model_class = innvestigate.utils.networks.base.mlp_2dense
+        model_class = base.mlp_2dense
 
         data = fetch_data()
         model, modelp = create_model(model_class)
@@ -321,7 +322,7 @@ class MnistPatternExample_dense_relu(unittest.TestCase):
 #     def test(self):
 #         np.random.seed(234354346)
 #         K.set_image_data_format("channels_first")
-#         model_class = innvestigate.utils.networks.base.cnn_2convb_2dense
+#         model_class = base.cnn_2convb_2dense
 #         data = fetch_data()
 #         model, modelp = create_model(model_class)
 #         train_model(modelp, data, epochs=1)

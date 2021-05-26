@@ -7,7 +7,7 @@ import pytest
 from innvestigate.analyzer.gradient_based import Gradient
 
 # Prevent pytest from collecting this class:
-from tests.pytest_utils.layer import TestAnalysisHelper as AnalysisHelper
+from tests.layer import TestAnalysisHelper as AnalysisHelper
 
 
 @pytest.mark.fast

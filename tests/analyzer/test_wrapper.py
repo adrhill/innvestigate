@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import pytest
 
-from innvestigate.analyzer import AugmentReduceBase
-from innvestigate.analyzer import GaussianSmoother
-from innvestigate.analyzer import Gradient
-from innvestigate.analyzer import PathIntegrator
-from innvestigate.analyzer import WrapperBase
+from innvestigate.analyzer import (
+    AugmentReduceBase,
+    GaussianSmoother,
+    Gradient,
+    PathIntegrator,
+    WrapperBase,
+)
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
 
 
 @pytest.mark.fast

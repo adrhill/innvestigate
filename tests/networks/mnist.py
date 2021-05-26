@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import keras.backend as K
 
-from innvestigate.utils.networks import base
+from tests.networks import base
 
 __all__ = [
     "log_reg",
@@ -19,9 +19,9 @@ __all__ = [
 
 
 if K.image_data_format() == "channels_first":
-    __input_shape__ = [None, 3, 32, 32]
+    __input_shape__ = [None, 1, 28, 28]
 else:
-    __input_shape__ = [None, 32, 32, 3]
+    __input_shape__ = [None, 28, 28, 1]
 __output_n__ = 10
 
 
@@ -40,8 +40,8 @@ def mlp_2dense(activation=None):
         __input_shape__,
         __output_n__,
         activation=activation,
-        dense_units=1024,
-        dropout_rate=0.5,
+        dense_units=512,
+        dropout_rate=0.25,
     )
 
 
@@ -50,8 +50,8 @@ def mlp_3dense(activation=None):
         __input_shape__,
         __output_n__,
         activation=activation,
-        dense_units=1024,
-        dropout_rate=0.5,
+        dense_units=512,
+        dropout_rate=0.25,
     )
 
 
@@ -63,8 +63,8 @@ def cnn_1convb_2dense(activation=None):
         __input_shape__,
         __output_n__,
         activation=activation,
-        dense_units=1024,
-        dropout_rate=0.5,
+        dense_units=512,
+        dropout_rate=0.25,
     )
 
 
@@ -73,8 +73,8 @@ def cnn_2convb_2dense(activation=None):
         __input_shape__,
         __output_n__,
         activation=activation,
-        dense_units=1024,
-        dropout_rate=0.5,
+        dense_units=512,
+        dropout_rate=0.25,
     )
 
 
@@ -83,8 +83,8 @@ def cnn_2convb_3dense(activation=None):
         __input_shape__,
         __output_n__,
         activation=activation,
-        dense_units=1024,
-        dropout_rate=0.5,
+        dense_units=512,
+        dropout_rate=0.25,
     )
 
 
@@ -93,6 +93,6 @@ def cnn_3convb_3dense(activation=None):
         __input_shape__,
         __output_n__,
         activation=activation,
-        dense_units=1024,
-        dropout_rate=0.5,
+        dense_units=512,
+        dropout_rate=0.25,
     )

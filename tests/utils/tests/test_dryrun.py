@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
 
 
 @pytest.mark.fast

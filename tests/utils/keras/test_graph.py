@@ -4,7 +4,8 @@ import keras.models
 import pytest
 
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.utils import networks
+
+from tests import networks
 
 
 @pytest.mark.fast

@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from innvestigate.analyzer import PatternAttribution
-from innvestigate.analyzer import PatternNet
+from innvestigate.analyzer import PatternAttribution, PatternNet
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
 
 # TODO: add again a train/test case for mnist
 

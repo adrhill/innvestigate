@@ -1,16 +1,20 @@
-from __future__ import annotations
+from __future__ import absolute_import
 
 import pytest
 
-from innvestigate.analyzer import BaselineGradient
-from innvestigate.analyzer import Deconvnet
-from innvestigate.analyzer import Gradient
-from innvestigate.analyzer import GuidedBackprop
-from innvestigate.analyzer import InputTimesGradient
-from innvestigate.analyzer import IntegratedGradients
-from innvestigate.analyzer import SmoothGrad
+from innvestigate.analyzer import (
+    BaselineGradient,
+    Deconvnet,
+    Gradient,
+    GuidedBackprop,
+    InputTimesGradient,
+    IntegratedGradients,
+    SmoothGrad,
+)
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
+
+methods = []
 
 
 @pytest.mark.fast

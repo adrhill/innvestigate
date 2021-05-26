@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from innvestigate.analyzer import BaselineGradient
-from innvestigate.analyzer import Gradient
+from innvestigate.analyzer import BaselineGradient, Gradient
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
 
 
 @pytest.mark.fast

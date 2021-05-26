@@ -7,8 +7,8 @@ import keras.layers
 import numpy as np
 
 from innvestigate.applications import imagenet
-from innvestigate.utils.networks import base
-from innvestigate.utils.networks import mnist
+
+from tests.networks import base, mnist
 
 __all__ = [
     "vgg16_custom",

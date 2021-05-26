@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from innvestigate.analyzer import BoundedDeepTaylor
-from innvestigate.analyzer import DeepTaylor
+from innvestigate.analyzer import BoundedDeepTaylor, DeepTaylor
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
 
 
 @pytest.mark.fast

@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from innvestigate.analyzer import Input
-from innvestigate.analyzer import Random
+from innvestigate.analyzer import Input, Random
 
-from tests.pytest_utils import dryrun
+from tests import dryrun
 
 
 @pytest.mark.fast
