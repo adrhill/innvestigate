@@ -12,6 +12,7 @@ from innvestigate.utils.keras.graph import model_wo_softmax
 __all__ = [
     "model_wo_softmax",
     "to_list",
+    "unpack_singleton",
     "BatchSequence",
     "TargetAugmentedSequence",
     "preprocess_images",
@@ -19,11 +20,30 @@ __all__ = [
 ]
 
 
-def to_list(X: Union[Tensor, List[Tensor]]) -> List[Tensor]:
-    """ If not list, wraps parameter into a list."""
+T = TypeVar("T")  # Generic type, can be anything
+
+
+def to_list(X: Union[T, List[T]]) -> List[T]:
+    """Wraps tensor `X` into a list, if it isn't a list of Tensors yet."""
     if isinstance(X, list):
         return X
     return [X]
+
+
+def unpack_singleton(x: List[T]) -> Union[T, List[T]]:
+    """Gets the first element if the iterable has only one value.
+
+    Otherwise return the iterable.
+
+    # Argument
+        x: A list or tuple.
+
+    # Returns
+        The same iterable or the first element.
+    """
+    if len(x) == 1:
+        return x[0]
+    return x
 
 
 ###############################################################################

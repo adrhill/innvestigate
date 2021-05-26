@@ -401,6 +401,8 @@ def model_contains(
 ) -> Union[List[Layer], List[List[Layer]]]:
     """
     Collect layers in model which satisfy `layer_condition`.
+    If multiple conditions are given in `layer_condition`,
+    the collected layers are returned for each condition.
 
     :param model: A Keras model.
     :type model: Model
@@ -411,25 +413,13 @@ def model_contains(
         contains a list of layers which satisfy that condition.
     :rtype: Union[List[Layer], List[List[Layer]]]
     """
-    # Wrap LayerCheck in List if singleton
-    if callable(layer_condition):
-        layer_condition = [
-            layer_condition,
-        ]
-        single_condition = True
-    else:
-        single_condition = False
-
+    conditions: List[LayerCheck]
+    conditions = iutils.to_list(layer_condition)
     layers = get_model_layers(model)
-    collected_layers = []
-    for condition in layer_condition:
-        tmp = [layer for layer in layers if condition(layer)]  # type: ignore
-        collected_layers.append(tmp)
 
-    if single_condition is True:
-        return collected_layers[0]
-    else:
-        return collected_layers
+    # return layers for which condition c holds true
+    lists_of_layers = [[l for l in layers if c(l)] for c in conditions]
+    return iutils.unpack_singleton(lists_of_layers)
 
 
 ###############################################################################
