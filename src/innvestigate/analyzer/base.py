@@ -67,9 +67,13 @@ class AnalyzerBase(object):
         self,
         model: keras.Model,
         disable_model_checks: bool = False,
-        _model_check_done: bool = False,
         _model_checks: List[ModelCheckDict] = None,
+        _model_check_done: bool = False,
     ) -> None:
+        """
+        Calling the super init first initializes an empty list of model checks
+        that child classes can append to.
+        """
         self._model = model
         self._disable_model_checks = disable_model_checks
         self._model_check_done = _model_check_done
@@ -78,10 +82,6 @@ class AnalyzerBase(object):
         if _model_checks is None:
             _model_checks = []
         self._model_checks: List[ModelCheckDict] = _model_checks
-
-        # Run all model checks in self._model_checks
-        if not self._disable_model_checks:
-            self._do_model_checks()
 
     def _add_model_check(
         self, check: LayerCheck, message: str, check_type: str = "exception"
@@ -111,6 +111,7 @@ class AnalyzerBase(object):
 
     def _do_model_checks(self) -> None:
 
+        tmp: List[Tuple[LayerCheck, str, str]]
         if not self._disable_model_checks and len(self._model_checks) > 0:
             check = [x["check"] for x in self._model_checks]
             types = [x["check_type"] for x in self._model_checks]
@@ -121,7 +122,7 @@ class AnalyzerBase(object):
 
             for checked_layers, message, check_type in tmp:
                 if len(checked_layers) > 0:
-                    tmp_message = "%s\nCheck triggerd by layers: %s" % (
+                    tmp_message = "%s\nCheck triggered by layers: %s" % (
                         message,
                         checked_layers,
                     )
@@ -131,12 +132,11 @@ class AnalyzerBase(object):
                     elif check_type == "warning":
                         # TODO(albermax) only the first warning will be shown
                         warnings.warn(tmp_message)
-                    else:
-                        raise NotImplementedError()
+                    raise NotImplementedError()
 
         self._model_check_done = True
 
-    def fit(self, *_args, **kwargs):
+    def fit(self, *_args, disable_no_training_warning: bool = False, **_kwargs):
         """
         Stub that eats arguments. If an analyzer needs training
         include :class:`TrainerMixin`.
@@ -144,7 +144,6 @@ class AnalyzerBase(object):
         :param disable_no_training_warning: Do not warn if this function is
           called despite no training is needed.
         """
-        disable_no_training_warning = kwargs.pop("disable_no_training_warning", False)
         if not disable_no_training_warning:
             # issue warning if no training is foreseen, but fit() is still called.
             warnings.warn(
@@ -152,7 +151,9 @@ class AnalyzerBase(object):
                 RuntimeWarning,
             )
 
-    def fit_generator(self, *_args, **kwargs):
+    def fit_generator(
+        self, *_args, disable_no_training_warning: bool = False, **_kwargs
+    ):
         """
         Stub that eats arguments. If an analyzer needs training
         include :class:`TrainerMixin`.
@@ -160,7 +161,6 @@ class AnalyzerBase(object):
         :param disable_no_training_warning: Do not warn if this function is
           called despite no training is needed.
         """
-        disable_no_training_warning = kwargs.pop("disable_no_training_warning", False)
         if not disable_no_training_warning:
             # issue warning if no training is foreseen, but fit() is still called.
             warnings.warn(
@@ -210,12 +210,14 @@ class AnalyzerBase(object):
 
     @classmethod
     def _state_to_kwargs(cls, state: dict) -> dict:
+        disable_model_checks: bool
+        disable_model_checks = state.pop("disable_model_checks")
         model_json = state.pop("model_json")
         model_weights = state.pop("model_weights")
-        disable_model_checks = state.pop("disable_model_checks")
         assert len(state) == 0
 
-        model: Model = keras.models.model_from_json(model_json)
+        model: Model
+        model = keras.models.model_from_json(model_json)
         model.set_weights(model_weights)
         return {"model": model, "disable_model_checks": disable_model_checks}
 
@@ -300,12 +302,11 @@ class OneEpochTrainerMixin(TrainerMixin):
         """
         return super().fit(*args, epochs=1, **kwargs)
 
-    def fit_generator(self, *args, **kwargs):
+    def fit_generator(self, *args, steps: int = None, **kwargs):
         """
         Same interface as :func:`fit_generator` of :class:`TrainerMixin` except that
         the parameter epoch is fixed to 1.
         """
-        steps = kwargs.pop("steps", None)
         return super().fit_generator(*args, steps_per_epoch=steps, epochs=1, **kwargs)
 
 
@@ -339,38 +340,38 @@ class AnalyzerNetworkBase(AnalyzerBase):
         allow_lambda_layers: bool = False,
         **kwargs
     ) -> None:
+        """
+        From AnalyzerBase super init:
+        * Initializes empty list of _model_checks
+
+        Here:
+        * set _neuron_selection_mode
+        * add check for lambda layers through 'allow_lambda_layers'
+        * define attributes for '_prepare_model', which is later called
+            through 'create_analyzer_model'
+        """
+        # Call super init to initialize self._model_checks
+        super().__init__(model, **kwargs)
+
         if neuron_selection_mode not in ["max_activation", "index", "all"]:
             raise ValueError("neuron_selection_mode parameter is not valid.")
         self._neuron_selection_mode: str = neuron_selection_mode
 
-        self._model_check_done: bool = False
-        self._model_checks: List[ModelCheckDict] = []
-
+        # Add model check for lambda layers
         self._allow_lambda_layers: bool = allow_lambda_layers
+        self._add_lambda_layers_check()
 
-        check_lambda_layers: LayerCheck = lambda layer: (
-            not self._allow_lambda_layers
-            and isinstance(layer, keras.layers.core.Lambda)
-        )
-        self._add_model_check(
-            check=check_lambda_layers,
-            message=(
-                "Lamda layers are not allowed. "
-                "To force use set allow_lambda_layers parameter."
-            ),
-            check_type="exception",
-        )
-
-        self._special_helper_layers: List[Layer] = []
-
-        # Attributes defined by functions
+        # Attributes of prepared model created by '_prepare_model'
+        self._analyzer_model_done: bool = False
+        self._analyzer_model: Model = None
+        self._special_helper_layers: List[
+            Layer
+        ] = []  # special layers added for _reverse_mapping
         self._analysis_inputs = None
         self._n_data_input: int = 0
         self._n_constant_input: int = 0
         self._n_data_output: int = 0
         self._n_debug_output: int = 0
-
-        super().__init__(model, **kwargs)
 
     def _add_model_softmax_check(self) -> None:
         """
@@ -385,20 +386,41 @@ class AnalyzerNetworkBase(AnalyzerBase):
             check_type="exception",
         )
 
-    def _prepare_model(self, model: Model):
+    def _add_lambda_layers_check(self) -> None:
+        check_lambda_layers: LayerCheck = lambda layer: (
+            not self._allow_lambda_layers
+            and isinstance(layer, keras.layers.core.Lambda)
+        )
+        self._add_model_check(
+            check=check_lambda_layers,
+            message=(
+                "Lamda layers are not allowed. "
+                "To force use set 'allow_lambda_layers' parameter."
+            ),
+            check_type="exception",
+        )
+
+    def _prepare_model(self, model: Model) -> Tuple[Model, List[Tensor], List[Tensor]]:
         """
         Prepares the model to analyze before it gets actually analyzed.
 
         This class adds the code to select a specific output neuron.
         """
-        neuron_selection_mode: str = self._neuron_selection_mode
-        model_inputs: List[Tensor] = model.inputs
-        model_output: List[Tensor] = model.outputs
+        neuron_selection_mode: str
+        model_inputs: Union[Tensor, List[Tensor]]
+        model_output: Union[Tensor, List[Tensor]]
+        analysis_inputs: List[Tensor]
+        stop_analysis_at_tensors: List[Tensor]
+
+        neuron_selection_mode = self._neuron_selection_mode
+        model_inputs = model.inputs
+        model_output = model.outputs
 
         if len(model_output) > 1:
             raise ValueError("Only models with one output tensor are allowed.")
-        analysis_inputs: List[Tensor] = []
-        stop_analysis_at_tensors: List[Tensor] = []
+
+        analysis_inputs = []
+        stop_analysis_at_tensors = []
 
         # Flatten to form (batch_size, other_dimensions):
         if K.ndim(model_output[0]) > 2:
@@ -408,8 +430,10 @@ class AnalyzerNetworkBase(AnalyzerBase):
             inn_max = ilayers.Max(name="iNNvestigate_max")
             model_output = inn_max(model_output)
             self._special_helper_layers.append(inn_max)
+
         elif neuron_selection_mode == "index":
-            neuron_indexing = keras.layers.Input(
+            # Creates a placeholder tensor when `dtype` is passed.
+            neuron_indexing: Layer = keras.layers.Input(
                 batch_shape=[None, None],
                 dtype=np.int32,
                 name="iNNvestigate_neuron_indexing",
@@ -452,15 +476,17 @@ class AnalyzerNetworkBase(AnalyzerBase):
                 analysis_outputs, debug_outputs, constant_inputs = tmp
             elif len(tmp) == 2:
                 analysis_outputs, debug_outputs = tmp
-                constant_inputs = list()
+                constant_inputs = []
             elif len(tmp) == 1:
-                analysis_outputs = iutils.to_list(tmp[0])
-                constant_inputs, debug_outputs = list(), list()
+                analysis_outputs = tmp[0]
+                constant_inputs = []
+                debug_outputs = []
             else:
                 raise Exception("Unexpected output from _create_analysis.")
         else:
             analysis_outputs = tmp
-            constant_inputs, debug_outputs = list(), list()
+            constant_inputs = []
+            debug_outputs = []
 
         analysis_outputs = iutils.to_list(analysis_outputs)
         debug_outputs = iutils.to_list(debug_outputs)
@@ -474,6 +500,8 @@ class AnalyzerNetworkBase(AnalyzerBase):
             inputs=model_inputs + analysis_inputs + constant_inputs,
             outputs=analysis_outputs + debug_outputs,
         )
+
+        self._analyzer_model_done = True
 
     def _create_analysis(
         self, model: Model, stop_analysis_at_tensors: List[Tensor] = None
@@ -516,36 +544,30 @@ class AnalyzerNetworkBase(AnalyzerBase):
         Same interface as :class:`Analyzer` besides
 
         :param neuron_selection: If neuron_selection_mode is 'index' this
-          should be an integer with the index for the chosen neuron.
+        should be an integer with the index for the chosen neuron. # TODO: what does should mean?
         """
-        if not hasattr(self, "_analyzer_model"):
-            self.create_analyzer_model()
 
-        X = iutils.to_list(X)
+        if self._analyzer_model_done is False:
+            self.create_analyzer_model()
 
         if neuron_selection is not None and self._neuron_selection_mode != "index":
             raise ValueError(
-                "neuron_selection_mode 'index' expects 'neuron_selection' parameter."
+                "neuron_selection_mode {} doesn't support 'neuron_selection' parameter.".format(
+                    self._neuron_selection_mode
+                )
             )
+
         if neuron_selection is None and self._neuron_selection_mode == "index":
             raise ValueError(
                 "neuron_selection_mode 'index' expects 'neuron_selection' parameter."
             )
 
-        # TODO: Comment what happens here
-        if self._neuron_selection_mode == "index":
-            neuron_selection_array: np.ndarray = np.asarray(neuron_selection).flatten()
-            if neuron_selection_array.size == 1:
-                neuron_selection_array = np.repeat(neuron_selection_array, len(X[0]))
+        X = iutils.to_list(X)
 
-            # Add first axis indices for gather_nd
-            neuron_selection_array = np.hstack(
-                (
-                    np.arange(len(neuron_selection_array)).reshape((-1, 1)),
-                    neuron_selection_array.reshape((-1, 1)),
-                )
-            )
-            ret = self._analyzer_model.predict_on_batch(X + [neuron_selection_array])
+        if self._neuron_selection_mode == "index":
+            # TODO: document how this works
+            selection = self._get_neuron_selection_array(X, neuron_selection)
+            ret = self._analyzer_model.predict_on_batch(X + [selection])
         else:
             ret = self._analyzer_model.predict_on_batch(X)
 
@@ -556,6 +578,21 @@ class AnalyzerNetworkBase(AnalyzerBase):
         if isinstance(ret, list) and len(ret) == 1:
             ret = ret[0]
         return ret
+
+    def _get_neuron_selection_array(
+        self, X: List[np.ndarray], neuron_selection: int
+    ) -> List[np.ndarray]:
+        # TODO: document how this selects neurons
+
+        nsa = np.asarray(neuron_selection).flatten()  # singleton ndarray
+
+        # is 'ns' is singleton, repeat it so that it matches number of rows of X
+        if nsa.size == 1:
+            nsa = np.repeat(nsa, len(X[0]))
+
+        # Add first axis indices for gather_nd
+        nsa = np.hstack((np.arange(len(nsa)).reshape((-1, 1)), nsa.reshape((-1, 1))))
+        return nsa
 
     def _get_state(self):
         state = super()._get_state()
@@ -636,6 +673,21 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         reverse_reapply_on_copied_layers: bool = False,
         **kwargs
     ) -> None:
+        """
+        From AnalyzerBase super init:
+        * Initializes empty list of _model_checks
+
+        From AnalyzerNetworkBase super init:
+        * set _neuron_selection_mode
+        * add check for lambda layers through 'allow_lambda_layers'
+        * define attributes for '_prepare_model', which is later called
+            through 'create_analyzer_model'
+
+        Here:
+        * define attributes required for calling '_conditional_reverse_mapping'
+        """
+        super().__init__(model, **kwargs)
+
         self._reverse_verbose = reverse_verbose
         self._reverse_clip_values = reverse_clip_values
         self._reverse_project_bottleneck_layers = reverse_project_bottleneck_layers
@@ -643,8 +695,6 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         self._reverse_check_finite = reverse_check_finite
         self._reverse_keep_tensors = reverse_keep_tensors
         self._reverse_reapply_on_copied_layers = reverse_reapply_on_copied_layers
-
-        # TODO: check how this plays with inheritance
         self._reverse_mapping_applied: bool = False
 
         # map priorities to lists of conditional reverse mappings
@@ -653,11 +703,16 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         # Maps keys "min", "max", "finite", "keep" to tuples of indices
         self._debug_tensors_indices: Dict[str, Tuple[int, int]] = {}
 
-        super().__init__(model, **kwargs)
-
-    def _gradient_reverse_mapping(self, Xs, Ys, reversed_Ys, reverse_state):
+    def _gradient_reverse_mapping(
+        self,
+        Xs: Union[Tensor, List[Tensor]],
+        Ys: Union[Tensor, List[Tensor]],
+        reversed_Ys: Union[Tensor, List[Tensor]],
+        reverse_state,
+    ):
         mask = [x not in reverse_state["stop_mapping_at_tensors"] for x in Xs]
-        return ilayers.GradientWRT(len(Xs), mask=mask)(Xs + Ys + reversed_Ys)
+        masked_grad = ilayers.GradientWRT(len(Xs), mask=mask)
+        return masked_grad(Xs + Ys + reversed_Ys)
 
     def _reverse_mapping(self, layer: keras.layers.Layer):
         """

@@ -119,9 +119,9 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
     """
 
     def __init__(self, model, patterns=None, pattern_type=None, **kwargs):
-        self._model_check_done = False
-        self._model_checks = []
+        super().__init__(model, **kwargs)
 
+        # Add and run model checks
         self._add_model_softmax_check()
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
@@ -141,6 +141,7 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
             ("PatternNet is only well defined for " "conv2d/max-pooling/dense layers."),
             check_type="exception",
         )
+        self._do_model_checks()
 
         self._patterns = patterns
         if self._patterns is not None:
@@ -160,8 +161,6 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
         else:
             kwargs["reverse_project_bottleneck_layers"] = True
 
-        super().__init__(model, **kwargs)
-
     def _get_pattern_for_layer(self, layer, state):
         layers = [
             l
@@ -172,7 +171,7 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
         return self._patterns[layers.index(layer)]
 
     def _prepare_pattern(self, layer, state, pattern):
-        """""Prepares a pattern before it is set in the back-ward pass."""
+        """ ""Prepares a pattern before it is set in the back-ward pass."""
         return pattern
 
     def _create_analysis(self, *args, **kwargs):

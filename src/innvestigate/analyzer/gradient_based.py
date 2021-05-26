@@ -33,6 +33,7 @@ class BaselineGradient(AnalyzerNetworkBase):
     """
 
     def __init__(self, model, postprocess=None, **kwargs):
+        super().__init__(model, **kwargs)
 
         if postprocess not in [None, "abs", "square"]:
             raise ValueError(
@@ -40,11 +41,8 @@ class BaselineGradient(AnalyzerNetworkBase):
             )
         self._postprocess = postprocess
 
-        self._model_check_done = False
-        self._model_checks = []
         self._add_model_softmax_check()
-
-        super().__init__(model, **kwargs)
+        self._do_model_checks()
 
     def _create_analysis(self, model, stop_analysis_at_tensors=None):
         if stop_analysis_at_tensors is None:
@@ -91,6 +89,7 @@ class Gradient(ReverseAnalyzerBase):
     """
 
     def __init__(self, model, postprocess=None, **kwargs):
+        super(Gradient, self).__init__(model, **kwargs)
 
         if postprocess not in [None, "abs", "square"]:
             raise ValueError(
@@ -98,11 +97,9 @@ class Gradient(ReverseAnalyzerBase):
             )
         self._postprocess = postprocess
 
-        self._model_check_done = False
-        self._model_checks = []
+        # Add and run model checks
         self._add_model_softmax_check()
-
-        super(Gradient, self).__init__(model, **kwargs)
+        self._do_model_checks()
 
     def _head_mapping(self, X):
         return ilayers.OnesLike()(X)
@@ -192,17 +189,16 @@ class Deconvnet(ReverseAnalyzerBase):
     """
 
     def __init__(self, model, **kwargs):
-        self._model_check_done = False
-        self._model_checks = []
+        super().__init__(model, **kwargs)
 
+        # Add and run model checks
         self._add_model_softmax_check()
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
             "Deconvnet is only specified for networks with ReLU activations.",
             check_type="exception",
         )
-
-        super().__init__(model, **kwargs)
+        self._do_model_checks()
 
     def _create_analysis(self, *args, **kwargs):
 
@@ -233,17 +229,16 @@ class GuidedBackprop(ReverseAnalyzerBase):
     """
 
     def __init__(self, model, **kwargs):
-        self._model_check_done = False
-        self._model_checks = []
+        super().__init__(model, **kwargs)
 
+        # Add and run model checks
         self._add_model_softmax_check()
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
             "GuidedBackprop is only specified for " "networks with ReLU activations.",
             check_type="exception",
         )
-
-        super().__init__(model, **kwargs)
+        self._do_model_checks()
 
     def _create_analysis(self, *args, **kwargs):
 

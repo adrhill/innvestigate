@@ -63,6 +63,7 @@ class ZRule(kgraph.ReverseMappingBase):
         self._layer_wo_act = kgraph.copy_layer_wo_activation(
             layer, keep_bias=bias, name_template="reversed_kernel_%s"
         )
+        super().__init__(layer, state)
 
     def apply(
         self,

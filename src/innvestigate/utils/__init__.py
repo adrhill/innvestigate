@@ -94,18 +94,20 @@ class TargetAugmentedSequence(kutils.Sequence):
     :param augment_f: Takes a batch and returns a target.
     """
 
-    def __init__(self, sequence: List, augment_f: Callable) -> None:
+    def __init__(
+        self, sequence: List[Tensor], augment_f: Callable[[List[Tensor]], List[Tensor]]
+    ) -> None:
         self.sequence = sequence
         self.augment_f = augment_f
 
         super().__init__()
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.sequence)
 
-    def __getitem__(self, idx: int):
+    def __getitem__(self, idx: int) -> Tuple[List[Tensor], List[Tensor]]:
         inputs = self.sequence[idx]
-        if isinstance(inputs, tuple):
+        if isinstance(inputs, tuple):  # TODO: check if this can be removed
             assert len(inputs) == 1
             inputs = inputs[0]
 

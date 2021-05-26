@@ -27,16 +27,16 @@ class DeepTaylor(base.ReverseAnalyzerBase):
     """
 
     def __init__(self, model: Model, *args, **kwargs) -> None:
-        self._model_check_done: bool = False
-        self._model_checks: List[ModelCheckDict] = []
+        super().__init__(model, *args, **kwargs)
 
+        # Add and run model checks
         self._add_model_softmax_check()
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
             "This DeepTaylor implementation only supports ReLU activations.",
             check_type="exception",
         )
-        super().__init__(model, *args, **kwargs)
+        self._do_model_checks()
 
     def _create_analysis(
         self, *args: Any, **kwargs: Any

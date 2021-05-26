@@ -10,9 +10,12 @@ from typing_extensions import TypedDict
 # Define type of checks, using Any for kwargs
 LayerCheck = Union[Callable[[Layer], bool], Callable[[Layer, Any], bool]]
 
+# Used for LRP rules
+ReverseRule = Tuple[LayerCheck, Any]  # TODO: replace Any with ReverseMappingBase
+
 
 class ModelCheckDict(TypedDict):
-    """"Adds type hints to model check dicts."""
+    """ "Adds type hints to model check dicts."""
 
     check: LayerCheck
     message: str
