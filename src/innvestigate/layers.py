@@ -413,10 +413,7 @@ class Divide(keras.layers.Layer):
 
 
 class SafeDivide(keras.layers.Layer):
-    def __init__(self, *args, **kwargs):
-        factor = kwargs.pop("factor", None)
-        if factor is None:
-            factor = K.epsilon()
+    def __init__(self, *args, factor: float= K.epsilon(), **kwargs):
         self._factor = factor
 
         return super().__init__(*args, **kwargs)
