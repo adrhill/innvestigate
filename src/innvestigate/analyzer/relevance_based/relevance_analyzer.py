@@ -55,6 +55,56 @@ __all__ = [
 
 
 ###############################################################################
+BASELINE_LRPZ_LAYERS = (
+    keras.engine.topology.InputLayer,
+    keras.layers.convolutional.Conv1D,
+    keras.layers.convolutional.Conv2D,
+    keras.layers.convolutional.Conv2DTranspose,
+    keras.layers.convolutional.Conv3D,
+    keras.layers.convolutional.Conv3DTranspose,
+    keras.layers.convolutional.Cropping1D,
+    keras.layers.convolutional.Cropping2D,
+    keras.layers.convolutional.Cropping3D,
+    keras.layers.convolutional.SeparableConv1D,
+    keras.layers.convolutional.SeparableConv2D,
+    keras.layers.convolutional.UpSampling1D,
+    keras.layers.convolutional.UpSampling2D,
+    keras.layers.convolutional.UpSampling3D,
+    keras.layers.convolutional.ZeroPadding1D,
+    keras.layers.convolutional.ZeroPadding2D,
+    keras.layers.convolutional.ZeroPadding3D,
+    keras.layers.core.Activation,
+    keras.layers.core.ActivityRegularization,
+    keras.layers.core.Dense,
+    keras.layers.core.Dropout,
+    keras.layers.core.Flatten,
+    keras.layers.core.Lambda,
+    keras.layers.core.Masking,
+    keras.layers.core.Permute,
+    keras.layers.core.RepeatVector,
+    keras.layers.core.Reshape,
+    keras.layers.core.SpatialDropout1D,
+    keras.layers.core.SpatialDropout2D,
+    keras.layers.core.SpatialDropout3D,
+    keras.layers.local.LocallyConnected1D,
+    keras.layers.local.LocallyConnected2D,
+    keras.layers.Add,
+    keras.layers.Concatenate,
+    keras.layers.Dot,
+    keras.layers.Maximum,
+    keras.layers.Minimum,
+    keras.layers.Subtract,
+    keras.layers.noise.AlphaDropout,
+    keras.layers.noise.GaussianDropout,
+    keras.layers.noise.GaussianNoise,
+    keras.layers.normalization.BatchNormalization,
+    keras.layers.pooling.GlobalMaxPooling1D,
+    keras.layers.pooling.GlobalMaxPooling2D,
+    keras.layers.pooling.GlobalMaxPooling3D,
+    keras.layers.pooling.MaxPooling1D,
+    keras.layers.pooling.MaxPooling2D,
+    keras.layers.pooling.MaxPooling3D,
+)
 
 
 class BaselineLRPZ(AnalyzerNetworkBase):
@@ -68,62 +118,11 @@ class BaselineLRPZ(AnalyzerNetworkBase):
     :param model: A Keras model.
     """
 
-    def __init__(self, model, **kwargs):
+    def __init__(self, model: Model, **kwargs):
         # Inside function to not break import if Keras changes.
-        baseline_lrpz_layers = (
-            keras.engine.topology.InputLayer,
-            keras.layers.convolutional.Conv1D,
-            keras.layers.convolutional.Conv2D,
-            keras.layers.convolutional.Conv2DTranspose,
-            keras.layers.convolutional.Conv3D,
-            keras.layers.convolutional.Conv3DTranspose,
-            keras.layers.convolutional.Cropping1D,
-            keras.layers.convolutional.Cropping2D,
-            keras.layers.convolutional.Cropping3D,
-            keras.layers.convolutional.SeparableConv1D,
-            keras.layers.convolutional.SeparableConv2D,
-            keras.layers.convolutional.UpSampling1D,
-            keras.layers.convolutional.UpSampling2D,
-            keras.layers.convolutional.UpSampling3D,
-            keras.layers.convolutional.ZeroPadding1D,
-            keras.layers.convolutional.ZeroPadding2D,
-            keras.layers.convolutional.ZeroPadding3D,
-            keras.layers.core.Activation,
-            keras.layers.core.ActivityRegularization,
-            keras.layers.core.Dense,
-            keras.layers.core.Dropout,
-            keras.layers.core.Flatten,
-            keras.layers.core.Lambda,
-            keras.layers.core.Masking,
-            keras.layers.core.Permute,
-            keras.layers.core.RepeatVector,
-            keras.layers.core.Reshape,
-            keras.layers.core.SpatialDropout1D,
-            keras.layers.core.SpatialDropout2D,
-            keras.layers.core.SpatialDropout3D,
-            keras.layers.local.LocallyConnected1D,
-            keras.layers.local.LocallyConnected2D,
-            keras.layers.Add,
-            keras.layers.Concatenate,
-            keras.layers.Dot,
-            keras.layers.Maximum,
-            keras.layers.Minimum,
-            keras.layers.Subtract,
-            keras.layers.noise.AlphaDropout,
-            keras.layers.noise.GaussianDropout,
-            keras.layers.noise.GaussianNoise,
-            keras.layers.normalization.BatchNormalization,
-            keras.layers.pooling.GlobalMaxPooling1D,
-            keras.layers.pooling.GlobalMaxPooling2D,
-            keras.layers.pooling.GlobalMaxPooling3D,
-            keras.layers.pooling.MaxPooling1D,
-            keras.layers.pooling.MaxPooling2D,
-            keras.layers.pooling.MaxPooling3D,
-        )
 
-        self._model_check_done = False
-        self._model_checks = []
 
+        # Add and run model checks
         self._add_model_softmax_check()
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
@@ -131,7 +130,7 @@ class BaselineLRPZ(AnalyzerNetworkBase):
             check_type="exception",
         )
         self._add_model_check(
-            lambda layer: not isinstance(layer, baseline_lrpz_layers),
+            lambda layer: not isinstance(layer, BASELINE_LRPZ_LAYERS),
             "BaselineLRPZ only works with a predefined set of layers.",
             check_type="exception",
         )
