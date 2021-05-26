@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from builtins import zip
-from typing import Iterable
-from typing import Tuple
+from typing import List, Tuple
 
 import keras
 import keras.backend as K

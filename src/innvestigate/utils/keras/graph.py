@@ -1,16 +1,8 @@
 from __future__ import annotations
 
 import inspect
-from builtins import range
-from builtins import zip
-from typing import Callable
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Sequence
-from typing import Set
-from typing import Tuple
-from typing import Union
+from builtins import range, zip
+from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
 import keras.backend as K
 import keras.engine.topology
@@ -23,11 +15,7 @@ import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.checks as kchecks
 from innvestigate.utils.keras import apply as kapply
-from innvestigate.utils.types import Layer
-from innvestigate.utils.types import LayerCheck
-from innvestigate.utils.types import Model
-from innvestigate.utils.types import NodeDict
-from innvestigate.utils.types import Tensor
+from innvestigate.utils.types import Layer, LayerCheck, Model, NodeDict, Tensor
 
 __all__ = [
     "get_kernel",

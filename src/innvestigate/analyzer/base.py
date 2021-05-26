@@ -2,14 +2,7 @@ from __future__ import annotations
 
 import warnings
 from builtins import zip
-from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Tuple
-from typing import Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import keras
 import keras.backend as K
@@ -23,12 +16,14 @@ import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.utils.types import CondReverseMapping
-from innvestigate.utils.types import Layer
-from innvestigate.utils.types import LayerCheck
-from innvestigate.utils.types import Model
-from innvestigate.utils.types import ModelCheckDict
-from innvestigate.utils.types import Tensor
+from innvestigate.utils.types import (
+    CondReverseMapping,
+    Layer,
+    LayerCheck,
+    Model,
+    ModelCheckDict,
+    Tensor,
+)
 
 __all__ = [
     "NotAnalyzeableModelException",

@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Callable
-from typing import List
-from typing import Tuple
-from typing import Union
+from typing import Callable, List, Tuple, TypeVar, Union
 
 import keras.backend as K
 import keras.utils as kutils

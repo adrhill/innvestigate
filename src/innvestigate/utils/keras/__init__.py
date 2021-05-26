@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from builtins import zip
-from typing import List
-from typing import Union
+from typing import List, Union
 
 import keras.backend as K
 import numpy as np

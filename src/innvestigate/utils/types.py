@@ -1,14 +1,6 @@
 """Custom types used in iNNvestigate"""
 
-from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Set
-from typing import Tuple
-from typing import Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, Union
 
 from keras import Model
 from keras.layers import Layer

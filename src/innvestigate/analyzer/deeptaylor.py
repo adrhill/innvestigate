@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
-from typing import List
-from typing import Tuple
-from typing import Union
+from typing import Any, List, Tuple, Union
 
 import keras.layers
 import keras.models
@@ -12,10 +9,7 @@ import innvestigate.analyzer.base as base
 import innvestigate.analyzer.relevance_based.relevance_rule as lrp_rules
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.utils.types import Layer
-from innvestigate.utils.types import Model
-from innvestigate.utils.types import ModelCheckDict
-from innvestigate.utils.types import Tensor
+from innvestigate.utils.types import Layer, Model, ModelCheckDict, Tensor
 
 __all__ = [
     "DeepTaylor",

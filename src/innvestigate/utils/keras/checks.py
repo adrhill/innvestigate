@@ -4,9 +4,7 @@ e.g. if it is an input or a pooling layer"""
 from __future__ import annotations
 
 import inspect
-from typing import Any
-from typing import Callable
-from typing import Union
+from typing import Any, Callable, Union
 
 import keras.engine.topology
 import keras.layers

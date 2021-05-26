@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from builtins import range
-from builtins import zip
-from typing import List
-from typing import Tuple
-from typing import Union
+from builtins import range, zip
+from typing import List, Optional, Tuple, Union
 
 import keras
 import keras.backend as K

@@ -15,8 +15,7 @@ import os
 import keras.models
 import keras.utils.data_utils
 import numpy as np
-from keras.models import clone_model
-from keras.models import load_model
+from keras.models import clone_model, load_model
 
 __all__ = [
     "pretrained_plos_long_relu",

@@ -8,10 +8,8 @@ import innvestigate.utils as iutils
 import innvestigate.utils.keras as kutils
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.analyzer.base import AnalyzerNetworkBase
-from innvestigate.analyzer.base import ReverseAnalyzerBase
-from innvestigate.analyzer.wrapper import GaussianSmoother
-from innvestigate.analyzer.wrapper import PathIntegrator
+from innvestigate.analyzer.base import AnalyzerNetworkBase, ReverseAnalyzerBase
+from innvestigate.analyzer.wrapper import GaussianSmoother, PathIntegrator
 
 __all__ = [
     "BaselineGradient",
