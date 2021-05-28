@@ -3,8 +3,8 @@ from __future__ import annotations
 from builtins import zip
 from typing import List, Union
 
-import keras.backend as K
 import numpy as np
+from keras.backend import int_shape
 from keras.layers import Layer
 from tensorflow import Tensor
 
@@ -67,12 +67,12 @@ def broadcast_np_tensors_to_keras_tensors(
 
     if isinstance(np_tensors, list):
         ret = [
-            np.broadcast_to(ri, none_to_one(K.int_shape(x)))
+            np.broadcast_to(ri, none_to_one(int_shape(x)))
             for x, ri in zip(keras_tensors, np_tensors)
         ]
     else:
         ret = [
-            np.broadcast_to(np_tensors, none_to_one(K.int_shape(x)))
+            np.broadcast_to(np_tensors, none_to_one(int_shape(x)))
             for x in keras_tensors
         ]
 

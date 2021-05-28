@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import warnings
 
-import keras.backend as K
 import keras.layers
 import numpy as np
+from keras.backend import image_data_format
 
 from innvestigate.applications import imagenet
 
@@ -48,7 +48,7 @@ def vgg16_custom(activation=None):
     if activation is None:
         activation = "relu"
 
-    if K.image_data_format() == "channels_first":
+    if image_data_format() == "channels_first":
         input_shape = [None, 3, 224, 224]
     else:
         input_shape = [None, 224, 224, 3]
@@ -200,7 +200,7 @@ def densenet201():
 
 
 def nasnet_large():
-    if K.image_data_format() == "channels_first":
+    if image_data_format() == "channels_first":
         warnings.warn(
             "NASNet is not available for channels first. " "Return dummy net."
         )
@@ -212,7 +212,7 @@ def nasnet_large():
 
 
 def nasnet_mobile():
-    if K.image_data_format() == "channels_first":
+    if image_data_format() == "channels_first":
         warnings.warn(
             "NASNet is not available for channels first. " "Return dummy net."
         )

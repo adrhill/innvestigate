@@ -4,6 +4,7 @@ import keras.layers
 import keras.models
 import numpy as np
 import pytest
+from keras.backend import image_data_format
 
 import innvestigate.tools.perturbate
 import innvestigate.utils as iutils
@@ -13,7 +14,7 @@ import innvestigate.utils as iutils
 @pytest.mark.precommit
 def test_fast__PerturbationAnalysis():
     # Some test data
-    if keras.backend.image_data_format() == "channels_first":
+    if image_data_format() == "channels_first":
         input_shape = (2, 1, 4, 4)
     else:
         input_shape = (2, 4, 4, 1)
@@ -63,7 +64,7 @@ def test_fast__PerturbationAnalysis():
 @pytest.mark.fast
 @pytest.mark.precommit
 def test_fast__Perturbation():
-    if keras.backend.image_data_format() == "channels_first":
+    if image_data_format() == "channels_first":
         input_shape = (1, 1, 4, 4)
     else:
         input_shape = (1, 4, 4, 1)
@@ -79,7 +80,7 @@ def test_fast__Perturbation():
     analysis[2:, 2:] = 3
     analysis = analysis.reshape(input_shape)
 
-    if keras.backend.image_data_format() == "channels_last":
+    if image_data_format() == "channels_last":
         x = np.moveaxis(x, 3, 1)
         analysis = np.moveaxis(analysis, 3, 1)
 

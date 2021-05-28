@@ -3,8 +3,8 @@ from __future__ import annotations
 import math
 from typing import Callable, List, Tuple, TypeVar, Union
 
-import keras.backend as K
 import keras.utils as kutils
+from keras.backend import image_data_format
 from tensorflow import Tensor
 
 from innvestigate.utils.keras.graph import model_wo_softmax
@@ -132,7 +132,7 @@ def preprocess_images(images: Tensor, color_coding: str = None) -> Tensor:
     """
 
     ret: Tensor = images
-    image_data_format: str = K.image_data_format()
+    image_data_format: str = image_data_format()
 
     # TODO: not very general:
     channels_first: bool = images.shape[1] in [1, 3]
@@ -166,7 +166,7 @@ def postprocess_images(
     """
 
     ret: Tensor = images
-    image_data_format: str = K.image_data_format()
+    image_data_format: str = image_data_format()
 
     assert color_coding in [None, "RGBtoBGR", "BGRtoRGB"]
     if color_coding in ["RGBtoBGR", "BGRtoRGB"]:

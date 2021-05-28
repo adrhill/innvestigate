@@ -4,9 +4,9 @@ import time
 import warnings
 from builtins import range
 
-import keras.backend as K
 import numpy as np
 import six
+from keras.backend import image_data_format
 from keras.utils import Sequence
 from keras.utils.data_utils import GeneratorEnqueuer, OrderedEnqueuer
 
@@ -220,7 +220,7 @@ class Perturbation:
         :return: Batch of perturbated images
         :rtype: numpy.ndarray
         """
-        if K.image_data_format() == "channels_last":
+        if image_data_format() == "channels_last":
             x = np.moveaxis(x, 3, 1)
             analysis = np.moveaxis(analysis, 3, 1)
         if not self.in_place:
@@ -255,7 +255,7 @@ class Perturbation:
                 pad_shape_before_x[1] : pad_shape_before_x[1] + original_shape[3],
             ]
 
-        if K.image_data_format() == "channels_last":
+        if image_data_format() == "channels_last":
             x_perturbated = np.moveaxis(x_perturbated, 1, 3)
             x = np.moveaxis(x, 1, 3)
             analysis = np.moveaxis(analysis, 1, 3)
@@ -308,17 +308,17 @@ class PerturbationAnalysis:
         if not self.recompute_analysis:
             # Compute the analysis once in the beginning
             analysis = list()
-            x = list()
-            y = list()
-            for xx, yy in self.generator:
-                x.extend(list(xx))
-                y.extend(list(yy))
-                analysis.extend(list(self.analyzer.analyze(xx)))
-            x = np.array(x)
-            y = np.array(y)
+            X = list()
+            Y = list()
+            for XX, YY in self.generator:
+                X.extend(list(XX))
+                Y.extend(list(YY))
+                analysis.extend(list(self.analyzer.analyze(XX)))
+            X = np.array(X)
+            Y = np.array(Y)
             analysis = np.array(analysis)
             self.analysis_generator = innvestigate.utils.BatchSequence(
-                [x, y, analysis], batch_size=256
+                [X, Y, analysis], batch_size=256
             )
         self.verbose = verbose
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import keras
 import numpy as np
-from keras import backend as K
+from keras.backend import image_data_format
 from keras.datasets import mnist
 from keras.models import Model
 from keras.optimizers import Adam
@@ -13,7 +13,6 @@ import innvestigate.utils
 import innvestigate.utils as iutils
 import innvestigate.utils.visualizations as ivis
 
-import tests.networks
 from tests.networks import base
 
 ###############################################################################
@@ -22,7 +21,7 @@ from tests.networks import base
 
 
 def fetch_data():
-    channels_first = K.image_data_format() == "channels_first"
+    channels_first = image_data_format() == "channels_first"
     # the data, shuffled and split between train and test sets
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
@@ -85,7 +84,7 @@ def create_preprocessing_f(X, input_range=None):
 
 
 def create_model(modelname, **kwargs):
-    channels_first = K.image_data_format() == "channels_first"
+    channels_first = image_data_format() == "channels_first"
     num_classes = 10
 
     if channels_first:

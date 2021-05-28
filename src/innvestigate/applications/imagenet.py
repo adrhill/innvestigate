@@ -27,9 +27,9 @@ import keras.applications.nasnet
 import keras.applications.resnet50
 import keras.applications.vgg16
 import keras.applications.vgg19
-import keras.backend as K
 import keras.utils.data_utils
 import numpy as np
+from keras.backend import image_data_format
 
 from ..utils.keras import graph as kgraph
 
@@ -94,7 +94,7 @@ def _prepare_keras_net(
     net = {}
     net["name"] = netname
     net["image_shape"] = image_shape
-    if K.image_data_format() == "channels_first":
+    if image_data_format() == "channels_first":
         net["input_shape"] = [None, 3] + image_shape
     else:
         net["input_shape"] = [None] + image_shape + [3]
@@ -275,7 +275,7 @@ def nasnet_large(load_weights=False, load_patterns=False):
 
 
 def nasnet_mobile(load_weights=False, load_patterns=False):
-    if K.image_data_format() == "channels_first":
+    if image_data_format() == "channels_first":
         raise Exception("NASNet is not available for channels first.")
 
     return _prepare_keras_net(

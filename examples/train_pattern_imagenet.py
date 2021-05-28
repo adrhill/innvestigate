@@ -4,11 +4,11 @@ import imp
 import os
 import sys
 
-import keras.backend
 import keras.models
 import keras.preprocessing.image
 import keras.utils
 import numpy as np
+from keras.backend import image_data_format
 
 import innvestigate
 import innvestigate.tools
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # Create data loaders.
     ###########################################################################
 
-    if keras.backend.image_data_format() == "channels_first":
+    if image_data_format() == "channels_first":
         target_size = net["input_shape"][2:4]
     else:
         target_size = net["input_shape"][1:3]
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     # Utility functions.
     ###########################################################################
     color_conversion = "BGRtoRGB" if net["color_coding"] == "BGR" else None
-    channels_first = keras.backend.image_data_format == "channels_first"
+    channels_first = image_data_format == "channels_first"
 
     def preprocess(X):
         X = X.copy()
