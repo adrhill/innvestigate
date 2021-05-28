@@ -1,12 +1,8 @@
-from __future__ import annotations
-
 import pytest
 
 from innvestigate.analyzer import PatternAttribution, PatternNet
 
 from tests import dryrun
-
-# TODO: add again a train/test case for mnist
 
 
 @pytest.mark.fast
