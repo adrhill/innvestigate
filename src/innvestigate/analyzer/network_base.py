@@ -270,9 +270,14 @@ class AnalyzerNetworkBase(AnalyzerBase):
         X = iutils.to_list(X)
 
         if self._neuron_selection_mode == "index":
-            # TODO: document how this works
-            selection = self._get_neuron_selection_array(X, neuron_selection)
-            ret = self._analyzer_model.predict_on_batch(X + [selection])
+            if neuron_selection:
+                # TODO: document how this works
+                selection = self._get_neuron_selection_array(X, neuron_selection)
+                ret = self._analyzer_model.predict_on_batch(X + [selection])
+            else:
+                raise RuntimeError(
+                    'neuron_selection_mode "index" requires neuron_selection.'
+                )
         else:
             ret = self._analyzer_model.predict_on_batch(X)
 
