@@ -326,7 +326,7 @@ class Project(_Map):
 
 class Print(_Map):
     def _apply_map(self, x: Tensor) -> None:
-        return K.print_tensor(x)
+        K.print_tensor(x)
 
 
 ###############################################################################
@@ -413,10 +413,9 @@ class Divide(keras.layers.Layer):
 
 
 class SafeDivide(keras.layers.Layer):
-    def __init__(self, *args, factor: float= K.epsilon(), **kwargs):
+    def __init__(self, *args, factor: float = K.epsilon(), **kwargs):
+        super().__init__(*args, **kwargs)
         self._factor = factor
-
-        return super().__init__(*args, **kwargs)
 
     def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
@@ -431,9 +430,9 @@ class SafeDivide(keras.layers.Layer):
 
 class Repeat(keras.layers.Layer):
     def __init__(self, n: int, axis, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._n = n
         self._axis = axis
-        return super().__init__(*args, **kwargs)
 
     def call(self, x: Tensor) -> Tensor:
         return K.repeat_elements(x, self._n, self._axis)
@@ -452,8 +451,8 @@ class Repeat(keras.layers.Layer):
 
 class Reshape(keras.layers.Layer):
     def __init__(self, shape, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._shape = shape
-        return super().__init__(*args, **kwargs)
 
     def call(self, x: Tensor) -> Tensor:
         return K.reshape(x, self._shape)
@@ -464,11 +463,11 @@ class Reshape(keras.layers.Layer):
 
 class MultiplyWithLinspace(keras.layers.Layer):
     def __init__(self, start, end, n=1, axis=-1, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._start = start
         self._end = end
         self._n = n
         self._axis = axis
-        return super().__init__(*args, **kwargs)
 
     def call(self, x: Tensor) -> Tensor:
         linspace = self._start + (self._end - self._start) * (
@@ -497,12 +496,12 @@ class TestPhaseGaussianNoise(keras.layers.GaussianNoise):
 
 class ExtractConv2DPatches(keras.layers.Layer):
     def __init__(self, kernel_shape, depth, strides, rates, padding, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._kernel_shape = kernel_shape
         self._depth = depth
         self._strides = strides
         self._rates = rates
         self._padding = padding
-        return super().__init__(*args, **kwargs)
 
     def call(self, x):
         return iK.extract_conv2d_patches(
