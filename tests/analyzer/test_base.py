@@ -19,20 +19,12 @@ class CustomAnalyzerIndex3(Gradient):
         return super().analyze(X, index)
 
 
-methods = {
+methods_serializable = {
     "Input": (Input, {}),
     "Random": (Random, {}),
     "AnalyzerNetworkBase_neuron_selection_max": (
         Gradient,
         {"neuron_selection_mode": "max_activation"},
-    ),
-    "AnalyzerNetworkBase_neuron_selection_index_0": (
-        CustomAnalyzerIndex0,
-        {"neuron_selection_mode": "index"},
-    ),
-    "AnalyzerNetworkBase_neuron_selection_index_3": (
-        CustomAnalyzerIndex3,
-        {"neuron_selection_mode": "index"},
     ),
     "BaseReverseNetwork_reverse_debug": (Gradient, {"reverse_verbose": True}),
     "BaseReverseNetwork_reverse_check_minmax": (
@@ -43,10 +35,27 @@ methods = {
         Gradient,
         {"reverse_verbose": True, "reverse_check_finite": True},
     ),
+    "Gradient": (Gradient, {}),
+    "BaselineGradient": (BaselineGradient, {}),
 }
 
-#######
+# TODO: Custom methods currently cannot be serialized as the process requires
+# the class name to be known by iNNvestigate.
+methods = methods_serializable.copy()
+methods.update(
+    {
+        "AnalyzerNetworkBase_neuron_selection_index_0": (
+            CustomAnalyzerIndex0,
+            {"neuron_selection_mode": "index"},
+        ),
+        "AnalyzerNetworkBase_neuron_selection_index_3": (
+            CustomAnalyzerIndex3,
+            {"neuron_selection_mode": "index"},
+        ),
+    }
+)
 
+# Dryrun all methods
 
 @pytest.mark.fast
 @pytest.mark.precommit
@@ -60,7 +69,11 @@ def test_fast(method, kwargs):
 
 @pytest.mark.fast
 @pytest.mark.precommit
-@pytest.mark.parametrize("method, kwargs", methods.values(), ids=list(methods.keys()))
+@pytest.mark.parametrize(
+    "method, kwargs",
+    methods_serializable.values(),
+    ids=list(methods_serializable.keys()),
+)
 def test_fast_serialize(method, kwargs):
     def analyzer(model):
         return method(model, **kwargs)
@@ -75,7 +88,6 @@ def test_precommit(method, kwargs):
         return method(model, **kwargs)
 
     dryrun.test_analyzer(analyzer, "mnist.*")
-
 
 #######
 
@@ -136,24 +148,3 @@ def test_precommit__BasicGraphReversal():
 #     dryrun.test_equal_analyzer(method1,
 #                                method2,
 #                                "mnist.*")
-
-
-###############################################################################
-
-
-@pytest.mark.fast
-@pytest.mark.precommit
-def test_fast__SerializeAnalyzerBase():
-    def method(model):
-        return BaselineGradient(model)
-
-    dryrun.test_serialize_analyzer(method, "trivia.*:mnist.log_reg")
-
-
-@pytest.mark.fast
-@pytest.mark.precommit
-def test_fast__SerializeReverseAnalyzerkBase():
-    def method(model):
-        return Gradient(model)
-
-    dryrun.test_serialize_analyzer(method, "trivia.*:mnist.log_reg")
