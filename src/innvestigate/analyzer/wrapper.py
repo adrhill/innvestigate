@@ -52,7 +52,8 @@ class WrapperBase(AnalyzerBase):
     def _state_to_kwargs(cls, state):
         sa_class_name = state.pop("subanalyzer_class_name")
         sa_state = state.pop("subanalyzer_state")
-        assert len(state) == 0
+        # call super after popping class-specific states:
+        kwargs = super()._state_to_kwargs(state)
 
         subanalyzer = super().load(sa_class_name, sa_state)
         kwargs = {"subanalyzer": subanalyzer}
@@ -181,7 +182,9 @@ class AugmentReduceBase(WrapperBase):
     @classmethod
     def _state_to_kwargs(cls, state):
         augment_by_n = state.pop("augment_by_n")
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         kwargs.update({"augment_by_n": augment_by_n})
         return kwargs
 
@@ -217,7 +220,9 @@ class GaussianSmoother(AugmentReduceBase):
     @classmethod
     def _state_to_kwargs(cls, state):
         noise_scale = state.pop("noise_scale")
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         kwargs.update({"noise_scale": noise_scale})
         return kwargs
 
@@ -307,9 +312,12 @@ class PathIntegrator(AugmentReduceBase):
     @classmethod
     def _state_to_kwargs(cls, state):
         reference_inputs = state.pop("reference_inputs")
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
-        kwargs.update({"reference_inputs": reference_inputs})
+
         # We use steps instead.
-        kwargs.update({"steps": kwargs["augment_by_n"]})
+        kwargs.update(
+            {"reference_inputs": reference_inputs, "steps": kwargs["augment_by_n"]}
+        )
         del kwargs["augment_by_n"]
         return kwargs

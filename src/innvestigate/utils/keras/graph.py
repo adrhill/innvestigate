@@ -480,7 +480,7 @@ def apply_mapping_to_fused_bn_layer(mapping, fuse_mode: str = "one_linear"):
 
     def meta_mapping(layer: Layer, reverse_state):
         # get bn params
-        weights = layer.weights[:]
+        weights = layer.weights[:]  # copy array
         if layer.scale:
             gamma = weights.pop(0)
         else:

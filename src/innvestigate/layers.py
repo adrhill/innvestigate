@@ -387,9 +387,11 @@ class Transpose(keras.layers.Layer):
         else:
             return K.permute_dimensions(x, self._axes)
 
-    def compute_output_shape(self, input_shape: List[Tuple]) -> Tuple:
+    def compute_output_shape(
+        self, input_shape: List[Tuple[int]]
+    ) -> Union[List[Tuple[int]], Tuple]:
         if self._axes is None:
-            return input_shape[::-1]
+            return input_shape[::-1]  # invert input shapes
         else:
             return tuple(np.asarray(input_shape)[list(self._axes)])
 
@@ -480,8 +482,8 @@ class MultiplyWithLinspace(keras.layers.Layer):
         linspace = K.reshape(linspace, shape)
         return x * linspace
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
-        ret = input_shapes[:]
+    def compute_output_shape(self, input_shapes: Iterable[int]) -> Iterable[int]:
+        ret = input_shapes[:]  # copy array
         ret = (
             ret[: self._axis] + (max(self._n, ret[self._axis]),) + ret[self._axis + 1 :]
         )

@@ -73,7 +73,9 @@ class BaselineGradient(AnalyzerNetworkBase):
     @classmethod
     def _state_to_kwargs(cls, state):
         postprocess = state.pop("postprocess")
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         kwargs.update(
             {
                 "postprocess": postprocess,
@@ -96,7 +98,7 @@ class Gradient(ReverseAnalyzerBase):
 
         if postprocess not in [None, "abs", "square"]:
             raise ValueError(
-                "Parameter 'postprocess' must be either " "None, 'abs', or 'square'."
+                """Parameter 'postprocess' must be either None, "abs", or "square"."""
             )
         self._postprocess = postprocess
 
@@ -125,7 +127,9 @@ class Gradient(ReverseAnalyzerBase):
     @classmethod
     def _state_to_kwargs(cls, state):
         postprocess = state.pop("postprocess")
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         kwargs.update(
             {
                 "postprocess": postprocess,

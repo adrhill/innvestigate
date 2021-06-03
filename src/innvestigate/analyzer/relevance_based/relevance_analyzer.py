@@ -563,7 +563,9 @@ class LRP(ReverseAnalyzerBase):
         input_layer_rule = state.pop("input_layer_rule")
         bn_layer_rule = state.pop("bn_layer_rule")
         bn_layer_fuse_mode = state.pop("bn_layer_fuse_mode")
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         kwargs.update(
             {
                 "rule": rule,
@@ -583,7 +585,9 @@ class LRP(ReverseAnalyzerBase):
 class _LRPFixedParams(LRP):
     @classmethod
     def _state_to_kwargs(cls, state):
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         del kwargs["rule"]
         del kwargs["bn_layer_rule"]
         return kwargs
@@ -703,7 +707,9 @@ class LRPAlphaBeta(LRP):
         beta = state.pop("beta")
         bias = state.pop("bias")
         state["rule"] = None
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         del kwargs["rule"]
         del kwargs["bn_layer_rule"]
         kwargs.update({"alpha": alpha, "beta": beta, "bias": bias})
@@ -713,7 +719,9 @@ class LRPAlphaBeta(LRP):
 class _LRPAlphaBetaFixedParams(LRPAlphaBeta):
     @classmethod
     def _state_to_kwargs(cls, state):
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         del kwargs["alpha"]
         del kwargs["beta"]
         del kwargs["bias"]

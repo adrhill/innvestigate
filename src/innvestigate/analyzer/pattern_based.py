@@ -54,7 +54,7 @@ class PatternNetReverseKernelLayer(kgraph.ReverseMappingBase):
     where the filter weights are replaced with the patterns.
     """
 
-    def __init__(self, layer, state, pattern):
+    def __init__(self, layer, _state, pattern):
         config = layer.get_config()
 
         # Layer can contain a kernel and an activation.
@@ -82,7 +82,7 @@ class PatternNetReverseKernelLayer(kgraph.ReverseMappingBase):
             layer, name_template="reversed_pattern_%s", weights=filter_weights
         )
 
-    def apply(self, Xs, _Ys, reversed_Ys, reverse_state):
+    def apply(self, Xs, _Ys, reversed_Ys, _reverse_state):
         # Reapply the prepared layers.
         act_Xs = kutils.apply(self._filter_layer, Xs)
         act_Ys = kutils.apply(self._act_layer, act_Xs)
@@ -126,20 +126,17 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
         self._add_model_softmax_check()
         self._add_model_check(
             lambda layer: not kchecks.only_relu_activation(layer),
-            (
-                "PatternNet is not well defined for "
-                "networks with non-ReLU activations."
-            ),
+            ("PatternNet is not well defined for networks with non-ReLU activations."),
             check_type="warning",
         )
         self._add_model_check(
             lambda layer: not kchecks.is_convnet_layer(layer),
-            ("PatternNet is only well defined for " "convolutional neural networks."),
+            ("PatternNet is only well defined for convolutional neural networks."),
             check_type="warning",
         )
         self._add_model_check(
             lambda layer: not isinstance(layer, SUPPORTED_LAYER_PATTERNNET),
-            ("PatternNet is only well defined for " "conv2d/max-pooling/dense layers."),
+            ("PatternNet is only well defined for conv2d/max-pooling/dense layers."),
             check_type="exception",
         )
         self._do_model_checks()
@@ -155,14 +152,13 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
         # Prevent this by projecting the values in bottleneck layers to +-1.
         if not kwargs.get("reverse_project_bottleneck_layers", True):
             warnings.warn(
-                "The standard setting for "
-                "'reverse_project_bottleneck_layers' "
+                "The standard setting for 'reverse_project_bottleneck_layers'"
                 "is overwritten."
             )
         else:
             kwargs["reverse_project_bottleneck_layers"] = True
 
-    def _get_pattern_for_layer(self, layer, state):
+    def _get_pattern_for_layer(self, layer, _state):
         layers = [
             l
             for l in kgraph.get_model_layers(self._model)
@@ -171,7 +167,7 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
 
         return self._patterns[layers.index(layer)]
 
-    def _prepare_pattern(self, layer, state, pattern):
+    def _prepare_pattern(self, _layer, _state, pattern):
         """ ""Prepares a pattern before it is set in the back-ward pass."""
         return pattern
 
@@ -210,7 +206,7 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
             pattern_type = "relu"
 
         if isinstance(pattern_type, (list, tuple)):
-            raise ValueError("Only one pattern type allowed. " "Please pass a string.")
+            raise ValueError("Only one pattern type allowed. Please pass a string.")
 
         computer = itools.PatternComputer(
             self._model, pattern_type=pattern_type, **kwargs
@@ -234,7 +230,9 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
     def _state_to_kwargs(cls, state):
         patterns = state.pop("patterns")
         pattern_type = state.pop("pattern_type")
+        # call super after popping class-specific states:
         kwargs = super()._state_to_kwargs(state)
+
         kwargs.update({"patterns": patterns, "pattern_type": pattern_type})
         return kwargs
 

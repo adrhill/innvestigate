@@ -205,13 +205,13 @@ class AnalyzerBase(object):
 
     @classmethod
     def _state_to_kwargs(cls, state: dict) -> dict:
-        disable_model_checks: bool
         disable_model_checks = state.pop("disable_model_checks")
         model_json = state.pop("model_json")
         model_weights = state.pop("model_weights")
+        # since `super()._state_to_kwargs(state)` should be called last
+        # in every child class, the dict `state` should be empty at this point.
         assert len(state) == 0
 
-        model: Model
         model = keras.models.model_from_json(model_json)
         model.set_weights(model_weights)
         return {"model": model, "disable_model_checks": disable_model_checks}
