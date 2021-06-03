@@ -17,7 +17,8 @@ import innvestigate.utils as iutils
 import innvestigate.utils.keras as kutils
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.analyzer.base import OneEpochTrainerMixin, ReverseAnalyzerBase
+from innvestigate.analyzer.base import OneEpochTrainerMixin
+from innvestigate.analyzer.reverse_base import ReverseAnalyzerBase
 
 __all__ = [
     "PatternNet",

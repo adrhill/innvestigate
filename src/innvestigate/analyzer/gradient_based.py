@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import keras
 import keras.models
 
@@ -8,7 +10,8 @@ import innvestigate.utils as iutils
 import innvestigate.utils.keras as kutils
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.analyzer.base import AnalyzerNetworkBase, ReverseAnalyzerBase
+from innvestigate.analyzer.network_base import AnalyzerNetworkBase
+from innvestigate.analyzer.reverse_base import ReverseAnalyzerBase
 from innvestigate.analyzer.wrapper import GaussianSmoother, PathIntegrator
 
 __all__ = [

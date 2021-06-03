@@ -5,10 +5,10 @@ from typing import Any, List, Tuple, Union
 import keras.layers
 import keras.models
 
-import innvestigate.analyzer.base as base
 import innvestigate.analyzer.relevance_based.relevance_rule as lrp_rules
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
+from innvestigate.analyzer.reverse_base import ReverseAnalyzerBase
 from innvestigate.utils.types import Layer, Model, ModelCheckDict, Tensor
 
 __all__ = [
@@ -17,7 +17,7 @@ __all__ = [
 ]
 
 
-class DeepTaylor(base.ReverseAnalyzerBase):
+class DeepTaylor(ReverseAnalyzerBase):
     """DeepTaylor for ReLU-networks with unbounded input
 
     This class implements the DeepTaylor algorithm for neural networks with

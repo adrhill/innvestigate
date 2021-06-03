@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
-from innvestigate.analyzer.base import AnalyzerNetworkBase
+from innvestigate.analyzer.network_base import AnalyzerNetworkBase
 
 __all__ = ["Random", "Input"]
 

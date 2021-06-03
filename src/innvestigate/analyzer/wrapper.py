@@ -1,15 +1,18 @@
 from __future__ import annotations
 
+import warnings
 from builtins import zip
+from typing import Dict, List, Union
 
-import keras.backend as K
+import keras.backend
 import keras.models
 import numpy as np
 
 import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras as kutils
-from innvestigate.analyzer.base import AnalyzerBase, AnalyzerNetworkBase
+from innvestigate.analyzer.base import AnalyzerBase
+from innvestigate.analyzer.network_base import AnalyzerNetworkBase
 from innvestigate.utils.types import Tensor
 
 __all__ = [
