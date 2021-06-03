@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from builtins import zip
-from typing import Callable, Iterable, List, Union
+from typing import Callable, Iterable, List, Sequence, Union
 
 import keras
 import keras.backend as K
@@ -363,7 +363,7 @@ class LRP(ReverseAnalyzerBase):
         model,
         *args,
         rule: Union[
-            str, List[str], ReverseRule, List[ReverseRule]
+            str, Sequence[str], ReverseRule, Sequence[ReverseRule]
         ] = None,  # TODO: annotate Callable
         input_layer_rule=None,
         until_layer_idx=None,
@@ -862,6 +862,13 @@ class LRPSequentialPresetAFlat(LRPSequentialPresetA):
     """Special LRP-configuration for ConvNets"""
 
     def __init__(self, model, *args, **kwargs):
+        # provide functionality for `analyzer.load()` by avoiding multiple kwargs:
+        if "input_layer_rule" in kwargs:
+            if kwargs["input_layer_rule"] != "Flat":
+                raise RuntimeError(
+                    "Unexpected input_layer_rule when loading LRPSequentialPresetAFlat."
+                )
+            kwargs.pop("input_layer_rule")
         super().__init__(model, *args, input_layer_rule="Flat", **kwargs)
 
 
@@ -870,6 +877,13 @@ class LRPSequentialPresetBFlat(LRPSequentialPresetB):
     """Special LRP-configuration for ConvNets"""
 
     def __init__(self, model, *args, **kwargs):
+        # provide functionality for `analyzer.load()` by avoiding multiple kwargs:
+        if "input_layer_rule" in kwargs:
+            if kwargs["input_layer_rule"] != "Flat":
+                raise RuntimeError(
+                    "Unexpected input_layer_rule when loading LRPSequentialPresetAFlat."
+                )
+            kwargs.pop("input_layer_rule")
         super().__init__(model, *args, input_layer_rule="Flat", **kwargs)
 
 
