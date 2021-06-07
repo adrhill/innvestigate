@@ -182,38 +182,48 @@ def get_activation_search_safe_layers():
 
 
 def contains_activation(layer: Layer, activation: str = None) -> bool:
-    """
-    Check whether the layer contains an activation function.
-    activation is None then we only check if layer can contain an activation.
+    """Check whether the layer contains an activation function of type `activation`.
+    If `activation` is None, only check if layer can contain an activation.
+
+    :param layer: Keras layer to check
+    :type layer: Layer
+    :param activation: Keras name of activation function, defaults to None
+    :type activation: str, optional
+    :return: If `activation` is None, check if layer contains any activation function.
+        Otherwise check for specific activation function of type `activation`.
+    :rtype: bool
     """
 
-    # TODO: add test and check this more throughroughly.
-    # rely on Keras convention.
-    if hasattr(layer, "activation"):
-        if activation is not None:
-            is_activation: bool = layer.activation == keras.activations.get(activation)
-            return is_activation
-        return True
-    elif isinstance(layer, keras.layers.ReLU):
-        if activation is not None:
-            is_relu: bool = keras.activations.get("relu") == keras.activations.get(
-                activation
+    if activation is not None:
+        if hasattr(layer, "activation"):
+            return bool(layer.activation == keras.activations.get(activation))
+        elif isinstance(layer, keras.layers.ReLU):
+            return bool(
+                keras.activations.get("relu") == keras.activations.get(activation)
             )
-            return is_relu
-        return True
-    elif isinstance(
-        layer,
-        (
-            keras.layers.advanced_activations.ELU,
-            keras.layers.advanced_activations.LeakyReLU,
-            keras.layers.advanced_activations.PReLU,
-            keras.layers.advanced_activations.Softmax,
-            keras.layers.advanced_activations.ThresholdedReLU,
-        ),
-    ):
-        if activation is not None:
-            raise Exception("Cannot detect activation type.")
-        return True
+        elif isinstance(
+            layer,
+            (
+                keras.layers.advanced_activations.ELU,
+                keras.layers.advanced_activations.LeakyReLU,
+                keras.layers.advanced_activations.PReLU,
+                keras.layers.advanced_activations.Softmax,
+                keras.layers.advanced_activations.ThresholdedReLU,
+            ),
+        ):
+            raise Exception(f"Cannot detect activation type, expected {activation}.")
+    else:  # just check if layer contains activation
+        if hasattr(layer, "activation") or isinstance(
+            layer,
+            (
+                keras.layers.advanced_activations.ELU,
+                keras.layers.advanced_activations.LeakyReLU,
+                keras.layers.advanced_activations.PReLU,
+                keras.layers.advanced_activations.Softmax,
+                keras.layers.advanced_activations.ThresholdedReLU,
+            ),
+        ):
+            return True
     return False
 
 
