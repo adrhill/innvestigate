@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import warnings
+from abc import ABCMeta, abstractmethod
 from builtins import zip
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
@@ -36,7 +37,7 @@ class NotAnalyzeableModelException(Exception):
     pass
 
 
-class AnalyzerBase(object):
+class AnalyzerBase(metaclass=ABCMeta):
     """The basic interface of an iNNvestigate analyzer.
 
     This class defines the basic interface for analyzers:
@@ -164,6 +165,7 @@ class AnalyzerBase(object):
                 RuntimeWarning,
             )
 
+    @abstractmethod
     def analyze(
         self, X: Union[np.ndarray, List[np.ndarray]], *args: Any, **kwargs: Any
     ) -> Union[np.ndarray, List[np.ndarray]]:
@@ -172,7 +174,7 @@ class AnalyzerBase(object):
 
         :param X: Input as expected by model.
         """
-        raise NotImplementedError()
+        pass
 
     def _get_state(self) -> dict:
         state = {
