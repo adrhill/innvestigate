@@ -1,6 +1,7 @@
 # Get Python six functionality:
 from __future__ import annotations
 
+from abc import ABCMeta, abstractmethod
 from builtins import range
 
 import keras.backend as K
@@ -115,7 +116,7 @@ def get_active_neuron_io(
 ###############################################################################
 
 
-class BasePattern(object):
+class BasePattern(metaclass=ABCMeta):
     """
     Interface for pattern objects used to compute patterns by the
     PatternComputer class.
@@ -158,18 +159,20 @@ class BasePattern(object):
     def has_pattern(self):
         return kchecks.contains_kernel(self.layer)
 
-    def stats_from_batch(self):
+    @abstractmethod
+    def get_stats_from_batch(self):
         """
         Creates statistics while the PatternComputer passes the
         dataset once.
         """
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def compute_pattern(self):
         """
         Computes the pattern after computing the statistics.
         """
-        raise NotImplementedError()
+        pass
 
 
 class DummyPattern(BasePattern):
