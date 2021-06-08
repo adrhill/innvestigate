@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import keras.layers
 import keras.models
@@ -143,7 +143,7 @@ class DeepTaylor(ReverseAnalyzerBase):
 
         return super()._create_analysis(*args, **kwargs)
 
-    def _default_reverse_mapping(self, Xs, Ys, reversed_Ys, reverse_state):
+    def _default_reverse_mapping(self, _Xs, _Ys, _reversed_Ys, reverse_state: Dict):
         """
         Block all default mappings.
         """
@@ -174,17 +174,16 @@ class BoundedDeepTaylor(DeepTaylor):
     """
 
     def __init__(self, model, low=None, high=None, **kwargs):
+        super().__init__(model, **kwargs)
 
         if low is None or high is None:
             raise ValueError(
-                "The low or high parameter is missing."
-                " Z-B (bounded rule) require both values."
+                "The low or high parameter is missing. "
+                "Z-B (bounded rule) require both values."
             )
 
         self._bounds_low = low
         self._bounds_high = high
-
-        super().__init__(model, **kwargs)
 
     def _create_analysis(self, *args, **kwargs):
 
@@ -202,3 +201,19 @@ class BoundedDeepTaylor(DeepTaylor):
         )
 
         return super()._create_analysis(*args, **kwargs)
+
+    def _get_state(self):
+        state = super()._get_state()
+        state.update({"low": self._bounds_low, "high": self._bounds_high})
+        return state
+
+    @classmethod
+    def _state_to_kwargs(cls, state):
+        low = state.pop("low")
+        high = state.pop("high")
+
+        # call super after popping class-specific states:
+        kwargs = super()._state_to_kwargs(state)
+
+        kwargs.update({"low": low, "high": high})
+        return kwargs
