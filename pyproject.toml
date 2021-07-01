@@ -32,9 +32,9 @@ documentation = "https://innvestigate.readthedocs.io/en/latest/"
 keywords = ["XAI", "LRP", "Deep Taylor",]
 
 [tool.poetry.dependencies]
-python = "3.7.*"
-Keras = "2.3.1"
-tensorflow = "1.15.5"
+python = "~3.7"
+Keras = "~2.3"
+tensorflow = "~1.15"
 Pillow = "^8.1.1"
 future = "^0.18.2"
 numpy = "^1.18.5"
@@ -74,6 +74,7 @@ addopts = "-v -m fast --strict-markers --cov"
 # addopts = "-v -m precommit --strict-markers --cov"
 filterwarnings = [
     "ignore::DeprecationWarning:tensorflow",
+    "ignore::DeprecationWarning:tensorboard",
     "ignore::DeprecationWarning:keras",
 ]
 markers = [
