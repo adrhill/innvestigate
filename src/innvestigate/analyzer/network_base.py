@@ -270,7 +270,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
         X = iutils.to_list(X)
 
         if self._neuron_selection_mode == "index":
-            if neuron_selection:
+            if neuron_selection is not None:
                 # TODO: document how this works
                 selection = self._get_neuron_selection_array(X, neuron_selection)
                 ret = self._analyzer_model.predict_on_batch(X + [selection])
