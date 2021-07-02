@@ -357,20 +357,16 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
 
     def _get_state(self):
         state = super()._get_state()
-        state.update({"reverse_verbose": self._reverse_verbose})
-        state.update({"reverse_clip_values": self._reverse_clip_values})
         state.update(
             {
-                "reverse_project_bottleneck_layers": self._reverse_project_bottleneck_layers  # noqa
+                "reverse_verbose": self._reverse_verbose,
+                "reverse_clip_values": self._reverse_clip_values,
+                "reverse_project_bottleneck_layers": self._reverse_project_bottleneck_layers,  # noqa
+                "reverse_check_min_max_values": self._reverse_check_min_max_values,
+                "reverse_check_finite": self._reverse_check_finite,
+                "reverse_keep_tensors": self._reverse_keep_tensors,
+                "reverse_reapply_on_copied_layers": self._reverse_reapply_on_copied_layers,  # noqa
             }
-        )
-        state.update(
-            {"reverse_check_min_max_values": self._reverse_check_min_max_values}
-        )
-        state.update({"reverse_check_finite": self._reverse_check_finite})
-        state.update({"reverse_keep_tensors": self._reverse_keep_tensors})
-        state.update(
-            {"reverse_reapply_on_copied_layers": self._reverse_reapply_on_copied_layers}
         )
         return state
 

@@ -197,10 +197,14 @@ def contains_activation(layer: Layer, activation: str = None) -> bool:
     if activation is not None:
         if hasattr(layer, "activation"):
             return bool(layer.activation == keras.activations.get(activation))
-        elif isinstance(layer, keras.layers.ReLU):
-            return bool(
-                keras.activations.get("relu") == keras.activations.get(activation)
-            )
+        elif (activation == "relu") and isinstance(
+            layer,
+            (
+                keras.layers.ReLU,
+                keras.layers.advanced_activations.ReLU,
+            ),
+        ):
+            return True
         elif isinstance(
             layer,
             (

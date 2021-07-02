@@ -67,7 +67,7 @@ class DeepTaylor(ReverseAnalyzerBase):
         # ReLU Activation layer
         self._add_conditional_reverse_mapping(
             lambda l: (
-                not kchecks.contains_kernel(l) and kchecks.contains_activation(l)
+                not kchecks.contains_kernel(l) and kchecks.only_relu_activation(l)
             ),
             self._gradient_reverse_mapping,
             name="deep_taylor_relu",
