@@ -31,7 +31,7 @@ def download(url, filename):
 def load_image(path, size):
     ret = PIL.Image.open(path)
     ret = ret.resize((size, size))
-    ret = np.asarray(ret, dtype=np.uint8).astype(np.float32)
+    ret = np.asarray(ret).astype(np.float32)
     if ret.ndim == 2:
         # Convert gray scale image to color channels.
         ret.resize((size, size, 1))
