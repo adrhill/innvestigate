@@ -9,14 +9,12 @@ from tests import dryrun
 
 class CustomAnalyzerIndex0(Gradient):
     def analyze(self, X):
-        index = 0
-        return super().analyze(X, index)
+        return super().analyze(X, neuron_selection=0)
 
 
 class CustomAnalyzerIndex3(Gradient):
     def analyze(self, X):
-        index = 3
-        return super().analyze(X, index)
+        return super().analyze(X, neuron_selection=3)
 
 
 methods_serializable = {
@@ -57,9 +55,14 @@ methods.update(
 
 # Dryrun all methods
 
+
 @pytest.mark.fast
 @pytest.mark.precommit
-@pytest.mark.parametrize("method, kwargs", methods.values(), ids=list(methods.keys()))
+@pytest.mark.parametrize(
+    "method, kwargs",
+    methods_serializable.values(),
+    ids=list(methods_serializable.keys()),
+)
 def test_fast(method, kwargs):
     def analyzer(model):
         return method(model, **kwargs)
@@ -88,6 +91,7 @@ def test_precommit(method, kwargs):
         return method(model, **kwargs)
 
     dryrun.test_analyzer(analyzer, "mnist.*")
+
 
 #######
 
