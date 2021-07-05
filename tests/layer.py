@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from builtins import range
-
 import keras.engine.topology
 import keras.models
 

@@ -5,9 +5,9 @@ from typing import Callable, List, Tuple, TypeVar, Union
 
 import keras.utils as kutils
 from keras import backend
-from tensorflow import Tensor
 
 from innvestigate.utils.keras.graph import model_wo_softmax
+from innvestigate.utils.types import OptionalList, Tensor
 
 __all__ = [
     "model_wo_softmax",

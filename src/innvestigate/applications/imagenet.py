@@ -29,6 +29,7 @@ import keras.applications.vgg16
 import keras.applications.vgg19
 import keras.utils.data_utils
 import numpy as np
+from keras import backend
 from keras.backend import image_data_format
 
 from ..utils.keras import graph as kgraph
@@ -259,7 +260,7 @@ def densenet201(load_weights=False, load_patterns=False):
 
 
 def nasnet_large(load_weights=False, load_patterns=False):
-    if K.image_data_format() == "channels_first":
+    if backend.image_data_format() == "channels_first":
         raise Exception("NASNet is not available for channels first.")
 
     return _prepare_keras_net(

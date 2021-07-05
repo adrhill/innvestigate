@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import List
 
 import keras.backend as K
-import tensorflow
-from tensorflow import Tensor
+import tensorflow as tf
 
 # TODO: remove this file -A.
 
@@ -36,16 +35,14 @@ def gradients(
     :param known_Ys: Gradients for Ys.
     :return: Gradients for Xs given known_Ys
     """
-    grads: List[Tensor] = tensorflow.gradients(
-        Ys, Xs, grad_ys=known_Ys, stop_gradients=Xs
-    )
+    grads: List[Tensor] = tf.gradients(Ys, Xs, grad_ys=known_Ys, stop_gradients=Xs)
     return grads
 
 
 def is_not_finite(X: Tensor) -> Tensor:  # returns Tensor of dtype bool
     """Checks if tensor x is finite, if not throws an exception."""
     # x = tensorflow.check_numerics(x, "innvestigate - is_finite check")
-    return tensorflow.logical_not(tensorflow.is_finite(X))
+    return tf.logical_not(tf.is_finite(X))
 
 
 def extract_conv2d_patches(X: Tensor, kernel_shape, strides, rates, padding) -> Tensor:
@@ -63,9 +60,7 @@ def extract_conv2d_patches(X: Tensor, kernel_shape, strides, rates, padding) -> 
     kernel_shape = [1, kernel_shape[0], kernel_shape[1], 1]
     strides = [1, strides[0], strides[1], 1]
     rates = [1, rates[0], rates[1], 1]
-    ret = tensorflow.extract_image_patches(
-        X, kernel_shape, strides, rates, padding.upper()
-    )
+    ret = tf.extract_image_patches(X, kernel_shape, strides, rates, padding.upper())
 
     if K.image_data_format() == "channels_first":
         # TODO: check if we need to permute again.xs
@@ -81,7 +76,7 @@ def gather(
     """TensorFlow's gather:
     Gather slices from `X` axis `axis` according to `indices`.
     """
-    return tensorflow.gather(X, indices, axis=axis)
+    return tf.gather(X, indices, axis=axis)
 
 
 def gather_nd(
@@ -90,4 +85,4 @@ def gather_nd(
 ) -> Tensor:
     """TensorFlow's gather_nd:
     Gather slices from `X` into a Tensor with shape specified by `indices`."""
-    return tensorflow.gather_nd(X, indices)
+    return tf.gather_nd(X, indices)

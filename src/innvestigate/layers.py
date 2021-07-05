@@ -10,10 +10,10 @@ import keras.layers
 import keras.regularizers
 import numpy as np
 from keras.utils import conv_utils
-from tensorflow import Tensor
 
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.backend as iK
+from innvestigate.utils.types import OptionalList, ShapeTuple, Tensor
 
 __all__ = [
     "OnesLike",

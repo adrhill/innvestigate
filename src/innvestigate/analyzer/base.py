@@ -11,9 +11,7 @@ import keras.models
 import numpy as np
 
 import innvestigate.analyzer
-import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
-import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
 from innvestigate.utils.types import (
     CondReverseMapping,

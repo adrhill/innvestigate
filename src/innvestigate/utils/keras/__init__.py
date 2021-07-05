@@ -5,10 +5,9 @@ from typing import List, Union
 
 import numpy as np
 from keras.backend import int_shape
-from keras.layers import Layer
-from tensorflow import Tensor
 
 import innvestigate.utils as iutils
+from innvestigate.utils.types import Layer, OptionalList, Tensor
 
 __all__ = [
     "apply",

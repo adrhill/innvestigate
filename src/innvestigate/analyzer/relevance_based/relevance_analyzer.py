@@ -16,9 +16,6 @@ import keras.layers.normalization
 import keras.layers.pooling
 import keras.models
 import six
-from keras import Model
-from keras.layers import Layer
-from tensorflow import Tensor
 
 import innvestigate.analyzer.relevance_based.relevance_rule as rrule
 import innvestigate.analyzer.relevance_based.utils as rutils
@@ -29,7 +26,7 @@ import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
 from innvestigate.analyzer.network_base import AnalyzerNetworkBase
 from innvestigate.analyzer.reverse_base import ReverseAnalyzerBase
-from innvestigate.utils.types import LayerCheck, ReverseRule, Tensor
+from innvestigate.utils.types import Layer, LayerCheck, Model, OptionalList, Tensor
 
 __all__ = [
     "BaselineLRPZ",
