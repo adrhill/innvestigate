@@ -23,7 +23,7 @@ __all__ = [
 T = TypeVar("T")  # Generic type, can be anything
 
 
-def to_list(X: Union[T, List[T]]) -> List[T]:
+def to_list(X: OptionalList[T]) -> List[T]:
     """Wraps tensor `X` into a list, if it isn't a list of Tensors yet."""
     if isinstance(X, list):
         return X
@@ -59,7 +59,7 @@ class BatchSequence(kutils.Sequence):
     :param batch_size: Batch size. Default 32.
     """
 
-    def __init__(self, Xs: Union[Tensor, List[Tensor]], batch_size: int = 32) -> None:
+    def __init__(self, Xs: OptionalList[Tensor], batch_size: int = 32) -> None:
         self.Xs: List[Tensor] = to_list(Xs)
         self.single_tensor: bool = len(Xs) == 1
         self.batch_size: int = batch_size

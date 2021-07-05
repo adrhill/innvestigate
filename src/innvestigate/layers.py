@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from builtins import range, zip
-from typing import List, Optional, Tuple, Union
+from typing import Iterable, List, Sequence, Tuple, Union
 
 import keras
 import keras.backend as K
@@ -53,17 +53,17 @@ __all__ = [
 class OnesLike(keras.layers.Layer):
     """Create list of all-ones tensors of the same shapes as provided tensors."""
 
-    def call(self, x: Union[Tensor, List[Tensor]], **_kwargs) -> List[Tensor]:
+    def call(self, x: OptionalList[Tensor], **_kwargs) -> List[Tensor]:
         return [K.ones_like(tmp) for tmp in iutils.to_list(x)]
 
 
 class AsFloatX(keras.layers.Layer):
-    def call(self, x: Union[Tensor, List[Tensor]], **_kwargs) -> List[Tensor]:
+    def call(self, x: OptionalList[Tensor], **_kwargs) -> List[Tensor]:
         return [iK.to_floatx(tmp) for tmp in iutils.to_list(x)]
 
 
 class FiniteCheck(keras.layers.Layer):
-    def call(self, x: Union[Tensor, List[Tensor]], **_kwargs) -> List[Tensor]:
+    def call(self, x: OptionalList[Tensor], **_kwargs) -> List[Tensor]:
         return [K.sum(iK.to_floatx(iK.is_not_finite(tmp))) for tmp in iutils.to_list(x)]
 
 
@@ -77,7 +77,7 @@ class Gradient(keras.layers.Layer):
         inputs, output = x[:-1], x[-1]
         return K.gradients(K.sum(output), inputs)
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes):
         return input_shapes[:-1]
 
 
@@ -92,7 +92,7 @@ class GradientWRT(keras.layers.Layer):
         self.mask = mask
         super().__init__(**kwargs)
 
-    def call(self, x: Union[Tensor, List[Tensor]]):
+    def call(self, x: List[Tensor]):
         assert isinstance(x, (list, tuple))
         Xs, tmp_Ys = x[: self.n_inputs], x[self.n_inputs :]
         assert len(tmp_Ys) % 2 == 0
@@ -104,7 +104,7 @@ class GradientWRT(keras.layers.Layer):
         self.__workaround__len_ret = len(ret)
         return ret
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes: List[ShapeTuple]) -> List[ShapeTuple]:
         if self.mask is None:
             return input_shapes[: self.n_inputs]
         else:
@@ -155,15 +155,15 @@ class _Reduce(keras.layers.Layer):
         self.keepdims = keepdims
         super(_Reduce, self).__init__(*args, **kwargs)
 
-    def call(self, x: Union[Tensor, List[Tensor]]):
+    def call(self, x: OptionalList[Tensor]):
         return self._apply_reduce(x, axis=self.axis, keepdims=self.keepdims)
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: ShapeTuple) -> ShapeTuple:
         if self.axis is None:
             if self.keepdims is False:
                 return (1,)
             else:
-                return tuple(np.ones_like(input_shape))
+                return tuple(np.ones_like(input_shape))  # type: ignore
         else:
             axes = np.arange(len(input_shape))
             if self.keepdims is False:
@@ -209,7 +209,7 @@ class CountNonZero(_Reduce):
 
 
 class _Map(keras.layers.Layer):
-    def call(self, X: Union[Tensor, List[Tensor]]) -> Union[Tensor, List[Tensor]]:
+    def call(self, X: OptionalList[Tensor]) -> OptionalList[Tensor]:
         if isinstance(X, list) and len(X) == 1:
             X = X[0]
         return self._apply_map(X)
@@ -310,11 +310,9 @@ class Transpose(keras.layers.Layer):
         else:
             return K.permute_dimensions(x, self._axes)
 
-    def compute_output_shape(
-        self, input_shape: List[Tuple[int]]
-    ) -> Union[List[Tuple[int]], Tuple]:
+    def compute_output_shape(self, input_shape: ShapeTuple) -> ShapeTuple:
         if self._axes is None:
-            return input_shape[::-1]  # invert input shapes
+            return input_shape[::-1]  # invert input shape
         else:
             return tuple(np.asarray(input_shape)[list(self._axes)])
 
@@ -324,7 +322,7 @@ class Dot(keras.layers.Layer):
         a, b = x
         return K.dot(a, b)
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes: Sequence[ShapeTuple]) -> ShapeTuple:
         return (input_shapes[0][0], input_shapes[1][1])
 
 
@@ -333,20 +331,23 @@ class Divide(keras.layers.Layer):
         a, b = x
         return a / b
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes: Sequence[ShapeTuple]) -> ShapeTuple:
         return input_shapes[0]
 
 
 class SafeDivide(keras.layers.Layer):
-    def __init__(self, *args, factor: float = K.epsilon(), **kwargs):
+    def __init__(self, *args, factor: float = None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if factor is None:
+            factor = K.epsilon()
         self._factor = factor
 
     def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
         a, b = x
         return a / (b + iK.to_floatx(K.equal(b, K.constant(0))) * self._factor)
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes: Sequence[ShapeTuple]) -> ShapeTuple:
         return input_shapes[0]
 
 
@@ -383,14 +384,14 @@ class Repeat(keras.layers.Layer):
 
 
 class Reshape(keras.layers.Layer):
-    def __init__(self, shape, *args, **kwargs):
+    def __init__(self, shape: Iterable[int], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._shape = shape
 
     def call(self, x: Tensor) -> Tensor:
         return K.reshape(x, self._shape)
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, _input_shapes) -> ShapeTuple:
         return tuple(x if x >= 0 else None for x in self._shape)
 
 
@@ -413,12 +414,12 @@ class MultiplyWithLinspace(keras.layers.Layer):
         linspace = K.reshape(linspace, shape)
         return x * linspace
 
-    def compute_output_shape(self, input_shapes: Iterable[int]) -> Iterable[int]:
-        ret = input_shapes[:]  # copy array
-        ret = (
-            ret[: self._axis] + (max(self._n, ret[self._axis]),) + ret[self._axis + 1 :]
+    def compute_output_shape(self, input_shapes: ShapeTuple) -> ShapeTuple:
+        return (
+            input_shapes[: self._axis]
+            + (max(self._n, input_shapes[self._axis]),)
+            + input_shapes[self._axis + 1 :]
         )
-        return ret
 
 
 class TestPhaseGaussianNoise(keras.layers.GaussianNoise):
@@ -441,7 +442,7 @@ class ExtractConv2DPatches(keras.layers.Layer):
             x, self._kernel_shape, self._strides, self._rates, self._padding
         )
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes: Sequence[ShapeTuple]) -> ShapeTuple:
         if K.image_data_format() == "channels_first":
             space = input_shapes[2:]
             new_space = []
@@ -480,7 +481,7 @@ class RunningMeans(keras.layers.Layer):
         self.stateful = True
         super().__init__(*args, **kwargs)
 
-    def build(self, input_shapes: Union[Tuple, List[Tuple]]):
+    def build(self, input_shapes: Sequence[ShapeTuple]):
         means_shape, counts_shape = input_shapes
 
         self.means = self.add_weight(
@@ -517,7 +518,7 @@ class RunningMeans(keras.layers.Layer):
 
         return [new_means, new_counts]
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes: ShapeTuple) -> ShapeTuple:
         return input_shapes
 
 
@@ -526,7 +527,7 @@ class Broadcast(keras.layers.Layer):
         target_shapped, x = x
         return target_shapped * 0 + x
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes: Sequence[ShapeTuple]) -> ShapeTuple:
         return input_shapes[0]
 
 
@@ -535,5 +536,5 @@ class GatherND(keras.layers.Layer):
         x, indices = inputs
         return iK.gather_nd(x, indices)
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(self, input_shapes: Sequence[ShapeTuple]) -> ShapeTuple:
         return input_shapes[1][:2] + input_shapes[0][2:]

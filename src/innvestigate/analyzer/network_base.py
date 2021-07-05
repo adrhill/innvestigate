@@ -12,7 +12,7 @@ import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.checks as kchecks
 from innvestigate.analyzer.base import AnalyzerBase
-from innvestigate.utils.types import Layer, LayerCheck, Model, Tensor
+from innvestigate.utils.types import Layer, LayerCheck, Model, OptionalList, Tensor
 
 __all__ = ["AnalyzerNetworkBase"]
 
@@ -42,7 +42,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
         model: keras.Model,
         neuron_selection_mode: str = "max_activation",
         allow_lambda_layers: bool = False,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         From AnalyzerBase super init:
@@ -111,8 +111,8 @@ class AnalyzerNetworkBase(AnalyzerBase):
         This class adds the code to select a specific output neuron.
         """
         neuron_selection_mode: str
-        model_inputs: Union[Tensor, List[Tensor]]
-        model_output: Union[Tensor, List[Tensor]]
+        model_inputs: OptionalList[Tensor]
+        model_output: OptionalList[Tensor]
         analysis_inputs: List[Tensor]
         stop_analysis_at_tensors: List[Tensor]
 
@@ -241,9 +241,9 @@ class AnalyzerNetworkBase(AnalyzerBase):
 
     def analyze(
         self,
-        X: Union[np.ndarray, List[np.ndarray]],
+        X: OptionalList[np.ndarray],
         neuron_selection: Optional[int] = None,
-    ) -> Union[np.ndarray, List[np.ndarray]]:
+    ) -> OptionalList[np.ndarray]:
         """
         Same interface as :class:`Analyzer` besides
 
@@ -268,6 +268,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
 
         X = iutils.to_list(X)
 
+        ret: OptionalList[np.ndarray]
         if self._neuron_selection_mode == "index":
             if neuron_selection is not None:
                 # TODO: document how this works
@@ -288,7 +289,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
 
     def _get_neuron_selection_array(
         self, X: List[np.ndarray], neuron_selection: int
-    ) -> List[np.ndarray]:
+    ) -> np.ndarray:
         # TODO: document how this selects neurons
 
         nsa = np.asarray(neuron_selection).flatten()  # singleton ndarray

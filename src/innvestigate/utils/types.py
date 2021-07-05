@@ -1,14 +1,28 @@
 """Custom types used in iNNvestigate"""
 
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, List, Optional, Sequence, Tuple, TypeVar, Union
 
 from keras import Model
 from keras.layers import Layer
 from tensorflow import Tensor
+
+# from tensorflow.python.types import Tensor
 from typing_extensions import TypedDict
 
-# Define type of checks, using Any for kwargs
-LayerCheck = Union[Callable[[Layer], bool], Callable[[Layer, Any], bool]]
+T = TypeVar("T")  # Generic type, can be anything
+
+# Keras commonly accepts and returns both tensors and lists of tensors.
+# Since iNNvestigate builds on Keras layers, it does too.
+# These generic type aliases can be used instead of things like 
+#   Union[Tensor, List[Tensor]] 
+OptionalList = Union[T, List[T]]
+OptionalSequence = Union[T, Sequence[T]]
+
+# Shapes of tensors are described using tuples of ints (and sometimes Nones).
+ShapeTuple = Tuple[Optional[int], ...]
+
+# Type for boolean checks on Keras layers
+LayerCheck = Callable[[Layer], bool]
 
 # Used for LRP rules
 ReverseRule = Tuple[LayerCheck, Any]  # TODO: replace Any with ReverseMappingBase
@@ -28,6 +42,15 @@ class CondReverseMapping(TypedDict):
     condition: LayerCheck
     mapping: Callable  # TODO: specify type
     name: Optional[str]
+
+
+class ReverseState(TypedDict):
+    """Adds type hints to state used in analyzers of type ReverseAnalyzerBase."""
+
+    layer: Layer
+    model: Model
+    nid: int
+    stop_mapping_at_tensors: List[Tensor]
 
 
 class NodeDict(TypedDict):

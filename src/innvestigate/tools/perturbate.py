@@ -233,7 +233,7 @@ class Perturbation:
 
         padding = not np.all(np.array(analysis.shape[2:]) % self.region_shape == 0)
         if padding:
-            analysis, pad_shape_before_analysis = self.pad(analysis)
+            analysis, _pad_shape_before_analysis = self.pad(analysis)
             x, pad_shape_before_x = self.pad(x)
         aggregated_regions = self.aggregate_regions(analysis)
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple
 
 import keras
 import keras.layers
@@ -12,7 +12,13 @@ import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.graph as kgraph
 from innvestigate.analyzer.network_base import AnalyzerNetworkBase
-from innvestigate.utils.types import CondReverseMapping, Layer, Model, Tensor
+from innvestigate.utils.types import (
+    CondReverseMapping,
+    Layer,
+    Model,
+    OptionalList,
+    Tensor,
+)
 
 __all__ = ["ReverseAnalyzerBase"]
 
@@ -108,10 +114,10 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
 
     def _gradient_reverse_mapping(
         self,
-        Xs: Union[Tensor, List[Tensor]],
-        Ys: Union[Tensor, List[Tensor]],
-        reversed_Ys: Union[Tensor, List[Tensor]],
-        reverse_state,
+        Xs: OptionalList[Tensor],
+        Ys: OptionalList[Tensor],
+        reversed_Ys: OptionalList[Tensor],
+        reverse_state: Dict,
     ):
         mask = [x not in reverse_state["stop_mapping_at_tensors"] for x in Xs]
         masked_grad = ilayers.GradientWRT(len(Xs), mask=mask)
@@ -171,7 +177,8 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
                 "Cannot add conditional mapping " "after first application."
             )
 
-        # Add key `priority` to dict _conditional_reverse_mappings if it doesn't exist yet
+        # Add key `priority` to dict _conditional_reverse_mappings
+        # if it doesn't exist yet.
         if priority not in self._conditional_reverse_mappings:
             self._conditional_reverse_mappings[priority] = []
 
@@ -199,10 +206,10 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
 
     def _default_reverse_mapping(
         self,
-        Xs: Union[Tensor, List[Tensor]],
-        Ys: Union[Tensor, List[Tensor]],
-        reversed_Ys: Union[Tensor, List[Tensor]],
-        reverse_state,
+        Xs: OptionalList[Tensor],
+        Ys: OptionalList[Tensor],
+        reversed_Ys: OptionalList[Tensor],
+        reverse_state: Dict,
     ):
         """
         Fallback function to map reversed_Ys to reversed_Xs
@@ -215,9 +222,12 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
         Map output tensors to new values before passing
         them into the reverted network.
         """
+        # Here: Keep the output signal.
+        # Should be re-implemented by inheritance.
+        # Refer to the "Introduction to development notebook".
         return X
 
-    def _postprocess_analysis(self, X):
+    def _postprocess_analysis(self, X: OptionalList[Tensor]) -> OptionalList[Tensor]:
         return X
 
     def _reverse_model(
@@ -243,11 +253,7 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
 
     def _create_analysis(
         self, model: Model, stop_analysis_at_tensors: List[Tensor] = None
-    ) -> Union[
-        Tuple[List[Tensor]],
-        Tuple[List[Tensor], List[Tensor]],
-        Tuple[List[Tensor], List[Tensor], List[Tensor]],
-    ]:
+    ):
 
         if stop_analysis_at_tensors is None:
             stop_analysis_at_tensors = []
@@ -269,14 +275,15 @@ class ReverseAnalyzerBase(AnalyzerNetworkBase):
             ret = self._postprocess_analysis(ret)
 
         if return_all_reversed_tensors:
-            debug_tensors: List[Tensor] = []
+            debug_tensors: List[Tensor]
+            tmp: List[Tensor]
 
+            debug_tensors = []
             values = list(six.itervalues(ret[1]))
             mapping = {i: v["id"] for i, v in enumerate(values)}
             tensors = [v["final_tensor"] for v in values]
             self._reverse_tensors_mapping = mapping
 
-            tmp: List[Tensor]
             if self._reverse_check_min_max_values:
                 tmp = [ilayers.Min(None)(x) for x in tensors]
                 self._debug_tensors_indices["min"] = (

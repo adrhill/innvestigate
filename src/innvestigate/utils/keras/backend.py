@@ -5,6 +5,8 @@ from typing import List
 import keras.backend as K
 import tensorflow as tf
 
+from innvestigate.utils.types import OptionalList, Tensor
+
 # TODO: remove this file -A.
 
 __all__ = [
@@ -23,7 +25,9 @@ def to_floatx(X: Tensor) -> Tensor:
 
 
 def gradients(
-    Xs: List[Tensor], Ys: List[Tensor], known_Ys: List[Tensor]
+    Xs: OptionalList[Tensor],
+    Ys: OptionalList[Tensor],
+    known_Ys: List[Tensor],
 ) -> List[Tensor]:
     """Partial derivatives
 

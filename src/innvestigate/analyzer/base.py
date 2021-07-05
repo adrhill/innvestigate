@@ -3,7 +3,7 @@ from __future__ import annotations
 import warnings
 from abc import ABCMeta, abstractmethod
 from builtins import zip
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, List, Tuple, Union
 
 import keras
 import keras.layers
@@ -13,13 +13,7 @@ import numpy as np
 import innvestigate.analyzer
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.utils.types import (
-    CondReverseMapping,
-    Layer,
-    LayerCheck,
-    Model,
-    ModelCheckDict,
-)
+from innvestigate.utils.types import LayerCheck, ModelCheckDict
 
 __all__ = [
     "NotAnalyzeableModelException",

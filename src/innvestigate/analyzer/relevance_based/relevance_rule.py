@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from builtins import zip
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import keras
 import keras.backend as K
@@ -114,7 +114,7 @@ class EpsilonRule(kgraph.ReverseMappingBase):
         Xs: List[Tensor],
         _Ys: List[Tensor],
         Rs: List[Tensor],
-        reverse_state,
+        _reverse_state: Dict,
     ):
         grad = ilayers.GradientWRT(len(Xs))
         # The epsilon rule aligns epsilon with the (extended) sign:
@@ -165,7 +165,7 @@ class WSquareRule(kgraph.ReverseMappingBase):
         Xs: List[Tensor],
         Ys: List[Tensor],
         Rs: List[Tensor],
-        reverse_state,
+        _reverse_state: Dict,
     ) -> List[Tensor]:
         grad = ilayers.GradientWRT(len(Xs))
         # Create dummy forward path to take the derivative below.
@@ -225,7 +225,7 @@ class AlphaBetaRule(kgraph.ReverseMappingBase):
     def __init__(
         self,
         layer: Layer,
-        state,
+        _state,
         alpha=None,
         beta=None,
         bias: bool = True,
@@ -263,7 +263,13 @@ class AlphaBetaRule(kgraph.ReverseMappingBase):
             name_template="reversed_kernel_negative_%s",
         )
 
-    def apply(self, Xs, _Ys, Rs, reverse_state):
+    def apply(
+        self,
+        Xs: List[Tensor],
+        _Ys: List[Tensor],
+        Rs: List[Tensor],
+        _reverse_state: Dict,
+    ):
         # this method is correct, but wasteful
         grad = ilayers.GradientWRT(len(Xs))
         times_alpha = keras.layers.Lambda(lambda x: x * self._alpha)
@@ -356,9 +362,9 @@ class AlphaBetaXRule(kgraph.ReverseMappingBase):
     def __init__(
         self,
         layer: Layer,
-        state,
-        alpha=(0.5, 0.5),
-        beta=(0.5, 0.5),
+        _state,
+        alpha: Tuple[float, float] = (0.5, 0.5),
+        beta: Tuple[float, float] = (0.5, 0.5),
         bias: bool = True,
         copy_weights: bool = False,
     ) -> None:
@@ -393,7 +399,13 @@ class AlphaBetaXRule(kgraph.ReverseMappingBase):
             name_template="reversed_kernel_negative_%s",
         )
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(
+        self,
+        Xs: List[Tensor],
+        _Ys: List[Tensor],
+        Rs: List[Tensor],
+        _reverse_state: Dict,
+    ):
         # this method is correct, but wasteful
         grad = ilayers.GradientWRT(len(Xs))
         times_alpha0 = keras.layers.Lambda(lambda x: x * self._alpha[0])
@@ -470,7 +482,9 @@ class BoundedRule(kgraph.ReverseMappingBase):
 
     # TODO: this only works for relu networks, needs to be extended.
     # TODO: check
-    def __init__(self, layer: Layer, state, low=-1, high=1, copy_weights=False) -> None:
+    def __init__(
+        self, layer: Layer, _state, low=-1, high=1, copy_weights: bool = False
+    ) -> None:
         self._low = low
         self._high = high
 
@@ -507,7 +521,7 @@ class BoundedRule(kgraph.ReverseMappingBase):
         )
 
     # TODO: clean up this implementation and add more documentation
-    def apply(self, Xs, _Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state: Dict):
         grad = ilayers.GradientWRT(len(Xs))
         to_low = keras.layers.Lambda(lambda x: x * 0 + self._low)
         to_high = keras.layers.Lambda(lambda x: x * 0 + self._high)
@@ -585,7 +599,7 @@ class ZPlusFastRule(kgraph.ReverseMappingBase):
             name_template="reversed_kernel_positive_%s",
         )
 
-    def apply(self, Xs, _Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state: Dict):
         grad = ilayers.GradientWRT(len(Xs))
 
         # TODO: assert all inputs are positive, instead of only keeping the positives.

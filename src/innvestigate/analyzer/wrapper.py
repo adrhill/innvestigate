@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from builtins import zip
-from typing import Dict, List, Union
+from typing import List, Optional, Union
 
 import keras.backend
 import keras.models
@@ -253,12 +253,12 @@ class PathIntegrator(AugmentReduceBase):
     """
 
     def __init__(
-        self, subanalyzer, *args, steps: int = 16, reference_inputs: int = 0, **kwargs
+        self, subanalyzer, *args, steps: int = 16, reference_inputs=0, **kwargs
     ):
         super().__init__(subanalyzer, *args, augment_by_n=steps, **kwargs)
 
         self._reference_inputs = reference_inputs
-        self._keras_constant_inputs: List[Tensor] = None
+        self._keras_constant_inputs: Optional[List[Tensor]] = None
 
     def _keras_set_constant_inputs(self, inputs: List[Tensor]) -> None:
         tmp = [keras.backend.variable(X) for X in inputs]
@@ -266,7 +266,7 @@ class PathIntegrator(AugmentReduceBase):
             keras.layers.Input(tensor=X, shape=X.shape[1:]) for X in tmp
         ]
 
-    def _keras_get_constant_inputs(self) -> List[Tensor]:
+    def _keras_get_constant_inputs(self) -> Optional[List[Tensor]]:
         return self._keras_constant_inputs
 
     def _compute_difference(self, X: List[Tensor]) -> List[Tensor]:
@@ -276,7 +276,9 @@ class PathIntegrator(AugmentReduceBase):
             )
             self._keras_set_constant_inputs(tmp)
 
-        reference_inputs = self._keras_get_constant_inputs()
+        # Type not Optional anymore as as `_keras_set_constant_inputs` has been called.
+        reference_inputs: List[Tensor]
+        reference_inputs = self._keras_get_constant_inputs()  # type: ignore
         return [keras.layers.Subtract()([x, ri]) for x, ri in zip(X, reference_inputs)]
 
     def _augment(self, X):

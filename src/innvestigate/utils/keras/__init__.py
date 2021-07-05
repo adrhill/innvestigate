@@ -15,7 +15,7 @@ __all__ = [
 ]
 
 
-def apply(layer: Layer, inputs: Union[Tensor, List[Tensor]]) -> List[Tensor]:
+def apply(layer: Layer, inputs: OptionalList[Tensor]) -> List[Tensor]:
     """
     Apply a layer to input[s].
 
@@ -26,7 +26,7 @@ def apply(layer: Layer, inputs: Union[Tensor, List[Tensor]]) -> List[Tensor]:
     :param layer: A Keras layer instance.
     :type layer: Layer
     :param inputs: A list of input tensors or a single tensor.
-    :type inputs: Union[Tensor, List[Tensor]]
+    :type inputs: OptionalList[Tensor]
     :return: Output from applying the layer to the input.
     :rtype: List[Tensor]
     """
@@ -46,13 +46,13 @@ def apply(layer: Layer, inputs: Union[Tensor, List[Tensor]]) -> List[Tensor]:
 
 
 def broadcast_np_tensors_to_keras_tensors(
-    keras_tensors: Union[Tensor, List[Tensor]],
-    np_tensors: Union[np.ndarray, List[np.ndarray]],
+    keras_tensors: OptionalList[Tensor],
+    np_tensors: Union[float, np.ndarray, List[np.ndarray]],
 ) -> List[np.ndarray]:
     """Broadcasts numpy tensors to the shape of Keras tensors.
 
     :param keras_tensors: The Keras tensors with the target shapes.
-    :type keras_tensors: Union[Tensor, List[Tensor]]
+    :type keras_tensors: OptionalList[Tensor]
     :param np_tensors: Numpy tensors that should be broadcasted.
     :type np_tensors: Union[np.ndarray, List[np.ndarray]]
     :return: The broadcasted Numpy tensors.

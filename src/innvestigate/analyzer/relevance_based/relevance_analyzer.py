@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from builtins import zip
-from typing import Callable, Iterable, List, Sequence, Union
+from typing import Dict, List
 
 import keras
 import keras.backend as K
@@ -157,7 +157,7 @@ class BaselineLRPZ(AnalyzerNetworkBase):
 ###############################################################################
 
 # Utility list enabling name mappings via string
-LRP_RULES = {
+LRP_RULES: Dict = {
     "Z": rrule.ZRule,
     "ZIgnoreBias": rrule.ZIgnoreBiasRule,
     "Epsilon": rrule.EpsilonRule,
@@ -181,7 +181,7 @@ class EmbeddingReverseLayer(kgraph.ReverseMappingBase):
         # TODO: implement rule support.
         return
 
-    def apply(self, Xs, _Ys, Rs, reverse_state):
+    def apply(self, _Xs, _Ys, Rs, _reverse_state: Dict):
         # the embedding layer outputs for an (indexed) input a vector.
         # thus, in the relevance backward pass, the embedding layer receives
         # relevances Rs corresponding to those vectors.
@@ -197,7 +197,7 @@ class EmbeddingReverseLayer(kgraph.ReverseMappingBase):
 class BatchNormalizationReverseLayer(kgraph.ReverseMappingBase):
     """Special BN handler that applies the Z-Rule"""
 
-    def __init__(self, layer, state):
+    def __init__(self, layer, _state):
         config = layer.get_config()
 
         self._center = config["center"]
@@ -217,7 +217,7 @@ class BatchNormalizationReverseLayer(kgraph.ReverseMappingBase):
         # check if isinstance(self_rule, EpsiloneRule), then reroute
         # to BatchNormEpsilonRule. Not pretty, but should work.
 
-    def apply(self, Xs, Ys, Rs, reverse_state):
+    def apply(self, Xs, Ys, Rs, _reverse_state: Dict):
         input_shape = [K.int_shape(x) for x in Xs]
         if len(input_shape) != 1:
             # extend below lambda layers towards multiple parameters.
@@ -283,7 +283,7 @@ class AddReverseLayer(kgraph.ReverseMappingBase):
         # TODO: implement rule support.
         # super().__init__(layer, state)
 
-    def apply(self, Xs, _Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, _reverse_state: Dict):
         # The outputs of the pooling operation at each location
         # is the sum of its inputs.
         # The forward message must be known in this case,
@@ -316,7 +316,7 @@ class AveragePoolingReverseLayer(kgraph.ReverseMappingBase):
         # TODO: implement rule support.
         # super().__init__(layer, state)
 
-    def apply(self, Xs, _Ys, Rs, reverse_state):
+    def apply(self, Xs, _Ys, Rs, reverse_state: Dict):
         # The outputs of the pooling operation at each location
         # is the sum of its inputs.
         # The forward message must be known in this case,
@@ -359,15 +359,13 @@ class LRP(ReverseAnalyzerBase):
         self,
         model,
         *args,
-        rule: Union[
-            str, Sequence[str], ReverseRule, Sequence[ReverseRule]
-        ] = None,  # TODO: annotate Callable
+        rule=None,
         input_layer_rule=None,
         until_layer_idx=None,
         until_layer_rule=None,
         bn_layer_rule=None,
         bn_layer_fuse_mode: str = "one_linear",
-        **kwargs
+        **kwargs,
     ):
         super().__init__(model, *args, **kwargs)
 
@@ -514,10 +512,10 @@ class LRP(ReverseAnalyzerBase):
 
     def _default_reverse_mapping(
         self,
-        Xs: Union[Tensor, List[Tensor]],
-        Ys: Union[Tensor, List[Tensor]],
-        reversed_Ys: Union[Tensor, List[Tensor]],
-        reverse_state,
+        Xs: OptionalList[Tensor],
+        Ys: OptionalList[Tensor],
+        reversed_Ys: OptionalList[Tensor],
+        reverse_state: Dict,
     ):
         # default_return_layers = [keras.layers.Activation]# TODO extend
         if (
@@ -627,7 +625,7 @@ class LRPEpsilon(_LRPFixedParams):
             *args,
             rule=EpsilonProxyRule,
             bn_layer_rule=EpsilonProxyRule,
-            **kwargs
+            **kwargs,
         )
 
         self._do_model_checks()
@@ -683,7 +681,7 @@ class LRPAlphaBeta(LRP):
             *args,
             rule=AlphaBetaProxyRule,
             bn_layer_rule=AlphaBetaProxyRule,
-            **kwargs
+            **kwargs,
         )
         self._do_model_checks()
 
@@ -786,7 +784,7 @@ class LRPSequentialPresetA(_LRPFixedParams):  # for the lack of a better name
         epsilon=1e-1,
         *args,
         bn_layer_rule=rrule.AlphaBetaX2m100Rule,
-        **kwargs
+        **kwargs,
     ):
         class EpsilonProxyRule(rrule.EpsilonRule):
             def __init__(self, *args, **kwargs):
@@ -823,7 +821,7 @@ class LRPSequentialPresetB(_LRPFixedParams):
         epsilon: float = 1e-1,
         *args,
         bn_layer_rule=rrule.AlphaBetaX2m100Rule,
-        **kwargs
+        **kwargs,
     ):
         class EpsilonProxyRule(rrule.EpsilonRule):
             def __init__(self, *args, **kwargs):
@@ -894,5 +892,5 @@ class LRPSequentialPresetBFlatUntilIdx(LRPSequentialPresetBFlat):
             *args,
             until_layer_idx=until_layer_idx,
             until_layer_rule=rrule.FlatRule,
-            **kwargs
+            **kwargs,
         )

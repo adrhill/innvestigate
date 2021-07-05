@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any
 
 import keras.layers
 import keras.models
@@ -9,7 +9,7 @@ import innvestigate.analyzer.relevance_based.relevance_rule as lrp_rules
 import innvestigate.utils.keras.checks as kchecks
 import innvestigate.utils.keras.graph as kgraph
 from innvestigate.analyzer.reverse_base import ReverseAnalyzerBase
-from innvestigate.utils.types import Layer, Model, ModelCheckDict, Tensor
+from innvestigate.utils.types import Model
 
 __all__ = [
     "DeepTaylor",
@@ -38,13 +38,7 @@ class DeepTaylor(ReverseAnalyzerBase):
         )
         self._do_model_checks()
 
-    def _create_analysis(
-        self, *args: Any, **kwargs: Any
-    ) -> Union[
-        Tuple[List[Tensor]],
-        Tuple[List[Tensor], List[Tensor]],
-        Tuple[List[Tensor], List[Tensor], List[Tensor]],
-    ]:
+    def _create_analysis(self, *args: Any, **kwargs: Any):
 
         # Kernel layers.
         self._add_conditional_reverse_mapping(
@@ -139,7 +133,7 @@ class DeepTaylor(ReverseAnalyzerBase):
 
         return super()._create_analysis(*args, **kwargs)
 
-    def _default_reverse_mapping(self, _Xs, _Ys, _reversed_Ys, reverse_state: Dict):
+    def _default_reverse_mapping(self, _Xs, _Ys, _reversed_Ys, reverse_state):
         """
         Block all default mappings.
         """

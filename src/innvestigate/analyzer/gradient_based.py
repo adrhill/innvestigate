@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Dict, Optional
 
 import keras
 import keras.models
@@ -178,7 +178,7 @@ class DeconvnetReverseReLULayer(kgraph.ReverseMappingBase):
             name_template="reversed_%s",
         )
 
-    def apply(self, Xs, Ys, reversed_Ys, reverse_state):
+    def apply(self, Xs, Ys, reversed_Ys, reverse_state: Dict):
         # Apply relus conditioned on backpropagated values.
         reversed_Ys = kutils.apply(self._activation, reversed_Ys)
 
@@ -218,7 +218,7 @@ class Deconvnet(ReverseAnalyzerBase):
         return super()._create_analysis(*args, **kwargs)
 
 
-def GuidedBackpropReverseReLULayer(Xs, Ys, reversed_Ys, reverse_state):
+def GuidedBackpropReverseReLULayer(Xs, Ys, reversed_Ys, reverse_state: Dict):
     activation = keras.layers.Activation("relu")
     # Apply relus conditioned on backpropagated values.
     reversed_Ys = kutils.apply(activation, reversed_Ys)

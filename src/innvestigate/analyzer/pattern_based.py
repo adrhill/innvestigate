@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import warnings
+from typing import Dict
 
 import keras
 import keras.activations
@@ -82,7 +83,7 @@ class PatternNetReverseKernelLayer(kgraph.ReverseMappingBase):
             layer, name_template="reversed_pattern_%s", weights=filter_weights
         )
 
-    def apply(self, Xs, _Ys, reversed_Ys, _reverse_state):
+    def apply(self, Xs, _Ys, reversed_Ys, _reverse_state: Dict):
         # Reapply the prepared layers.
         act_Xs = kutils.apply(self._filter_layer, Xs)
         act_Ys = kutils.apply(self._act_layer, act_Xs)
@@ -200,6 +201,7 @@ class PatternNet(OneEpochTrainerMixin, ReverseAnalyzerBase):
         disable_no_training_warning=None,
         **kwargs
     ):
+        # TODO: implement epochs
 
         pattern_type = self._pattern_type
         if pattern_type is None:

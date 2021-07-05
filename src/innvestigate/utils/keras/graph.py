@@ -16,7 +16,14 @@ import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.checks as kchecks
 from innvestigate.utils.keras import apply as kapply
-from innvestigate.utils.types import Layer, LayerCheck, Model, NodeDict, Tensor
+from innvestigate.utils.types import (
+    Layer,
+    LayerCheck,
+    Model,
+    NodeDict,
+    OptionalList,
+    Tensor,
+)
 
 __all__ = [
     "get_kernel",
@@ -349,7 +356,7 @@ def pre_softmax_tensors(Xs: Tensor, should_find_softmax: bool = True) -> List[Te
     Xs = iutils.to_list(Xs)
     ret = []
     for x in Xs:
-        layer, node_index, tensor_index = x._keras_history
+        layer, node_index, _tensor_index = x._keras_history
         if kchecks.contains_activation(layer, activation="softmax"):
             softmax_found = True
             if isinstance(layer, keras.layers.Activation):
@@ -392,8 +399,8 @@ def get_model_layers(model: Model) -> List[Layer]:
 
 def model_contains(
     model: Model,
-    layer_condition: Union[LayerCheck, List[LayerCheck]],
-) -> Union[List[Layer], List[List[Layer]]]:
+    layer_condition: OptionalList[LayerCheck],
+) -> List[List[Layer]]:
     """
     Collect layers in model which satisfy `layer_condition`.
     If multiple conditions are given in `layer_condition`,
@@ -471,7 +478,7 @@ def apply_mapping_to_fused_bn_layer(mapping, fuse_mode: str = "one_linear"):
 
         return ScaleLayer()
 
-    def meta_mapping(layer: Layer, reverse_state):
+    def meta_mapping(layer: Layer, reverse_state: Dict):
         # get bn params
         weights = layer.weights[:]  # copy array
         if layer.scale:
@@ -835,7 +842,7 @@ def get_model_execution_graph(
 
 
 def print_model_execution_graph(
-    graph: Dict[Optional[int], Union[NodeDict, List[NodeDict]]]
+    graph: Dict[Optional[int], OptionalList[NodeDict]]
 ) -> None:
     """Pretty print of a model execution graph."""
     # TODO: check types
@@ -843,13 +850,13 @@ def print_model_execution_graph(
     def nids_as_str(nids: List[Optional[int]]) -> str:  # type: ignore
         return ", ".join(["%s" % nid for nid in nids])  # type: ignore
 
-    def print_node(node: NodeDict):
+    def print_node(node) -> None:  # node of type NodeDict?
         print(
             "  [NID: %4s] [Layer: %20s] [Inputs from: %20s] [Outputs to: %20s]"
             % (
                 node["nid"],
                 node["layer"].name,
-                nids_as_str(node["Xs_nids"]),  # type: ignore
+                nids_as_str(node["Xs_nids"]),
                 nids_as_str(node["Ys_nids"]),
             )
         )
