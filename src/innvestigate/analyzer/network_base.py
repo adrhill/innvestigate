@@ -285,7 +285,6 @@ class AnalyzerNetworkBase(AnalyzerBase):
             ret = ret[: -self._n_debug_output]
 
         return iutils.unpack_singleton(ret)
-        return ret
 
     def _get_neuron_selection_array(
         self, X: List[np.ndarray], neuron_selection: int
