@@ -406,15 +406,13 @@ def model_contains(
     :type layer_condition: Union[LayerCheck, List[LayerCheck]]
     :return: List, which for each condition in layer_condition
         contains a list of layers which satisfy that condition.
-    :rtype: Union[List[Layer], List[List[Layer]]]
+    :rtype: List[List[Layer]]
     """
-    conditions: List[LayerCheck]
     conditions = iutils.to_list(layer_condition)
     layers = get_model_layers(model)
 
     # return layers for which condition c holds true
-    lists_of_layers = [[l for l in layers if c(l)] for c in conditions]
-    return iutils.unpack_singleton(lists_of_layers)
+    return [[l for l in layers if c(l)] for c in conditions]
 
 
 ###############################################################################

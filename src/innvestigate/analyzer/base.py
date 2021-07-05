@@ -106,15 +106,14 @@ class AnalyzerBase(metaclass=ABCMeta):
         self._model_checks.append(check_instance)
 
     def _do_model_checks(self) -> None:
-
-        tmp: List[Tuple[LayerCheck, str, str]]
         if not self._disable_model_checks and len(self._model_checks) > 0:
             check = [x["check"] for x in self._model_checks]
             types = [x["check_type"] for x in self._model_checks]
             messages = [x["message"] for x in self._model_checks]
 
             checked = kgraph.model_contains(self._model, check)
-            tmp = zip(iutils.to_list(checked), messages, types)
+
+            tmp = zip(checked, messages, types)
 
             for checked_layers, message, check_type in tmp:
                 if len(checked_layers) > 0:
