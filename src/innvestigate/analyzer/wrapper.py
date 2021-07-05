@@ -148,8 +148,8 @@ class AugmentReduceBase(WrapperBase):
             if ns_mode == "index":
                 # TODO: make neuron_selection arg or kwarg, not both
                 if len(args):
-                    args = list(args)
-                    indices = args.pop(0)
+                    arglist = list(args)
+                    indices = arglist.pop(0)
                 else:
                     indices = kwargs.pop("neuron_selection")
             # TODO: add "max_activation"

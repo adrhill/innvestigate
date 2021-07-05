@@ -257,9 +257,8 @@ class AnalyzerNetworkBase(AnalyzerBase):
 
         if neuron_selection is not None and self._neuron_selection_mode != "index":
             raise ValueError(
-                "neuron_selection_mode {} doesn't support 'neuron_selection' parameter.".format(
-                    self._neuron_selection_mode
-                )
+                f"neuron_selection_mode {self._neuron_selection_mode} doesn't support ",
+                "'neuron_selection' parameter.",
             )
 
         if neuron_selection is None and self._neuron_selection_mode == "index":

@@ -376,18 +376,18 @@ def model_wo_softmax(model: Model) -> Model:
 
 def get_model_layers(model: Model) -> List[Layer]:
     """Returns all layers of a model."""
-    ret = []
+    layers = []
 
-    def collect_layers(container):
+    def collect_layers(container: Model) -> None:
         for layer in container.layers:
-            assert layer not in ret
-            ret.append(layer)
+            assert layer not in layers
+            layers.append(layer)
             if kchecks.is_network(layer):
                 collect_layers(layer)
 
     collect_layers(model)
 
-    return ret
+    return layers
 
 
 def model_contains(

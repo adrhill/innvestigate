@@ -108,7 +108,11 @@ class GradientWRT(keras.layers.Layer):
         if self.mask is None:
             return input_shapes[: self.n_inputs]
         else:
-            return [x for c, x in zip(self.mask, input_shapes[: self.n_inputs]) if c]
+            return [
+                shape
+                for shape, keep in zip(input_shapes[: self.n_inputs], self.mask)
+                if keep
+            ]
 
     # TODO: remove once keras is fixed.
     # this is a workaround for cases when
