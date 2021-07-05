@@ -30,18 +30,18 @@ def to_list(X: Union[T, List[T]]) -> List[T]:
     return [X]
 
 
-def unpack_singleton(x: List[T]) -> Union[T, List[T]]:
-    """Gets the first element if the iterable has only one value.
+def unpack_singleton(x: OptionalList[T]) -> OptionalList[T]:
+    """Gets the first element of a list if it has only one value.
 
-    Otherwise return the iterable.
+    Otherwise return the list.
 
     # Argument
-        x: A list or tuple.
+        x: A list or singleton.
 
     # Returns
-        The same iterable or the first element.
+        The same list or the first element.
     """
-    if len(x) == 1:
+    if isinstance(x, list) and len(x) == 1:
         return x[0]
     return x
 

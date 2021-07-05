@@ -285,8 +285,7 @@ class AnalyzerNetworkBase(AnalyzerBase):
             self._handle_debug_output(ret[-self._n_debug_output :])
             ret = ret[: -self._n_debug_output]
 
-        if isinstance(ret, list) and len(ret) == 1:
-            ret = ret[0]
+        return iutils.unpack_singleton(ret)
         return ret
 
     def _get_neuron_selection_array(
