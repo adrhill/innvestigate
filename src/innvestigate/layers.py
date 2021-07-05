@@ -16,10 +16,6 @@ import innvestigate.utils as iutils
 import innvestigate.utils.keras.backend as iK
 
 __all__ = [
-    "Constant",
-    "Zero",
-    "One",
-    "ZerosLike",
     "OnesLike",
     "AsFloatX",
     "FiniteCheck",
@@ -27,13 +23,7 @@ __all__ = [
     "GradientWRT",
     "Min",
     "Max",
-    "Greater",
-    "Less",
     "GreaterThanZero",
-    "LessThanZero",
-    "GreaterEqual",
-    "LessEqual",
-    "GreaterEqualThanZero",
     "LessEqualThanZero",
     "Sum",
     "Mean",
@@ -43,7 +33,6 @@ __all__ = [
     "Square",
     "Clip",
     "Project",
-    "Print",
     "Transpose",
     "Dot",
     "SafeDivide",
@@ -54,35 +43,11 @@ __all__ = [
     "ExtractConv2DPatches",
     "RunningMeans",
     "Broadcast",
-    "Gather",
     "GatherND",
 ]
 
 
 ###############################################################################
-
-
-def Constant(c, reference: Tensor = None) -> Tensor:
-    if reference is None:
-        return K.constant(c)
-    else:
-        dtype: str = K.dtype(reference)
-        return K.constant(np.dtype(dtype)(c), dtype=dtype)
-
-
-def Zero(reference: Tensor = None):
-    return Constant(0, reference=reference)
-
-
-def One(reference: Tensor = None):
-    return Constant(1, reference=reference)
-
-
-class ZerosLike(keras.layers.Layer):
-    """Create list of all-zero tensors of the same shapes as provided tensors."""
-
-    def call(self, x: Union[Tensor, List[Tensor]], **_kwargs) -> List[Tensor]:
-        return [K.zeros_like(tmp) for tmp in iutils.to_list(x)]
 
 
 class OnesLike(keras.layers.Layer):
@@ -324,51 +289,12 @@ class Project(_Map):
         return X
 
 
-class Print(_Map):
-    def _apply_map(self, x: Tensor) -> None:
-        K.print_tensor(x)
-
-
 ###############################################################################
-
-
-class Greater(keras.layers.Layer):
-    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
-        a, b = x
-        return K.greater(a, b)
-
-
-class Less(keras.layers.Layer):
-    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
-        a, b = x
-        return K.less(a, b)
 
 
 class GreaterThanZero(keras.layers.Layer):
     def call(self, x: Tensor) -> Tensor:
         return K.greater(x, K.constant(0))
-
-
-class LessThanZero(keras.layers.Layer):
-    def call(self, x: Tensor) -> Tensor:
-        return K.less(x, K.constant(0))
-
-
-class GreaterEqual(keras.layers.Layer):
-    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
-        a, b = x
-        return K.greater_equal(a, b)
-
-
-class LessEqual(keras.layers.Layer):
-    def call(self, x: Tuple[Tensor, Tensor]) -> Tensor:
-        a, b = x
-        return K.less_equal(a, b)
-
-
-class GreaterEqualThanZero(keras.layers.Layer):
-    def call(self, x: Tensor) -> Tensor:
-        return K.greater_equal(x, K.constant(0))
 
 
 class LessEqualThanZero(keras.layers.Layer):
@@ -597,15 +523,6 @@ class Broadcast(keras.layers.Layer):
 
     def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
         return input_shapes[0]
-
-
-class Gather(keras.layers.Layer):
-    def call(self, inputs):
-        x, index = inputs
-        return iK.gather(x, 1, index)
-
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
-        return (input_shapes[0][0], input_shapes[1][0]) + input_shapes[0][2:]
 
 
 class GatherND(keras.layers.Layer):

@@ -21,7 +21,6 @@ from innvestigate.utils.types import Layer, LayerCheck, Model, NodeDict, Tensor
 __all__ = [
     "get_kernel",
     "get_layer_inbound_count",
-    "get_layer_outbound_count",
     "get_layer_neuronwise_io",
     "copy_layer_wo_activation",
     "copy_layer",
@@ -65,11 +64,6 @@ def get_input_layers(layer: Layer) -> Set[Layer]:
 def get_layer_inbound_count(layer: Layer) -> int:
     """Returns the number inbound nodes of a layer."""
     return len(layer._inbound_nodes)
-
-
-def get_layer_outbound_count(layer: Layer) -> int:
-    """Returns the number outbound nodes of a layer."""
-    return len(layer.outbound_nodes)
 
 
 def get_layer_neuronwise_io(

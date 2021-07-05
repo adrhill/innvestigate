@@ -45,10 +45,6 @@ class DeepTaylor(ReverseAnalyzerBase):
         Tuple[List[Tensor], List[Tensor]],
         Tuple[List[Tensor], List[Tensor], List[Tensor]],
     ]:
-        def do_nothing(
-            _Xs: List[Tensor], _Ys: List[Tensor], As: List[Tensor], _reverse_state
-        ) -> List[Tensor]:
-            return As
 
         # Kernel layers.
         self._add_conditional_reverse_mapping(
