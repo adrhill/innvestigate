@@ -13,8 +13,8 @@ T = TypeVar("T")  # Generic type, can be anything
 
 # Keras commonly accepts and returns both tensors and lists of tensors.
 # Since iNNvestigate builds on Keras layers, it does too.
-# These generic type aliases can be used instead of things like 
-#   Union[Tensor, List[Tensor]] 
+# These generic type aliases can be used instead of things like
+#   Union[Tensor, List[Tensor]]
 OptionalList = Union[T, List[T]]
 OptionalSequence = Union[T, Sequence[T]]
 
