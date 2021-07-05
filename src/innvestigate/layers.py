@@ -358,11 +358,19 @@ class Repeat(keras.layers.Layer):
     def call(self, x: Tensor) -> Tensor:
         return K.repeat_elements(x, self._n, self._axis)
 
-    def compute_output_shape(self, input_shapes: Union[Tuple, List[Tuple]]) -> Tuple:
+    def compute_output_shape(
+        self, input_shapes: OptionalList[ShapeTuple]
+    ) -> ShapeTuple:
+        input_shape: ShapeTuple
+
         if isinstance(input_shapes, list):
             input_shape = input_shapes[0]
-        else:
+        elif isinstance(input_shapes, tuple):
             input_shape = input_shapes
+        else:
+            raise TypeError(
+                "Expected shape tuple (tuple of integers) or list of shape tuples."
+            )
 
         if input_shape[0] is None:
             return input_shape
