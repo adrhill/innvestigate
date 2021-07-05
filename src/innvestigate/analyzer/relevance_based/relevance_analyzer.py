@@ -402,12 +402,12 @@ class LRP(ReverseAnalyzerBase):
         else:
             self._rule = rule
 
-        if isinstance(rule, six.string_types) or (
+        if isinstance(rule, str) or (
             inspect.isclass(rule) and issubclass(rule, kgraph.ReverseMappingBase)
         ):  # NOTE: All LRP rules inherit from kgraph.ReverseMappingBase
             # the given rule is a single string or single rule implementing cla ss
             use_conditions = True
-            rules = [(lambda a, b: True, rule)]
+            rules = [(lambda _: True, rule)]
 
         elif not isinstance(rule[0], tuple):
             # rule list of rule strings or classes
@@ -421,9 +421,7 @@ class LRP(ReverseAnalyzerBase):
         # apply rule to first self._until_layer_idx layers
         if self._until_layer_rule is not None and self._until_layer_idx is not None:
             for i in range(self._until_layer_idx + 1):
-                is_at_idx: LayerCheck = (
-                    lambda layer, _, bound_i=i: kchecks.is_layer_at_idx(layer, bound_i)
-                )
+                is_at_idx: LayerCheck = lambda layer: kchecks.is_layer_at_idx(layer, i)
                 rules.insert(0, (is_at_idx, self._until_layer_rule))
 
         # create a BoundedRule for input layer handling from given tuple
@@ -439,7 +437,7 @@ class LRP(ReverseAnalyzerBase):
                 input_layer_rule = BoundedProxyRule
 
             if use_conditions is True:
-                is_input: LayerCheck = lambda layer, foo: kchecks.is_input_layer(layer)
+                is_input: LayerCheck = lambda layer: kchecks.is_input_layer(layer)
                 rules.insert(0, (is_input, input_layer_rule))
             else:
                 rules.insert(0, input_layer_rule)
@@ -447,20 +445,19 @@ class LRP(ReverseAnalyzerBase):
         self._rules_use_conditions = use_conditions
         self._rules = rules
 
-    def create_rule_mapping(self, layer, reverse_state):
-        rule_class = None
+    def create_rule_mapping(self, layer: Layer, reverse_state: Dict):
         if self._rules_use_conditions is True:
             for condition, rule in self._rules:
-                if condition(layer, reverse_state):
+                if condition(layer):
                     rule_class = rule
                     break
         else:
             rule_class = self._rules.pop()
 
         if rule_class is None:
-            raise Exception("No rule applies to layer: %s" % layer)
+            raise Exception(f"No rule applies to layer {layer}")
 
-        if isinstance(rule_class, six.string_types):
+        if isinstance(rule_class, str):
             rule_class = LRP_RULES[rule_class]
         rule = rule_class(layer, reverse_state)
 
