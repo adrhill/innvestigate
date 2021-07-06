@@ -3,7 +3,7 @@ from __future__ import annotations
 import warnings
 from abc import ABCMeta, abstractmethod
 from builtins import zip
-from typing import Any, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import keras
 import keras.layers
@@ -13,7 +13,7 @@ import numpy as np
 import innvestigate.analyzer
 import innvestigate.utils as iutils
 import innvestigate.utils.keras.graph as kgraph
-from innvestigate.utils.types import LayerCheck, ModelCheckDict
+from innvestigate.utils.types import LayerCheck, ModelCheckDict, OptionalList
 
 __all__ = [
     "NotAnalyzeableModelException",
@@ -158,8 +158,8 @@ class AnalyzerBase(metaclass=ABCMeta):
 
     @abstractmethod
     def analyze(
-        self, X: Union[np.ndarray, List[np.ndarray]], *args: Any, **kwargs: Any
-    ) -> Union[np.ndarray, List[np.ndarray]]:
+        self, X: OptionalList[np.ndarray], *args: Any, **kwargs: Any
+    ) -> OptionalList[np.ndarray]:
         """
         Analyze the behavior of model on input `X`.
 
@@ -210,7 +210,7 @@ class AnalyzerBase(metaclass=ABCMeta):
         return {"model": model, "disable_model_checks": disable_model_checks}
 
     @staticmethod
-    def load(class_name, state):
+    def load(class_name: str, state: Dict[str, Any]) -> AnalyzerBase:
         """
         Resembles an analyzer from the state created by
         :func:`analyzer.save()`.
@@ -222,7 +222,7 @@ class AnalyzerBase(metaclass=ABCMeta):
         cls = getattr(innvestigate.analyzer, class_name)
 
         kwargs = cls._state_to_kwargs(state)
-        return cls(**kwargs)
+        return cls(**kwargs)  # type: ignore
 
     @staticmethod
     def load_npz(fname):
@@ -250,12 +250,14 @@ class TrainerMixin(object):
     """
 
     # TODO: extend with Y
-    def fit(self, X=None, batch_size=32, **kwargs):
+    def fit(
+        self, X: Optional[np.ndarray] = None, batch_size: int = 32, **kwargs
+    ) -> None:
         """
         Takes the same parameters as Keras's :func:`model.fit` function.
         """
         generator = iutils.BatchSequence(X, batch_size)
-        return self._fit_generator(generator, **kwargs)
+        return self._fit_generator(generator, **kwargs)  # type: ignore
 
     def fit_generator(self, *args, **kwargs):
         """
@@ -283,7 +285,7 @@ class OneEpochTrainerMixin(TrainerMixin):
     except that the training is limited to one epoch.
     """
 
-    def fit(self, *args, **kwargs):
+    def fit(self, *args, **kwargs) -> None:
         """
         Same interface as :func:`fit` of :class:`TrainerMixin` except that
         the parameter epoch is fixed to 1.

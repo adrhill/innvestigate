@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import keras
 import keras.backend as K
@@ -68,10 +68,8 @@ class AnalyzerNetworkBase(AnalyzerBase):
         # Attributes of prepared model created by '_prepare_model'
         self._analyzer_model_done: bool = False
         self._analyzer_model: Model = None
-        self._special_helper_layers: List[
-            Layer
-        ] = []  # special layers added for _reverse_mapping
-        self._analysis_inputs = None
+        self._special_helper_layers: List[Layer] = []  # added for _reverse_mapping
+        self._analysis_inputs: Optional[List[Tensor]] = None
         self._n_data_input: int = 0
         self._n_constant_input: int = 0
         self._n_data_output: int = 0
@@ -161,14 +159,15 @@ class AnalyzerNetworkBase(AnalyzerBase):
         )
         return model, analysis_inputs, stop_analysis_at_tensors
 
-    def create_analyzer_model(self):
+    def create_analyzer_model(self) -> None:
         """
         Creates the analyze functionality. If not called beforehand
         it will be called by :func:`analyze`.
         """
         model_inputs = self._model.inputs
-        tmp = self._prepare_model(self._model)
-        model, analysis_inputs, stop_analysis_at_tensors = tmp
+        model, analysis_inputs, stop_analysis_at_tensors = self._prepare_model(
+            self._model
+        )
         self._analysis_inputs = analysis_inputs
         self._prepared_model = model
 
@@ -177,9 +176,9 @@ class AnalyzerNetworkBase(AnalyzerBase):
         )
         if isinstance(tmp, tuple):
             if len(tmp) == 3:
-                analysis_outputs, debug_outputs, constant_inputs = tmp
+                analysis_outputs, debug_outputs, constant_inputs = tmp  # type: ignore
             elif len(tmp) == 2:
-                analysis_outputs, debug_outputs = tmp
+                analysis_outputs, debug_outputs = tmp  # type: ignore
                 constant_inputs = []
             elif len(tmp) == 1:
                 analysis_outputs = tmp[0]
@@ -302,14 +301,14 @@ class AnalyzerNetworkBase(AnalyzerBase):
         nsa = np.hstack((np.arange(len(nsa)).reshape((-1, 1)), nsa.reshape((-1, 1))))
         return nsa
 
-    def _get_state(self):
+    def _get_state(self) -> Dict[str, Any]:
         state = super()._get_state()
         state.update({"neuron_selection_mode": self._neuron_selection_mode})
         state.update({"allow_lambda_layers": self._allow_lambda_layers})
         return state
 
     @classmethod
-    def _state_to_kwargs(cls, state):
+    def _state_to_kwargs(cls, state: Dict[str, Any]) -> Dict[str, Any]:
         neuron_selection_mode = state.pop("neuron_selection_mode")
         allow_lambda_layers = state.pop("allow_lambda_layers")
         # call super after popping class-specific states:

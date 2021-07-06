@@ -13,7 +13,7 @@ import innvestigate.utils as iutils
 import innvestigate.utils.keras as kutils
 from innvestigate.analyzer.base import AnalyzerBase
 from innvestigate.analyzer.network_base import AnalyzerNetworkBase
-from innvestigate.utils.types import Tensor
+from innvestigate.utils.types import OptionalList, Tensor
 
 __all__ = [
     "WrapperBase",
@@ -138,7 +138,9 @@ class AugmentReduceBase(WrapperBase):
         )
         self._subanalyzer._analyzer_model = new_model
 
-    def analyze(self, X: Union[np.ndarray, List[np.ndarray]], *args, **kwargs):
+    def analyze(
+        self, X: OptionalList[np.ndarray], *args, **kwargs
+    ) -> OptionalList[np.ndarray]:
         if not hasattr(self._subanalyzer, "_analyzer_model"):
             self.create_analyzer_model()
 
