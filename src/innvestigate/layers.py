@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from builtins import range, zip
-from typing import Iterable, List, Sequence, Tuple, Union
+from typing import Iterable, List, Optional, Sequence, Tuple, Union
 
 import keras
 import keras.backend as K
@@ -73,11 +73,11 @@ class FiniteCheck(keras.layers.Layer):
 class Gradient(keras.layers.Layer):
     "Returns gradient of sum(output), expects inputs+[output,]."
 
-    def call(self, x: List[Tensor]):
+    def call(self, x: List[Tensor]) -> List[Tensor]:
         inputs, output = x[:-1], x[-1]
-        return K.gradients(K.sum(output), inputs)
+        return K.gradients(K.sum(output), inputs)  # type: ignore
 
-    def compute_output_shape(self, input_shapes):
+    def compute_output_shape(self, input_shapes: List[ShapeTuple]) -> List[ShapeTuple]:
         return input_shapes[:-1]
 
 
@@ -87,13 +87,15 @@ class GradientWRT(keras.layers.Layer):
 
     # TODO: add documentation
 
-    def __init__(self, n_inputs, mask=None, **kwargs):
+    def __init__(
+        self, n_inputs: int, mask: Optional[List[bool]] = None, **kwargs
+    ) -> None:
         self.n_inputs = n_inputs
         self.mask = mask
         super().__init__(**kwargs)
 
-    def call(self, x: List[Tensor]):
-        assert isinstance(x, (list, tuple))
+    def call(self, x: List[Tensor]) -> List[Tensor]:
+        assert isinstance(x, list)
         Xs, tmp_Ys = x[: self.n_inputs], x[self.n_inputs :]
         assert len(tmp_Ys) % 2 == 0
         len_Ys = len(tmp_Ys) // 2
@@ -150,12 +152,18 @@ class GradientWRT(keras.layers.Layer):
 
 
 class _Reduce(keras.layers.Layer):
-    def __init__(self, axis=-1, keepdims=False, *args, **kwargs):
+    def __init__(
+        self,
+        axis: Optional[OptionalList[int]] = -1,
+        keepdims: bool = False,
+        *args,
+        **kwargs,
+    ) -> None:
         self.axis = axis
         self.keepdims = keepdims
         super(_Reduce, self).__init__(*args, **kwargs)
 
-    def call(self, x: OptionalList[Tensor]):
+    def call(self, x: OptionalList[Tensor]) -> Tensor:
         return self._apply_reduce(x, axis=self.axis, keepdims=self.keepdims)
 
     def compute_output_shape(self, input_shape: ShapeTuple) -> ShapeTuple:
@@ -174,32 +182,44 @@ class _Reduce(keras.layers.Layer):
                     axes[i] = 1
             return tuple([idx for i, idx in enumerate(input_shape) if i in axes])
 
-    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
+    def _apply_reduce(
+        self, x: Tensor, axis: Optional[OptionalList[int]], keepdims: bool
+    ) -> Tensor:
         raise NotImplementedError()
 
 
 class Min(_Reduce):
-    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
+    def _apply_reduce(
+        self, x: Tensor, axis: Optional[OptionalList[int]], keepdims: bool
+    ) -> Tensor:
         return K.min(x, axis=axis, keepdims=keepdims)
 
 
 class Max(_Reduce):
-    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
+    def _apply_reduce(
+        self, x: Tensor, axis: Optional[OptionalList[int]], keepdims: bool
+    ) -> Tensor:
         return K.max(x, axis=axis, keepdims=keepdims)
 
 
 class Sum(_Reduce):
-    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
+    def _apply_reduce(
+        self, x: Tensor, axis: Optional[OptionalList[int]], keepdims: bool
+    ) -> Tensor:
         return K.sum(x, axis=axis, keepdims=keepdims)
 
 
 class Mean(_Reduce):
-    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
+    def _apply_reduce(
+        self, x: Tensor, axis: Optional[OptionalList[int]], keepdims: bool
+    ) -> Tensor:
         return K.mean(x, axis=axis, keepdims=keepdims)
 
 
 class CountNonZero(_Reduce):
-    def _apply_reduce(self, x: Tensor, axis: int, keepdims: bool) -> Tensor:
+    def _apply_reduce(
+        self, x: Tensor, axis: Optional[OptionalList[int]], keepdims: bool
+    ) -> Tensor:
         return K.sum(
             iK.to_floatx(K.not_equal(x, K.constant(0))), axis=axis, keepdims=keepdims
         )
@@ -214,7 +234,7 @@ class _Map(keras.layers.Layer):
             X = X[0]
         return self._apply_map(X)
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: ShapeTuple) -> ShapeTuple:
         return input_shape
 
     def _apply_map(self, X: Tensor):
@@ -300,7 +320,7 @@ class LessEqualThanZero(keras.layers.Layer):
 
 
 class Transpose(keras.layers.Layer):
-    def __init__(self, axes=None, **kwargs):
+    def __init__(self, axes=None, **kwargs) -> None:
         self._axes = axes
         super().__init__(**kwargs)
 
@@ -336,7 +356,7 @@ class Divide(keras.layers.Layer):
 
 
 class SafeDivide(keras.layers.Layer):
-    def __init__(self, *args, factor: float = None, **kwargs):
+    def __init__(self, *args, factor: float = None, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         if factor is None:
@@ -423,7 +443,7 @@ class MultiplyWithLinspace(keras.layers.Layer):
 
 
 class TestPhaseGaussianNoise(keras.layers.GaussianNoise):
-    def call(self, inputs):
+    def call(self, inputs: Tensor) -> Tensor:
         # Always add Gaussian noise!
         return super().call(inputs, training=True)
 
@@ -477,11 +497,11 @@ class ExtractConv2DPatches(keras.layers.Layer):
 
 
 class RunningMeans(keras.layers.Layer):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.stateful = True
         super().__init__(*args, **kwargs)
 
-    def build(self, input_shapes: Sequence[ShapeTuple]):
+    def build(self, input_shapes: Sequence[ShapeTuple]) -> None:
         means_shape, counts_shape = input_shapes
 
         self.means = self.add_weight(
@@ -492,7 +512,7 @@ class RunningMeans(keras.layers.Layer):
         )
         self.built = True
 
-    def call(self, x):
+    def call(self, x: List[Tensor]) -> List[Tensor]:
         def safe_divide(a, b):
             return a / (b + iK.to_floatx(K.equal(b, K.constant(0))) * 1)
 
@@ -523,7 +543,7 @@ class RunningMeans(keras.layers.Layer):
 
 
 class Broadcast(keras.layers.Layer):
-    def call(self, x):
+    def call(self, x: List[Tensor]) -> Tensor:
         target_shapped, x = x
         return target_shapped * 0 + x
 
