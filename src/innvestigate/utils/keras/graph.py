@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 from abc import ABCMeta, abstractmethod
 from builtins import range, zip
-from typing import Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
 import keras.backend as K
 import keras.engine.topology
@@ -23,6 +23,7 @@ from innvestigate.utils.types import (
     NodeDict,
     OptionalList,
     Tensor,
+    ReverseTensorDict,
 )
 
 __all__ = [
@@ -80,7 +81,7 @@ def get_layer_neuronwise_io(
     Ys: List[Tensor] = None,
     return_i: bool = True,
     return_o: bool = True,
-):
+) -> Union[Tuple[List[Tensor], List[Tensor]], List[Tensor]]:
     """Returns the input and output for each neuron in a layer
 
     Returns the symbolic input and output for each neuron in a layer.
@@ -197,7 +198,7 @@ def get_symbolic_weight_names(layer: Layer, weights: List[Tensor] = None) -> Lis
     return ret
 
 
-def update_symbolic_weights(layer: Layer, weight_mapping: Dict[str, Tensor]):
+def update_symbolic_weights(layer: Layer, weight_mapping: Dict[str, Tensor]) -> None:
     """Updates the symbolic tensors of a layer
 
     Updates the symbolic tensors of a layer by replacing them.
@@ -228,8 +229,11 @@ def update_symbolic_weights(layer: Layer, weight_mapping: Dict[str, Tensor]):
 
 
 def get_layer_from_config(
-    old_layer, new_config, weights=None, reuse_symbolic_tensors=True
-):
+    old_layer: Layer,
+    new_config: Dict[str, Any],
+    weights: Optional[Union[List[np.ndarray], List[Tensor]]] = None,
+    reuse_symbolic_tensors: bool = True,
+) -> Layer:
     """Creates a new layer from a config
 
     Creates a new layer given a changed config and weights etc.
@@ -274,13 +278,13 @@ def get_layer_from_config(
 
 
 def copy_layer_wo_activation(
-    layer,
-    keep_bias=True,
-    name_template=None,
-    weights=None,
-    reuse_symbolic_tensors=True,
+    layer: Layer,
+    keep_bias: bool = True,
+    name_template: Optional[str] = None,
+    weights: Optional[Union[List[np.ndarray], List[Tensor]]] = None,
+    reuse_symbolic_tensors: bool = True,
     **kwargs
-):
+) -> Layer:
     """Copy a Keras layer and remove the activations
 
     Copies a Keras layer but remove potential activations.
@@ -317,7 +321,7 @@ def copy_layer(
     layer: Layer,
     keep_bias: bool = True,
     name_template: bool = None,
-    weights: Optional[Union[Tensor, np.ndarray]] = None,
+    weights: Optional[Union[List[Tensor], List[np.ndarray]]] = None,
     reuse_symbolic_tensors: bool = True,
     **kwargs
 ) -> Layer:
@@ -425,7 +429,7 @@ def model_contains(
 ###############################################################################
 
 
-def apply_mapping_to_fused_bn_layer(mapping, fuse_mode: str = "one_linear"):
+def apply_mapping_to_fused_bn_layer(mapping, fuse_mode: str = "one_linear") -> Callable:
     """
     Applies a mapping to a linearized Batch Normalization layer.
 
@@ -678,7 +682,9 @@ def trace_model_execution(
 
 
 def get_model_execution_trace(
-    model: Model, keep_input_layers=False, reapply_on_copied_layers=False
+    model: Model,
+    keep_input_layers: bool = False,
+    reapply_on_copied_layers: bool = False,
 ) -> List[NodeDict]:
     """
     Returns a list representing the execution graph.
@@ -957,7 +963,7 @@ def get_bottleneck_tensors(
 
 
 class ReverseMappingBase(metaclass=ABCMeta):
-    def __init__(self, layer: Layer, state):
+    def __init__(self, layer: Layer, state: Dict[str, Any]) -> None:
         pass
 
     @abstractmethod

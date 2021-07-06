@@ -76,3 +76,11 @@ class NodeDict(TypedDict):
     Ys_nids: List[Union[List[int], List[None]]]
     Xs_layers: List[Layer]
     Ys_layers: List[List[Layer]]
+
+
+class ReverseTensorDict(TypedDict):
+
+    id: Tuple[int, int]  # Node ID and order in reversed_tensor_list
+    tensor: Optional[Tensor]  # reversed tensor
+    tensors: Optional[List[Tensor]]
+    final_tensor: Optional[Tensor]
