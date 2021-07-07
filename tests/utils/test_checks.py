@@ -1,5 +1,5 @@
-import keras
 import pytest
+import tensorflow.keras.layers as klayers
 
 import innvestigate.utils.keras.checks as ichecks
 
@@ -17,7 +17,7 @@ import innvestigate.utils.keras.checks as ichecks
     ],
 )
 def test_contains_activation_relu(activation, expected):
-    layer = keras.layers.Dense(5, activation=activation)
+    layer = klayers.Dense(5, activation=activation)
     assert ichecks.contains_activation(layer, "relu") == expected
 
 
@@ -34,7 +34,7 @@ def test_contains_activation_relu(activation, expected):
     ],
 )
 def test_contains_activation_softmax(activation, expected):
-    layer = keras.layers.Dense(5, activation=activation)
+    layer = klayers.Dense(5, activation=activation)
     assert ichecks.contains_activation(layer, "softmax") == expected
 
 
@@ -51,5 +51,5 @@ def test_contains_activation_softmax(activation, expected):
     ],
 )
 def test_contains_activation_general(activation, expected):
-    layer = keras.layers.Dense(5, activation=activation)
+    layer = klayers.Dense(5, activation=activation)
     assert ichecks.contains_activation(layer) == expected

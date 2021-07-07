@@ -4,13 +4,13 @@ import warnings
 from builtins import zip
 from typing import List, Optional, Union
 
-import keras.backend
-import keras.models
 import numpy as np
+import tensorflow.keras.backend as kbackend
+import tensorflow.keras.layers as klayers
+import tensorflow.keras.models as kmodels
 
 import innvestigate.layers as ilayers
 import innvestigate.utils as iutils
-import innvestigate.utils.keras as kutils
 from innvestigate.analyzer.base import AnalyzerBase
 from innvestigate.analyzer.network_base import AnalyzerNetworkBase
 from innvestigate.utils.types import OptionalList, Tensor
@@ -132,7 +132,7 @@ class AugmentReduceBase(WrapperBase):
         new_outputs = iutils.to_list(self._reduce(tmp))
         new_constant_inputs = self._keras_get_constant_inputs()
 
-        new_model = keras.models.Model(
+        new_model = kmodels.Model(
             inputs=inputs + extra_inputs + new_constant_inputs,
             outputs=outputs + new_outputs + extra_outputs,
         )
@@ -173,7 +173,7 @@ class AugmentReduceBase(WrapperBase):
         return [repeat(x) for x in iutils.to_list(X)]
 
     def _reduce(self, X):
-        X_shape = [keras.backend.int_shape(x) for x in iutils.to_list(X)]
+        X_shape = [kbackend.int_shape(x) for x in iutils.to_list(X)]
         reshape = [
             ilayers.Reshape((-1, self._augment_by_n) + shape[1:]) for shape in X_shape
         ]
@@ -263,9 +263,9 @@ class PathIntegrator(AugmentReduceBase):
         self._keras_constant_inputs: Optional[List[Tensor]] = None
 
     def _keras_set_constant_inputs(self, inputs: List[Tensor]) -> None:
-        tmp = [keras.backend.variable(X) for X in inputs]
+        tmp = [kbackend.variable(X) for X in inputs]
         self._keras_constant_inputs = [
-            keras.layers.Input(tensor=X, shape=X.shape[1:]) for X in tmp
+            klayers.Input(tensor=X, shape=X.shape[1:]) for X in tmp
         ]
 
     def _keras_get_constant_inputs(self) -> Optional[List[Tensor]]:
@@ -273,7 +273,7 @@ class PathIntegrator(AugmentReduceBase):
 
     def _compute_difference(self, X: List[Tensor]) -> List[Tensor]:
         if self._keras_constant_inputs is None:
-            tmp = kutils.broadcast_np_tensors_to_keras_tensors(
+            tmp = iutils.keras.broadcast_np_tensors_to_keras_tensors(
                 X, self._reference_inputs
             )
             self._keras_set_constant_inputs(tmp)
@@ -281,14 +281,12 @@ class PathIntegrator(AugmentReduceBase):
         # Type not Optional anymore as as `_keras_set_constant_inputs` has been called.
         reference_inputs: List[Tensor]
         reference_inputs = self._keras_get_constant_inputs()  # type: ignore
-        return [keras.layers.Subtract()([x, ri]) for x, ri in zip(X, reference_inputs)]
+        return [klayers.Subtract()([x, ri]) for x, ri in zip(X, reference_inputs)]
 
     def _augment(self, X):
         tmp = super()._augment(X)
         tmp = [
-            ilayers.Reshape((-1, self._augment_by_n) + keras.backend.int_shape(x)[1:])(
-                x
-            )
+            ilayers.Reshape((-1, self._augment_by_n) + kbackend.int_shape(x)[1:])(x)
             for x in tmp
         ]
 
@@ -296,8 +294,7 @@ class PathIntegrator(AugmentReduceBase):
         self._keras_difference = difference
         # Make broadcastable.
         difference = [
-            ilayers.Reshape((-1, 1) + keras.backend.int_shape(x)[1:])(x)
-            for x in difference
+            ilayers.Reshape((-1, 1) + kbackend.int_shape(x)[1:])(x) for x in difference
         ]
 
         # Compute path steps.
@@ -307,8 +304,8 @@ class PathIntegrator(AugmentReduceBase):
         path_steps = [multiply_with_linspace(d) for d in difference]
 
         reference_inputs = self._keras_get_constant_inputs()
-        ret = [keras.layers.Add()([x, p]) for x, p in zip(reference_inputs, path_steps)]
-        ret = [ilayers.Reshape((-1,) + keras.backend.int_shape(x)[2:])(x) for x in ret]
+        ret = [klayers.Add()([x, p]) for x, p in zip(reference_inputs, path_steps)]
+        ret = [ilayers.Reshape((-1,) + kbackend.int_shape(x)[2:])(x) for x in ret]
         return ret
 
     def _reduce(self, X):
@@ -316,7 +313,7 @@ class PathIntegrator(AugmentReduceBase):
         difference = self._keras_difference
         del self._keras_difference
 
-        return [keras.layers.Multiply()([x, d]) for x, d in zip(tmp, difference)]
+        return [klayers.Multiply()([x, d]) for x, d in zip(tmp, difference)]
 
     def _get_state(self):
         state = super()._get_state()

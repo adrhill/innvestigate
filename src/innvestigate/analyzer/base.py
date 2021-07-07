@@ -5,15 +5,13 @@ from abc import ABCMeta, abstractmethod
 from builtins import zip
 from typing import Any, Dict, List, Optional, Tuple
 
-import keras
-import keras.layers
-import keras.models
 import numpy as np
+import tensorflow.keras.models as kmodels
 
 import innvestigate.analyzer
 import innvestigate.utils as iutils
-import innvestigate.utils.keras.graph as kgraph
-from innvestigate.utils.types import LayerCheck, ModelCheckDict, OptionalList
+import innvestigate.utils.keras.graph as igraph
+from innvestigate.utils.types import LayerCheck, Model, ModelCheckDict, OptionalList
 
 __all__ = [
     "NotAnalyzeableModelException",
@@ -53,7 +51,7 @@ class AnalyzerBase(metaclass=ABCMeta):
 
     def __init__(
         self,
-        model: keras.Model,
+        model: Model,
         disable_model_checks: bool = False,
         _model_checks: List[ModelCheckDict] = None,
         _model_check_done: bool = False,
@@ -103,7 +101,8 @@ class AnalyzerBase(metaclass=ABCMeta):
             types = [x["check_type"] for x in self._model_checks]
             messages = [x["message"] for x in self._model_checks]
 
-            checked = kgraph.model_contains(self._model, check)
+            # ideally empty if all checks pass
+            checked = igraph.model_contains(self._model, check)
 
             tmp = zip(checked, messages, types)
 
@@ -205,7 +204,7 @@ class AnalyzerBase(metaclass=ABCMeta):
         # in every child class, the dict `state` should be empty at this point.
         assert len(state) == 0
 
-        model = keras.models.model_from_json(model_json)
+        model = kmodels.model_from_json(model_json)
         model.set_weights(model_weights)
         return {"model": model, "disable_model_checks": disable_model_checks}
 
