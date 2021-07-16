@@ -36,9 +36,7 @@ def is_not_finite(X: Tensor) -> Tensor:  # returns Tensor of dtype bool
 
 
 def cast_to_floatx(X: Tensor) -> Tensor:
-    floatx = getattr(tf, kbackend.floatx())
-    return tf.cast(X, dtype=floatx)
-
+    return tf.cast(X, dtype=kbackend.floatx())
 
 def extract_conv2d_patches(X: Tensor, kernel_shape, strides, rates, padding) -> Tensor:
     """Extracts conv2d patches like TF function extract_image_patches.
